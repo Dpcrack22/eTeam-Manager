@@ -1,0 +1,140 @@
+eTeam Manager — Documentación técnica general del proyecto
+Versión 1.0 — Arquitectura base
+
+1) Visión general del sistema
+eTeam Manager es una aplicación web diseñada para la gestión interna de organizaciones y equipos de eSports. El sistema centraliza herramientas operativas que normalmente se
+ encuentran dispersas en múltiples plataformas externas (Discord, Google Calendar, Trello, documentos compartidos, etc.). 
+ El proyecto se concibe como una plataforma modular, escalable y preparada para futuras integraciones externas, especialmente con APIs oficiales de videojuegos competitivos como Valorant. 
+ Actualmente el sistema se encuentra en fase estructural y visual (frontend modular), pero su arquitectura está diseñada para evolucionar hacia una aplicación completa con backend, 
+ autenticación real, persistencia de datos y control de permisos.
+
+2) Propósito funcional
+El sistema permite gestionar:
+- Usuarios
+- Organizaciones
+- Equipos
+- Roles internos
+- Scrims
+- Calendario competitivo
+- Tableros de tareas tipo Kanban
+- Notas estratégicas
+- Configuración y perfil
+El objetivo principal es profesionalizar la gestión interna de equipos competitivos mediante una herramienta especializada.
+
+3) Principios de diseño
+El proyecto se basa en los siguientes principios técnicos:
+- Modularidad por dominio funcional
+- Separación clara de responsabilidades
+- Reutilización de componentes
+- Arquitectura escalable
+- Preparación para backend
+- Evitar sobreingeniería en fase inicial
+Se evita la creación innecesaria de estructuras complejas hasta que el proyecto lo requiera.
+
+4) Arquitectura general
+La arquitectura actual es una arquitectura frontend modular organizada por dominios. Estructura principal:
+- /css
+- /js
+- /images
+- /components
+- /pages
+- index.html
+Esta estructura está diseñada para permitir: separación entre estructura (HTML), estilo (CSS) y comportamiento (JS); crecimiento progresivo sin reorganizaciones drásticas;
+ e integración futura con backend.
+
+5) Organización del proyecto
+5.1) CSS
+Archivo principal: main.css. Responsabilidades:
+- Definición de sistema de colores
+- Tipografía global
+- Layout base (sidebar, navbar, contenedores)
+- Sistema de tarjetas
+- Botones
+- Estados visuales (error, éxito, warning)
+- Responsive design
+Se mantiene un único punto central de control visual para evitar inconsistencias.
+
+5.2) JS
+Archivo principal: main.js. Responsabilidades:
+- Interacciones visuales
+- Apertura/cierre de sidebar
+- Simulación de modales
+- Simulación de movimientos en Kanban
+- Eventos de UI
+No se implementa lógica de negocio real en esta fase.
+
+5.3) Components
+Contiene elementos reutilizables: Navbar, Sidebar, Footer, Modal base, Tarjeta de tarea y Columna Kanban. La reutilización evita duplicación de código y facilita mantenimiento.
+
+5.4) Pages
+Cada página representa un módulo funcional independiente:
+- login.html
+- register.html
+- dashboard.html
+- teams.html
+- calendar.html
+- scrims.html
+- boards.html
+- notes.html
+- settings.html
+Cada módulo está desacoplado del resto a nivel estructural.
+
+6) Módulos funcionales
+6.1) Autenticación
+Sistema visual de login y registro. Futuro: hash de contraseñas, JWT o sesiones, OAuth externo (Riot u otros).
+
+6.2) Dashboard
+Centro de control del usuario. Incluye: próximos eventos, scrims recientes, tareas pendientes y accesos rápidos.
+
+6.3) Equipos
+Permite visualizar: equipos, miembros y roles. Roles definidos: Owner, Manager, Coach, Player, Viewer. Este módulo es el núcleo organizativo.
+
+6.4) Calendario
+Gestión visual de eventos. Tipos de evento: Scrim, Torneo, Entrenamiento, Reunión. En futuras versiones podrá integrarse con librerías avanzadas.
+
+6.5) Scrims
+Registro de entrenamientos competitivos. Incluye: rival, mapas, resultado y notas pre y post partida.
+
+6.6) Tableros (Kanban)
+Sistema interno de tareas. Columnas: Pendiente, En progreso, Completado. Cada tarea incluye: título, prioridad, fecha límite y usuario asignado.
+
+6.7) Notas
+Repositorio interno para: estrategias, análisis de rivales y documentación táctica.
+
+6.8) Configuración
+Perfil y preferencias del usuario.
+
+7) Modelo conceptual del sistema
+El sistema está diseñado conceptualmente bajo esta jerarquía:
+Organización
+└── Equipos
+└── Miembros
+└── Scrims
+└── Tareas
+└── Calendario
+Los usuarios pertenecen a organizaciones y equipos mediante roles específicos. Este modelo conceptual facilitará la futura implementación de base de datos relacional.
+
+8) Preparación para integraciones externas
+El sistema está diseñado para permitir:
+- Integración con Riot API
+- Vinculación de cuentas externas
+- Sincronización de estadísticas
+- Verificación de identidad mediante código
+La arquitectura desacoplada facilita añadir esta capa sin reestructurar el sistema completo.
+
+9) Escalabilidad
+El sistema permite:
+- Soporte multi-organización
+- Soporte multi-equipo
+- Soporte multi-juego
+- Añadir nuevos módulos sin afectar los existentes
+- Evolución hacia SPA o framework moderno
+
+10) Estado actual del proyecto
+Fase actual: arquitectura definida, estructura modular creada, plantillas visuales implementadas, sin backend, sin persistencia real y sin autenticación real.
+ Próxima fase posible: implementación backend, persistencia de datos, sistema de roles funcional e integración con APIs externas.
+
+11) Conclusión técnica
+eTeam Manager no es una simple web estática, sino una base arquitectónica pensada para evolucionar hacia un sistema completo de gestión competitiva.
+ Su diseño modular, desacoplado y estructurado permite escalar el sistema sin rehacer la base. Este documento sirve como referencia estructural y guía de desarrollo
+ para futuras decisiones técnicas y para proporcionar contexto completo a herramientas de asistencia como Copilot.

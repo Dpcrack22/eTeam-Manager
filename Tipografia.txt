@@ -1,0 +1,75 @@
+eTeam Manager — Sistema tipográfico oficial
+Versión 1.0 — Dark Competitive UI
+
+1) Filosofía tipográfica
+El sistema tipográfico está diseñado para transmitir: profesionalidad, claridad estructural, legibilidad en entornos oscuros, sensación moderna y tecnológica, y estética competitiva eSports.
+Se prioriza:
+- Alta legibilidad
+- Jerarquía clara
+- Consistencia en tamaños
+- Uso limitado de pesos para evitar ruido visual
+
+2) Fuente principal
+Fuente recomendada: Inter.
+Alternativas compatibles: Poppins, Montserrat, Roboto.
+Recomendación principal: Inter (por su claridad en interfaces modernas).
+
+Carga recomendada (Google Fonts)
+Pesos necesarios: 400 (Regular), 500 (Medium), 600 (SemiBold), 700 (Bold).
+No se recomienda usar pesos 800 o 900 salvo en títulos muy grandes.
+
+3) Jerarquía tipográfica
+Se define un sistema escalonado coherente:
+- H1 (título principal de página): tamaño 32px; peso 700; color #FFFFFF. Uso: títulos de sección principal (Dashboard, Equipos, etc.).
+- H2 (subtítulo principal): tamaño 24px; peso 600; color #FFFFFF. Uso: títulos de módulo dentro de página.
+- H3 (título secundario): tamaño 20px; peso 600; color #FFFFFF. Uso: títulos de tarjetas o bloques internos.
+- H4 (título pequeño): tamaño 16px; peso 500; color #FFFFFF. Uso: encabezados dentro de tarjetas.
+
+4) Texto base
+- Texto principal: tamaño 16px; peso 400; color #FFFFFF. Uso: texto normal de contenido.
+- Texto secundario: tamaño 14px; peso 400; color #B3B3B8. Uso: descripciones y contenido auxiliar.
+- Texto pequeño (meta / etiquetas): tamaño 12px; peso 400; color #6E6E73. Uso: fechas, estados, información secundaria.
+
+5) Botones
+- Texto botón principal: tamaño 14px; peso 600; color #FFFFFF; transformación opcional MAYÚSCULAS ligeras; letter spacing recomendado 0.5px.
+- Botón secundario: tamaño 14px; peso 500.
+Regla: no usar tamaño menor de 14px en botones.
+
+6) Sidebar
+- Items normales: tamaño 14px; peso 500; color #B3B3B8.
+- Item activo: peso 600; color #FFFFFF.
+
+7) Tarjetas y Kanban
+- Título de tarea: tamaño 14px; peso 600.
+- Descripción tarea: tamaño 13px; peso 400; color #B3B3B8.
+- Metadatos (fecha, prioridad): tamaño 12px; peso 400; color #6E6E73.
+
+8) Line-height y espaciado
+Line-height recomendado: para títulos 1.2; para texto normal 1.5; para texto pequeño 1.4.
+Regla: nunca usar line-height menor de 1.2 en textos largos.
+
+9) Variables CSS recomendadas
+--font-family-main: 'Inter', sans-serif;
+--font-size-h1: 32px;
+--font-size-h2: 24px;
+--font-size-h3: 20px;
+--font-size-h4: 16px;
+--font-size-base: 16px;
+--font-size-secondary: 14px;
+--font-size-small: 12px;
+--font-weight-regular: 400;
+--font-weight-medium: 500;
+--font-weight-semibold: 600;
+--font-weight-bold: 700;
+
+10) Reglas de uso
+- No mezclar múltiples tipografías.
+- No usar más de 4 pesos distintos.
+- Mantener consistencia entre módulos.
+- No usar texto rojo salvo para acciones importantes.
+- Evitar texto demasiado pequeño (<12px).
+- Priorizar contraste en entorno oscuro.
+
+11) Conclusión
+El sistema tipográfico está diseñado para ofrecer: claridad estructural, jerarquía visual coherente, legibilidad en dark mode y 
+estética moderna y tecnológica. Este sistema debe mantenerse consistente en todos los módulos del proyecto.

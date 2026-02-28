@@ -1,0 +1,65 @@
+eTeam Manager — Sistema de colores oficial
+Versión 1.0 — Dark Theme (inspirado en Valorant)
+
+1) Identidad visual general
+El sistema visual está basado en una estética oscura, competitiva y profesional, inspirada en entornos eSports. Predominan tonos negros y grises oscuros, con rojo intenso como color primario de acción.
+Filosofía del sistema:
+- Fondo oscuro para reducir fatiga visual.
+- Rojo como color de acento y acción.
+- Blanco y grises para jerarquía textual.
+- Estados bien diferenciados para UX clara.
+
+2) Colores primarios
+- Primario principal (Acción / botones principales): HEX #FF4655. Uso: botones principales, elementos activos, indicadores clave, estados importantes.
+- Primario hover: HEX #E03A49. Uso: hover de botones y elementos interactivos principales.
+- Primario oscuro: HEX #B8323F. Uso: versiones activas, bordes, estados seleccionados.
+
+3) Fondos (Dark System)
+- Fondo principal aplicación: HEX #0F0F12. Uso: background general del body.
+- Fondo secundario: HEX #1A1A1F. Uso: secciones internas, contenedores principales.
+- Fondo tarjetas (cards): HEX #202027. Uso: cards, módulos, bloques de información.
+- Fondo sidebar: HEX #141418. Uso: menú lateral.
+- Fondo columnas Kanban: HEX #1C1C22. Uso: columnas de tareas.
+- Fondo tareas individuales: HEX #24242C. Uso: tarjetas dentro del Kanban.
+
+4) Sistema de texto
+- Texto principal: HEX #FFFFFF. Uso: títulos, texto destacado, contenido principal.
+- Texto secundario: HEX #B3B3B8. Uso: descripciones, subtítulos, texto auxiliar.
+- Texto desactivado / muted: HEX #6E6E73. Uso: información secundaria, placeholders, estados inactivos.
+
+5) Colores de estado
+- Éxito: HEX #2ECC71. Uso: confirmaciones, tareas completadas, estados positivos.
+- Advertencia: HEX #F39C12. Uso: alertas leves, fechas próximas a vencer.
+- Error: HEX #E74C3C. Uso: errores críticos, fallos de validación.
+- Información: HEX #3498DB. Uso: notificaciones informativas.
+
+6) Aplicación en componentes
+- Botón primario: background #FF4655; texto #FFFFFF; hover #E03A49.
+- Botón secundario: background #2A2A32; texto #FFFFFF; hover #353540.
+- Sidebar: background #141418; texto normal #B3B3B8; texto activo #FFFFFF; item activo: fondo #FF4655 + texto blanco.
+- Tarjetas: background #202027; borde rgba(255,255,255,0.05).
+- Kanban prioridad alta: borde izquierdo 4px solid #FF4655.
+
+7) Variables CSS oficiales
+Se recomienda usar variables globales:
+--color-primary: #FF4655
+--color-primary-hover: #E03A49
+--color-primary-dark: #B8323F
+--bg-main: #0F0F12
+--bg-secondary: #1A1A1F
+--bg-card: #202027
+--bg-sidebar: #141418
+--text-main: #FFFFFF
+--text-secondary: #B3B3B8
+--text-muted: #6E6E73
+--success: #2ECC71
+--warning: #F39C12
+--error: #E74C3C
+--info: #3498DB
+
+8) Reglas de uso
+- No usar negro puro (#000000).
+- No abusar del rojo como fondo principal.
+- El rojo debe ser color de acción y acento.
+- Mantener contraste alto para accesibilidad.
+- Priorizar jerarquía visual mediante contraste de tonos.
