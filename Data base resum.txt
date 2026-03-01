@@ -1,0 +1,430 @@
+ESPORTS PLATFORM - DATABASE SCHEMA (MULTI-GAME READY)
+
+Version: 1.0
+Designed for scalability and multi-game support
+Primary initial focus: Valorant
+Future-ready: Any esports title
+
+CORE SYSTEM
+
+TABLE: users
+
+id (PK)
+
+username (UNIQUE, NOT NULL)
+
+email (UNIQUE, NOT NULL)
+
+password_hash (NOT NULL)
+
+avatar_url (NULLABLE)
+
+is_active (BOOLEAN, DEFAULT TRUE)
+
+created_at (TIMESTAMP)
+
+updated_at (TIMESTAMP)
+
+last_login_at (TIMESTAMP, NULLABLE)
+
+RELATIONS:
+
+1:N organization_members
+
+1:N team_members
+
+1:N user_game_accounts
+
+1:N match_player_stats
+
+1:N tasks (assigned_to)
+
+1:N notifications
+
+TABLE: organizations
+
+id (PK)
+
+name (NOT NULL)
+
+slug (UNIQUE, NOT NULL)
+
+logo_url (NULLABLE)
+
+description (TEXT, NULLABLE)
+
+owner_id (FK -> users.id)
+
+created_at (TIMESTAMP)
+
+updated_at (TIMESTAMP)
+
+RELATIONS:
+
+1:N organization_members
+
+1:N teams
+
+1:N events
+
+TABLE: organization_members
+
+id (PK)
+
+organization_id (FK -> organizations.id)
+
+user_id (FK -> users.id)
+
+role (ENUM: owner, admin, manager, coach, analyst, player, viewer)
+
+joined_at (TIMESTAMP)
+
+is_active (BOOLEAN)
+
+UNIQUE (organization_id, user_id)
+
+MULTI-GAME SYSTEM
+
+TABLE: games
+
+id (PK)
+
+name (NOT NULL)
+
+slug (UNIQUE)
+
+developer
+
+is_active (BOOLEAN)
+
+created_at (TIMESTAMP)
+
+TABLE: game_modes
+
+id (PK)
+
+game_id (FK -> games.id)
+
+name
+
+is_ranked (BOOLEAN)
+
+TABLE: game_maps
+
+id (PK)
+
+game_id (FK -> games.id)
+
+name
+
+is_active (BOOLEAN)
+
+TABLE: game_characters
+
+id (PK)
+
+game_id (FK -> games.id)
+
+name
+
+role (VARCHAR) -- duelist, controller, lane, class, etc.
+
+is_active (BOOLEAN)
+
+TEAMS
+
+TABLE: teams
+
+id (PK)
+
+organization_id (FK -> organizations.id)
+
+game_id (FK -> games.id)
+
+name
+
+tag
+
+description (TEXT)
+
+created_at (TIMESTAMP)
+
+is_active (BOOLEAN)
+
+UNIQUE (organization_id, name, game_id)
+
+TABLE: team_members
+
+id (PK)
+
+team_id (FK -> teams.id)
+
+user_id (FK -> users.id)
+
+role (ENUM: coach, player, analyst, substitute)
+
+joined_at (TIMESTAMP)
+
+is_active (BOOLEAN)
+
+UNIQUE (team_id, user_id)
+
+EXTERNAL GAME ACCOUNTS
+
+TABLE: user_game_accounts
+
+id (PK)
+
+user_id (FK -> users.id)
+
+game_id (FK -> games.id)
+
+external_player_id -- PUUID, SteamID, etc.
+
+in_game_name
+
+tag_line (NULLABLE)
+
+rank_tier
+
+rank_division
+
+verified (BOOLEAN)
+
+last_sync_at (TIMESTAMP)
+
+created_at (TIMESTAMP)
+
+UNIQUE (user_id, game_id)
+
+MATCHES & STATS
+
+TABLE: matches
+
+id (PK)
+
+team_id (FK -> teams.id)
+
+opponent_name
+
+opponent_tag
+
+match_type (ENUM: scrim, tournament, league, friendly)
+
+game_mode_id (FK -> game_modes.id)
+
+match_date (TIMESTAMP)
+
+result (ENUM: win, loss, draw, pending)
+
+score_for
+
+score_against
+
+created_by (FK -> users.id)
+
+created_at (TIMESTAMP)
+
+TABLE: match_maps
+
+id (PK)
+
+match_id (FK -> matches.id)
+
+map_id (FK -> game_maps.id)
+
+score_for
+
+score_against
+
+order_index
+
+TABLE: match_player_stats
+
+id (PK)
+
+match_id (FK -> matches.id)
+
+user_id (FK -> users.id)
+
+kills
+
+deaths
+
+assists
+
+score
+
+custom_stats_json (JSON) -- flexible for other games
+
+EVENTS & CALENDAR
+
+TABLE: events
+
+id (PK)
+
+organization_id (FK -> organizations.id)
+
+team_id (FK -> teams.id, NULLABLE)
+
+title
+
+description (TEXT)
+
+event_type (ENUM: scrim, practice, tournament, meeting, review)
+
+start_datetime
+
+end_datetime
+
+location
+
+created_by (FK -> users.id)
+
+created_at (TIMESTAMP)
+
+TABLE: event_participants
+
+id (PK)
+
+event_id (FK -> events.id)
+
+user_id (FK -> users.id)
+
+status (ENUM: invited, accepted, declined)
+
+TASK MANAGEMENT (KANBAN)
+
+TABLE: boards
+
+id (PK)
+
+team_id (FK -> teams.id)
+
+name
+
+created_at (TIMESTAMP)
+
+TABLE: board_columns
+
+id (PK)
+
+board_id (FK -> boards.id)
+
+name
+
+order_index
+
+TABLE: tasks
+
+id (PK)
+
+board_column_id (FK -> board_columns.id)
+
+team_id (FK -> teams.id)
+
+title
+
+description (TEXT)
+
+priority (ENUM: low, medium, high, critical)
+
+assigned_to (FK -> users.id, NULLABLE)
+
+due_date (TIMESTAMP, NULLABLE)
+
+status
+
+created_by (FK -> users.id)
+
+created_at (TIMESTAMP)
+
+updated_at (TIMESTAMP)
+
+TABLE: task_comments
+
+id (PK)
+
+task_id (FK -> tasks.id)
+
+user_id (FK -> users.id)
+
+comment (TEXT)
+
+created_at (TIMESTAMP)
+
+NOTES & DOCUMENTATION
+
+TABLE: notes
+
+id (PK)
+
+team_id (FK -> teams.id)
+
+title
+
+content (TEXT)
+
+created_by (FK -> users.id)
+
+created_at (TIMESTAMP)
+
+updated_at (TIMESTAMP)
+
+TABLE: note_tags
+
+id (PK)
+
+name
+
+TABLE: note_tag_relations
+
+note_id (FK -> notes.id)
+
+tag_id (FK -> note_tags.id)
+
+PRIMARY KEY (note_id, tag_id)
+
+NOTIFICATIONS
+
+TABLE: notifications
+
+id (PK)
+
+user_id (FK -> users.id)
+
+type
+
+reference_id
+
+message
+
+is_read (BOOLEAN)
+
+created_at (TIMESTAMP)
+
+SCALABILITY NOTES
+
+Multi-game ready via games table.
+
+Stats extensible via custom_stats_json.
+
+Supports multiple teams per organization.
+
+Users can belong to multiple organizations.
+
+Supports API integrations via external_player_id.
+
+Can scale to subscription SaaS model in the future.
+
+Can extend with:
+
+sponsorship management
+
+financial tracking
+
+performance analytics
+
+AI analysis modules
+
+role/permission system

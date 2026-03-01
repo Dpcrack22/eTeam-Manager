@@ -205,6 +205,179 @@ p {
   margin-top: var(--space-4);
 }
 
+/* Landing (Home) */
+.landing-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+}
+
+.landing-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.landing-brand-title {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.2px;
+}
+
+.landing-nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.landing-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.landing-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-secondary);
+}
+
+.landing-link:hover {
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+}
+
+.landing-cta {
+  white-space: nowrap;
+}
+
+.landing-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      800px 400px at 20% 20%,
+      color-mix(in srgb, var(--color-primary) 28%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 360px at 80% 40%,
+      color-mix(in srgb, var(--color-primary) 16%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--bg-main) 55%, transparent),
+      var(--bg-main)
+    );
+  pointer-events: none;
+}
+
+.landing-hero-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: var(--space-5);
+  padding: 56px 0;
+  align-items: end;
+}
+
+.landing-hero-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.landing-hero-card {
+  background: var(--bg-card);
+}
+
+.landing-section {
+  padding: 48px 0;
+}
+
+.landing-section-head {
+  margin-bottom: var(--space-5);
+}
+
+.landing-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.landing-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.landing-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landing-team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.landing-cta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--bg-secondary);
+}
+
+.landing-footer {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  padding: 28px 0;
+}
+
+.landing-footer-inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing-footer-brand {
+  font-weight: var(--font-weight-bold);
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -449,6 +622,17 @@ textarea:focus {
   line-height: var(--lh-title);
 }
 
+/* Auth dialog (landing only) */
+.auth-tabs {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.auth-tab {
+  flex: 1;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   :root {
@@ -491,10 +675,48 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .landing-hero-content {
+    grid-template-columns: 1fr;
+    padding: 44px 0;
+  }
+
+  .landing-nav-right {
+    gap: var(--space-2);
+  }
+
+  .landing-team {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .landing-cta-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .landing-footer-inner {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .landing-footer-links {
+    justify-content: flex-start;
+  }
+
   .table {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
+  }
+}
+
+@media (max-width: 1024px) {
+  .landing-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landing-grid-3 {
+    grid-template-columns: 1fr;
   }
 }
 
