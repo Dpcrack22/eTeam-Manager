@@ -1,0 +1,299 @@
+eTeam Manager — Planificación SCRUM (8 semanas)
+
+Fecha: 4 de març del 2026
+
+======================================================================
+
+RESUMEN
+
+- Duración total estimada: 8 semanas
+- Carga semanal: 12 horas totales (equipo de 2 personas)
+- Total aproximado: 96 horas
+- Metodología aplicada: SCRUM adaptado a entorno académico
+
+Objetivo general:
+Construir una versión 1 (V1) funcional, estable y coherente del sistema eTeam Manager.
+
+Alcance (V1 en entorno académico):
+- Frontend completo con datos simulados (mocks) y flujo de navegación real.
+- Preparado para conectar backend/DB más adelante sin rehacer la UI.
+
+======================================================================
+
+ORGANIZACIÓN SCRUM DEL PROYECTO
+
+- Duración de cada Sprint: 1 semana
+
+Cada semana incluye:
+- Sprint Planning (30 minutos)
+- Desarrollo técnico
+- Sprint Review (30 minutos)
+- Sprint Retrospective (15 minutos)
+
+Cada Sprint tiene:
+- Objetivo técnico claro
+- Conjunto definido de tareas
+- Entregable funcional verificable
+
+======================================================================
+
+SPRINT 1 — Base UI + navegación + Auth (prototipo usable)
+
+Objetivo:
+Tener una base visual coherente (layout + estilos) y un flujo de autenticación simulado
+que permita “entrar” a la app y navegar por los módulos principales.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Estructura de páginas y layout reutilizable (3h)
+   - Estandarizar estructura por páginas usando el stack del repo (PHP y carpetas existentes).
+   - Definir layout base: header/nav + footer + contenedor principal.
+   Resultado esperado:
+   - Todas las páginas comparten el mismo layout sin duplicar código.
+
+2) Estilos globales y componentes básicos (3h)
+   - Consolidar estilos globales en css/main.css.
+   - Definir componentes UI reutilizables (botones, inputs, cards) en components/.
+   Resultado esperado:
+   - UI consistente y lista para escalar sin “CSS por página”.
+
+3) Login/Registro (UI) + validaciones front (4h)
+   - Crear pantallas de login y registro (formularios + mensajes de error).
+   - Validaciones básicas en JS (campos obligatorios, formato email, password mínima).
+   Resultado esperado:
+   - Formularios completos y con UX mínima de errores.
+
+4) Sesión simulada + rutas protegidas (2h)
+   - Simular sesión (localStorage o sessionStorage) y “logout”.
+   - Proteger navegación: si no hay sesión → redirigir a login.
+   Resultado esperado:
+   - Se puede iniciar/cerrar sesión (simulado) y acceder a páginas protegidas.
+
+Entregable del Sprint 1:
+- Prototipo navegable con layout final + login/registro funcional a nivel visual.
+- Acceso “protegido” por sesión simulada.
+
+======================================================================
+
+SPRINT 2 — Dashboard + Gestión de usuarios (perfil) con mocks
+
+Objetivo:
+Dar vida a la app tras el login: dashboard con datos simulados y perfil de usuario.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Dashboard inicial (4h)
+   - Página principal con resumen (ej.: org activa, equipo activo, próximos eventos).
+   - Widgets con datos mock.
+   Resultado esperado:
+   - Tras login se aterriza en un dashboard útil y coherente.
+
+2) Perfil de usuario (4h)
+   - Vista de perfil (avatar, username, email).
+   - Edición visual (sin persistencia real, solo mock).
+   Resultado esperado:
+   - Perfil completo y consistente con el resto de UI.
+
+3) Modelo de datos mock (4h)
+   - Definir mocks en JS para user, organizations, teams.
+   - Centralizar mocks para reutilizarlos en módulos siguientes.
+   Resultado esperado:
+   - Fuente única de datos simulados para toda la app.
+
+Entregable del Sprint 2:
+- Dashboard funcional (visual) + perfil completo con datos simulados.
+
+======================================================================
+
+SPRINT 3 — Organizaciones + miembros + roles (UI)
+
+Objetivo:
+Permitir crear/seleccionar una organización y gestionar miembros/roles a nivel visual.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Listado y selección de organización (4h)
+   - Ver organizaciones donde pertenece el usuario (mock).
+   - Seleccionar “organización activa”.
+   Resultado esperado:
+   - Contexto de organización activo para el resto de módulos.
+
+2) Crear/editar organización (4h)
+   - Formulario de creación/edición (nombre, slug, descripción, logo).
+   Resultado esperado:
+   - CRUD visual coherente.
+
+3) Miembros y roles (4h)
+   - Vista de miembros (owner/admin/manager/player/viewer, etc.).
+   - UI de invitación/alta y cambio de rol (mock).
+   Resultado esperado:
+   - Gestión de miembros operativa a nivel visual.
+
+Entregable del Sprint 3:
+- Módulo de organizaciones completo (visual) con miembros y roles simulados.
+
+======================================================================
+
+SPRINT 4 — Equipos y miembros (UI)
+
+Objetivo:
+Crear equipos dentro de una organización y gestionar miembros/roles dentro del equipo.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Listado y creación de equipos (5h)
+   - Lista de equipos (mock) y creación (name, tag, game).
+   Resultado esperado:
+   - Equipos visibles y navegables.
+
+2) Detalle de equipo (4h)
+   - Vista detalle con información y miembros.
+   Resultado esperado:
+   - Pantalla “Team Detail” lista para módulos competitivos.
+
+3) Roles de equipo + altas/bajas (3h)
+   - Asignación de roles (player, coach, analyst, substitute).
+   Resultado esperado:
+   - Gestión de equipo completa (visual).
+
+Entregable del Sprint 4:
+- Módulo de equipos completo (visual) con roles y miembros.
+
+======================================================================
+
+SPRINT 5 — Scrims (UI)
+
+Objetivo:
+Gestionar scrims: crear, editar, listar y ver detalle (a nivel visual).
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Páginas scrims (4h)
+   - Lista por equipo y estado (pending/win/loss).
+   Resultado esperado:
+   - Visualización clara y navegable.
+
+2) CRUD visual de scrim (5h)
+   - Crear/editar/eliminar scrim (rival, fecha, modo, resultado, score).
+   Resultado esperado:
+   - Flujo completo de gestión de scrims.
+
+3) Mapas por scrim (3h)
+   - Añadir mapas al scrim y orden.
+   Resultado esperado:
+   - Scrims con detalle suficiente para análisis futuro.
+
+Entregable del Sprint 5:
+- Módulo de scrims operativo a nivel visual.
+
+======================================================================
+
+SPRINT 6 — Calendario de eventos (UI)
+
+Objetivo:
+Calendario por equipo/organización con eventos y participación (visual).
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Vista calendario + listado (5h)
+   - Vista calendario y/o lista con eventos mock.
+   Resultado esperado:
+   - Consultar próximos eventos fácilmente.
+
+2) Crear/editar evento (4h)
+   - Tipo (scrim, práctica, reunión, torneo).
+   - Fecha inicio/fin, localización.
+   Resultado esperado:
+   - CRUD visual de eventos.
+
+3) Participación (3h)
+   - invited/accepted/declined.
+   Resultado esperado:
+   - Confirmación de asistencia funcional (mock).
+
+Entregable del Sprint 6:
+- Calendario competitivo operativo a nivel visual.
+
+======================================================================
+
+SPRINT 7 — Kanban (gestión de tareas) (UI)
+
+Objetivo:
+Tablero Kanban por equipo con tareas, prioridades y movimiento entre columnas.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Tableros y columnas (4h)
+   - Board por equipo.
+   - Columnas: Pendiente, En progreso, Completado.
+   Resultado esperado:
+   - Estructura Kanban lista.
+
+2) Tareas (5h)
+   - Crear/editar tareas (title, priority, due_date, assigned_to).
+   Resultado esperado:
+   - CRUD visual de tareas.
+
+3) Movimiento de tareas (3h)
+   - Drag & drop o controles simples (según complejidad).
+   Resultado esperado:
+   - Flujo de trabajo Kanban funcional.
+
+Entregable del Sprint 7:
+- Sistema Kanban funcional por equipo (visual).
+
+======================================================================
+
+SPRINT 8 — Notas + ajustes + integración final
+
+Objetivo:
+Completar el módulo estratégico (notas) y dejar el prototipo pulido y documentado.
+
+Duración estimada: 12 horas
+
+Tareas:
+
+1) Notas y tags (5h)
+   - CRUD de notas (title, content).
+   - Tags para filtrar notas.
+   Resultado esperado:
+   - Notas estratégicas operativas (mock).
+
+2) Ajustes (settings) (3h)
+   - Pantalla de configuración visual (avatar/email/password, preferencias).
+   Resultado esperado:
+   - Ajustes integrados en navegación.
+
+3) Pulido + pruebas visuales + documentación (4h)
+   - Revisar consistencia de CSS/JS.
+   - Verificar que navegación/layout funciona en todas las páginas.
+   - Documentar el proyecto (README.md) y dejar claros los mocks y puntos de integración.
+   Resultado esperado:
+   - Prototipo completo, modular y listo para conectar backend.
+
+Entregable del Sprint 8:
+- V1 completa a nivel visual, estable y lista para evaluación.
+
+======================================================================
+
+NOTAS IMPORTANTES
+
+- Este plan es frontend + mocks (sin persistencia real aún).
+- Roles y asignaciones funcionan solo visualmente por ahora.
+- La base de datos está diseñada para extender a backend más adelante.
+- Al final del Sprint 8 tendrás un prototipo funcional que luce y se comporta como una app real,
+  listo para integraciones futuras.
