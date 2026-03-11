@@ -1,0 +1,880 @@
+eTeam Manager — Planificación extendida del proyecto
+
+Fecha: 11 de marzo de 2026
+
+======================================================================
+
+OBJETIVO DEL DOCUMENTO
+
+Este documento amplía la planificación original del proyecto eTeam Manager
+con una estructura más clara, más práctica y mejor dividida por sprints,
+actividades y tareas concretas.
+
+La idea no es solo decir "qué módulo toca", sino dejar definido:
+
+- qué se trabaja en cada sprint
+- qué actividades lo componen
+- qué ejercicios o tareas concretas hay que realizar
+- qué resultado debe salir de cada bloque
+- cómo saber si ese sprint está realmente terminado
+
+Este plan está pensado para un entorno académico y para una V1 centrada en:
+
+- frontend funcional
+- navegación real
+- datos simulados (mocks)
+- arquitectura preparada para backend y base de datos futura
+
+======================================================================
+
+RESUMEN GENERAL DEL PROYECTO
+
+Nombre del proyecto:
+eTeam Manager
+
+Descripción breve:
+Aplicación web para la gestión interna de organizaciones y equipos de eSports.
+Centraliza en una sola plataforma herramientas como calendario, scrims,
+tableros Kanban, notas, roles y organización de miembros.
+
+Objetivo general de la V1:
+Construir un prototipo visual completo, estable y coherente que simule el
+comportamiento de una aplicación real, sin depender todavía de backend ni
+persistencia real.
+
+Duración total estimada:
+8 semanas
+
+Carga estimada por semana:
+12 horas en total
+
+Carga total aproximada:
+96 horas
+
+Metodología:
+SCRUM adaptado a proyecto académico
+
+======================================================================
+
+BASE TÉCNICA Y CRITERIOS DEL PROYECTO
+
+El plan extendido se apoya en los documentos base del proyecto y en el estado
+actual del repositorio.
+
+Puntos técnicos que condicionan la planificación:
+
+- El proyecto está orientado a frontend modular.
+- El stack del repositorio gira en torno a PHP, CSS y JavaScript.
+- La interfaz debe mantener una identidad visual competitiva y oscura.
+- Los estilos globales deben centralizarse en css/main.css.
+- La lógica visual e interacciones deben centralizarse en js/main.js y módulos
+  específicos cuando haga falta.
+- La estructura debe quedar preparada para conectarse más adelante a backend,
+  autenticación real y base de datos relacional.
+- El sistema conceptual del producto gira alrededor de usuarios,
+  organizaciones, equipos, eventos, scrims, tareas y notas.
+
+Reglas de alcance para esta V1:
+
+- No se desarrolla backend funcional completo.
+- No hay persistencia real en base de datos durante esta fase.
+- La autenticación es simulada.
+- Los datos de negocio se representarán mediante mocks.
+- El foco principal es estructura, experiencia de uso y coherencia modular.
+
+======================================================================
+
+ESTRUCTURA SCRUM PROPUESTA
+
+Duración de cada sprint:
+1 semana
+
+Ritmo recomendado por sprint:
+
+1) Sprint Planning
+   - Revisar objetivo de la semana.
+   - Confirmar pantallas, componentes y datos mock necesarios.
+   - Identificar dependencias con sprints anteriores.
+
+2) Diseño y preparación
+   - Revisar layout, navegación y componentes reutilizables.
+   - Preparar estructuras base antes de programar el módulo.
+
+3) Desarrollo
+   - Construcción visual del módulo.
+   - Integración con mocks.
+   - Interacciones y validaciones front.
+
+4) Revisión
+   - Comprobar navegación.
+   - Verificar consistencia visual.
+   - Revisar responsive y estados vacíos.
+
+5) Cierre del sprint
+   - Dejar entregable demostrable.
+   - Anotar mejoras o bloqueos para el sprint siguiente.
+
+Definición de "terminado" para cualquier sprint:
+
+- La UI del módulo existe y se puede navegar.
+- Los componentes principales funcionan a nivel visual.
+- Los datos mock están conectados a la interfaz.
+- El módulo respeta el estilo global del proyecto.
+- No rompe la navegación de los módulos anteriores.
+
+======================================================================
+
+SPRINT 1 — BASE VISUAL, LAYOUT Y AUTENTICACIÓN SIMULADA
+
+Objetivo del sprint:
+Construir la base visual de la aplicación para que el proyecto tenga una
+estructura reutilizable, una navegación clara y un acceso simulado mediante
+login/registro.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Prototipo navegable con layout base compartido, formularios de acceso y sesión
+simulada.
+
+ACTIVIDAD 1 — Preparar estructura general de la aplicación (2h)
+
+Qué se tiene que hacer:
+- Revisar la estructura actual del repositorio.
+- Definir qué partes serán reutilizables entre páginas.
+- Separar claramente layout, contenido principal y recursos compartidos.
+- Decidir la organización base entre index, includes, páginas y scripts.
+
+Ejercicios o tareas concretas:
+- Identificar encabezado, menú, contenedor principal y pie común.
+- Crear una estructura repetible para futuras páginas.
+- Dejar claro dónde se cargarán CSS globales y JS globales.
+
+Resultado esperado:
+- Base estructural común para todas las vistas.
+
+ACTIVIDAD 2 — Diseñar layout compartido y navegación principal (3h)
+
+Qué se tiene que hacer:
+- Implementar header, sidebar o navegación superior según la estructura elegida.
+- Definir enlaces claros a los módulos principales.
+- Garantizar que la navegación sea reutilizable sin duplicar código.
+
+Ejercicios o tareas concretas:
+- Crear menú principal con acceso a dashboard, equipos, scrims, calendario,
+  boards, notas y ajustes.
+- Marcar visualmente el apartado activo.
+- Preparar estados de navegación para usuario autenticado y visitante.
+
+Resultado esperado:
+- Navegación coherente y lista para escalar.
+
+ACTIVIDAD 3 — Consolidar identidad visual global (3h)
+
+Qué se tiene que hacer:
+- Aplicar la paleta de colores oficial.
+- Aplicar la tipografía del sistema.
+- Crear componentes básicos reutilizables.
+
+Ejercicios o tareas concretas:
+- Configurar variables globales de color y tipografía.
+- Estilizar botones primarios y secundarios.
+- Estilizar inputs, labels, cards, badges y mensajes de estado.
+- Revisar márgenes, espaciados y jerarquía visual.
+
+Resultado esperado:
+- Sistema visual unificado y consistente desde el primer sprint.
+
+ACTIVIDAD 4 — Construir login y registro (2.5h)
+
+Qué se tiene que hacer:
+- Diseñar las vistas o formularios de login y registro.
+- Preparar una experiencia visual clara para acceso de usuario.
+
+Ejercicios o tareas concretas:
+- Crear campos de email, usuario y contraseña.
+- Mostrar mensajes de error y ayuda contextual.
+- Añadir CTA claros para cambiar entre login y registro.
+
+Resultado esperado:
+- Pantallas de acceso completas a nivel visual.
+
+ACTIVIDAD 5 — Validaciones front y sesión simulada (1.5h)
+
+Qué se tiene que hacer:
+- Validar los formularios en frontend.
+- Simular inicio de sesión y cierre de sesión.
+- Restringir el acceso visual a páginas internas si no hay sesión simulada.
+
+Ejercicios o tareas concretas:
+- Validar campos vacíos.
+- Validar formato de email.
+- Validar longitud mínima de contraseña.
+- Guardar sesión en localStorage o sessionStorage.
+- Redirigir a login si se intenta entrar sin sesión.
+
+Resultado esperado:
+- Flujo de acceso usable y protegido a nivel visual.
+
+Criterios de cierre del sprint:
+- El usuario puede entrar y salir de la app de forma simulada.
+- Existe un layout común reutilizable.
+- La app tiene una base visual sólida y consistente.
+
+======================================================================
+
+SPRINT 2 — DASHBOARD Y PERFIL DE USUARIO CON MOCKS
+
+Objetivo del sprint:
+Dar contenido real al entorno interno de la app tras el login, empezando por un
+dashboard útil y un perfil de usuario coherente con los datos simulados.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Dashboard funcional a nivel visual y módulo de perfil conectado a mocks.
+
+ACTIVIDAD 1 — Diseñar la experiencia inicial tras el login (2h)
+
+Qué se tiene que hacer:
+- Definir qué información debe ver el usuario nada más entrar.
+- Priorizar datos importantes en la pantalla principal.
+
+Ejercicios o tareas concretas:
+- Elegir widgets principales.
+- Definir una estructura de dashboard clara y escaneable.
+- Determinar accesos rápidos hacia módulos clave.
+
+Resultado esperado:
+- Base funcional del dashboard planificada antes de maquetar.
+
+ACTIVIDAD 2 — Construir el dashboard principal (4h)
+
+Qué se tiene que hacer:
+- Maquetar la página de dashboard.
+- Mostrar resúmenes relevantes del estado del equipo u organización.
+
+Ejercicios o tareas concretas:
+- Añadir bloque de organización activa.
+- Añadir bloque de equipo activo.
+- Añadir próximos eventos.
+- Añadir tareas pendientes.
+- Añadir scrims recientes o próximos.
+
+Resultado esperado:
+- Pantalla principal con valor visual y contexto operativo.
+
+ACTIVIDAD 3 — Definir y centralizar mocks del sistema (3h)
+
+Qué se tiene que hacer:
+- Crear una fuente central de datos simulados.
+- Estandarizar la estructura de los objetos principales.
+
+Ejercicios o tareas concretas:
+- Crear mock de usuario.
+- Crear mock de organizaciones.
+- Crear mock de equipos.
+- Crear mock de eventos y tareas básicas.
+- Preparar datos reutilizables para sprints posteriores.
+
+Resultado esperado:
+- Base de datos simulada coherente para alimentar varios módulos.
+
+ACTIVIDAD 4 — Crear módulo de perfil de usuario (2h)
+
+Qué se tiene que hacer:
+- Diseñar la pantalla de perfil.
+- Mostrar información principal del usuario.
+
+Ejercicios o tareas concretas:
+- Mostrar avatar, username y email.
+- Incluir zona de edición visual.
+- Simular cambios de datos sin persistencia real.
+
+Resultado esperado:
+- Perfil completo y consistente con la interfaz general.
+
+ACTIVIDAD 5 — Revisar flujo entre login, dashboard y perfil (1h)
+
+Qué se tiene que hacer:
+- Verificar continuidad visual y de navegación.
+- Corregir inconsistencias tempranas.
+
+Ejercicios o tareas concretas:
+- Revisar enlaces del menú.
+- Confirmar que el usuario aterriza correctamente en dashboard.
+- Comprobar que perfil usa los mismos mocks que el resto.
+
+Resultado esperado:
+- Primer flujo interno de aplicación realmente usable.
+
+Criterios de cierre del sprint:
+- El dashboard ofrece información resumen útil.
+- El perfil se visualiza correctamente.
+- Los mocks quedan listos para reutilizarse en módulos siguientes.
+
+======================================================================
+
+SPRINT 3 — ORGANIZACIONES, MIEMBROS Y ROLES
+
+Objetivo del sprint:
+Introducir el concepto de organización activa y permitir gestionar miembros y
+roles a nivel visual.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Módulo de organizaciones con alta, edición, selección y gestión visual de
+miembros.
+
+ACTIVIDAD 1 — Modelar el contexto de organización activa (2h)
+
+Qué se tiene que hacer:
+- Definir cómo se selecciona una organización.
+- Preparar el estado visual de organización activa.
+
+Ejercicios o tareas concretas:
+- Crear selector o listado de organizaciones.
+- Marcar la organización actualmente activa.
+- Preparar el impacto visual de ese contexto en el resto de páginas.
+
+Resultado esperado:
+- La aplicación entiende en qué organización está trabajando el usuario.
+
+ACTIVIDAD 2 — Crear listado de organizaciones (2.5h)
+
+Qué se tiene que hacer:
+- Mostrar las organizaciones del usuario.
+- Facilitar navegación y elección rápida.
+
+Ejercicios o tareas concretas:
+- Mostrar nombre, slug, logo y descripción breve.
+- Añadir acciones de ver, editar y seleccionar.
+- Preparar estado vacío cuando no existan organizaciones.
+
+Resultado esperado:
+- Vista clara y navegable de organizaciones.
+
+ACTIVIDAD 3 — Crear formulario de alta y edición de organización (3h)
+
+Qué se tiene que hacer:
+- Diseñar el CRUD visual de organizaciones.
+- Mantener coherencia con el esquema previsto para base de datos futura.
+
+Ejercicios o tareas concretas:
+- Añadir campos nombre, slug, descripción y logo.
+- Validar campos obligatorios.
+- Simular guardado y actualización de datos.
+
+Resultado esperado:
+- Flujo visual de creación y edición completo.
+
+ACTIVIDAD 4 — Implementar vista de miembros y roles (3h)
+
+Qué se tiene que hacer:
+- Mostrar quién pertenece a la organización.
+- Diferenciar permisos o roles de forma clara.
+
+Ejercicios o tareas concretas:
+- Listar miembros con avatar, nombre y rol.
+- Representar roles como owner, admin, manager, coach, analyst, player y viewer.
+- Añadir control visual para cambiar rol.
+- Añadir acción de invitar o incorporar nuevo miembro en modo mock.
+
+Resultado esperado:
+- Gestión visual de miembros comprensible y funcional.
+
+ACTIVIDAD 5 — Revisar coherencia entre organización y dashboard (1.5h)
+
+Qué se tiene que hacer:
+- Comprobar que la organización activa afecta al contenido mostrado.
+- Dejar sentadas las bases para el módulo de equipos.
+
+Ejercicios o tareas concretas:
+- Confirmar que los textos del dashboard se adaptan a la organización seleccionada.
+- Revisar navegación entre dashboard y organizaciones.
+
+Resultado esperado:
+- Contexto organizativo bien integrado en la app.
+
+Criterios de cierre del sprint:
+- Se pueden ver, crear, editar y seleccionar organizaciones a nivel visual.
+- Se pueden visualizar miembros y roles de una organización.
+- La organización activa queda preparada para los sprints siguientes.
+
+======================================================================
+
+SPRINT 4 — EQUIPOS, ROSTER Y ROLES INTERNOS
+
+Objetivo del sprint:
+Crear el módulo de equipos dentro de una organización y permitir gestionar el
+roster con roles competitivos.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Módulo de equipos completo a nivel visual con lista, detalle y gestión de
+miembros del roster.
+
+ACTIVIDAD 1 — Diseñar la estructura del módulo de equipos (1.5h)
+
+Qué se tiene que hacer:
+- Definir qué datos son obligatorios para un equipo.
+- Relacionar cada equipo con organización y juego.
+
+Ejercicios o tareas concretas:
+- Establecer campos name, tag, game y descripción.
+- Decidir cómo se verá el estado activo del equipo.
+
+Resultado esperado:
+- Base funcional clara antes de construir pantallas.
+
+ACTIVIDAD 2 — Crear listado de equipos (3h)
+
+Qué se tiene que hacer:
+- Mostrar todos los equipos de la organización activa.
+- Facilitar acceso rápido al detalle de cada uno.
+
+Ejercicios o tareas concretas:
+- Mostrar nombre, tag, juego y número de miembros.
+- Incluir filtros o agrupación simple si hace falta.
+- Añadir CTA para crear equipo nuevo.
+
+Resultado esperado:
+- Vista general de equipos limpia y navegable.
+
+ACTIVIDAD 3 — Crear alta y edición de equipos (2.5h)
+
+Qué se tiene que hacer:
+- Diseñar formularios para registrar o modificar equipos.
+
+Ejercicios o tareas concretas:
+- Añadir campos de nombre, tag, juego y descripción.
+- Validar campos básicos.
+- Simular guardado con datos mock.
+
+Resultado esperado:
+- CRUD visual de equipos listo.
+
+ACTIVIDAD 4 — Construir detalle de equipo (3h)
+
+Qué se tiene que hacer:
+- Crear una vista completa de cada roster.
+- Mostrar tanto información general como miembros.
+
+Ejercicios o tareas concretas:
+- Mostrar encabezado del equipo.
+- Añadir descripción y juego asociado.
+- Añadir panel de miembros.
+- Reservar espacio para próximos módulos como scrims o tareas.
+
+Resultado esperado:
+- Pantalla de detalle útil y preparada para crecer.
+
+ACTIVIDAD 5 — Gestionar miembros y roles del equipo (2h)
+
+Qué se tiene que hacer:
+- Representar el roster con roles internos de equipo.
+
+Ejercicios o tareas concretas:
+- Añadir roles como player, coach, analyst y substitute.
+- Simular alta y baja de miembros.
+- Simular cambios de rol dentro del equipo.
+
+Resultado esperado:
+- Gestión visual completa del roster competitivo.
+
+Criterios de cierre del sprint:
+- Existe un listado de equipos ligado a una organización.
+- Cada equipo tiene pantalla de detalle.
+- El roster y sus roles se gestionan de forma visual.
+
+======================================================================
+
+SPRINT 5 — SCRIMS Y DETALLE COMPETITIVO
+
+Objetivo del sprint:
+Construir el módulo de scrims para registrar, visualizar y simular el análisis
+de enfrentamientos competitivos.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Módulo de scrims con listado, CRUD visual y detalle por mapas.
+
+ACTIVIDAD 1 — Definir el flujo del módulo de scrims (1.5h)
+
+Qué se tiene que hacer:
+- Establecer qué información mínima debe tener un scrim.
+- Relacionarlo con equipos, modo de juego y estado.
+
+Ejercicios o tareas concretas:
+- Confirmar campos rival, fecha, resultado, score y modo.
+- Definir estados pending, win, loss y draw si se necesita.
+
+Resultado esperado:
+- Base del módulo cerrada antes de implementarlo.
+
+ACTIVIDAD 2 — Crear listado de scrims (3h)
+
+Qué se tiene que hacer:
+- Mostrar historial y próximos scrims por equipo.
+
+Ejercicios o tareas concretas:
+- Listar scrims por fecha.
+- Diferenciar estado visualmente.
+- Añadir acceso a crear, editar y ver detalle.
+
+Resultado esperado:
+- Vista principal de scrims clara y útil.
+
+ACTIVIDAD 3 — Crear formularios de alta y edición (3h)
+
+Qué se tiene que hacer:
+- Diseñar el flujo visual para registrar scrims.
+
+Ejercicios o tareas concretas:
+- Añadir campos rival, fecha, modo, resultado y score.
+- Validar campos clave.
+- Simular creación, modificación y eliminación.
+
+Resultado esperado:
+- CRUD visual completo del módulo.
+
+ACTIVIDAD 4 — Construir detalle del scrim (2.5h)
+
+Qué se tiene que hacer:
+- Diseñar una vista donde el scrim tenga contexto competitivo.
+
+Ejercicios o tareas concretas:
+- Mostrar resumen general del enfrentamiento.
+- Añadir espacio para notas previas o posteriores.
+- Mostrar bloque de mapas jugados.
+
+Resultado esperado:
+- Detalle de scrim útil y preparado para futuras estadísticas.
+
+ACTIVIDAD 5 — Añadir mapas y orden del enfrentamiento (2h)
+
+Qué se tiene que hacer:
+- Representar la estructura interna del scrim por mapas.
+
+Ejercicios o tareas concretas:
+- Añadir lista de mapas.
+- Añadir orden de juego.
+- Añadir scores por mapa.
+
+Resultado esperado:
+- El scrim tiene suficiente profundidad para análisis futuro.
+
+Criterios de cierre del sprint:
+- Los scrims se pueden listar, crear, editar y consultar.
+- El detalle incluye mapas y contexto competitivo.
+- El módulo queda conectado visualmente con los equipos.
+
+======================================================================
+
+SPRINT 6 — CALENDARIO Y GESTIÓN DE EVENTOS
+
+Objetivo del sprint:
+Crear el módulo de calendario para organizar eventos de equipo u organización y
+simular participación de usuarios.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Calendario visual con eventos, formularios y estados de asistencia.
+
+ACTIVIDAD 1 — Planificar estructura temporal del módulo (1.5h)
+
+Qué se tiene que hacer:
+- Definir tipos de evento y jerarquía organizativa.
+- Decidir si el calendario se muestra como lista, rejilla o ambos.
+
+Ejercicios o tareas concretas:
+- Confirmar tipos scrim, practice, tournament, meeting y review.
+- Decidir relación entre evento de organización y evento de equipo.
+
+Resultado esperado:
+- Estructura clara para desarrollar sin rehacer.
+
+ACTIVIDAD 2 — Construir vista de calendario y listado (4h)
+
+Qué se tiene que hacer:
+- Crear la página principal del módulo de eventos.
+
+Ejercicios o tareas concretas:
+- Mostrar próximos eventos.
+- Añadir filtros por tipo o por equipo.
+- Representar fechas y estados de forma clara.
+- Añadir estado vacío si no hay eventos.
+
+Resultado esperado:
+- Vista usable para consultar planificación semanal o mensual.
+
+ACTIVIDAD 3 — Crear alta y edición de eventos (3h)
+
+Qué se tiene que hacer:
+- Diseñar formularios para registrar eventos.
+
+Ejercicios o tareas concretas:
+- Añadir campos título, descripción, tipo, fecha inicio, fecha fin y localización.
+- Permitir asociar el evento a organización o equipo.
+- Simular guardado y edición.
+
+Resultado esperado:
+- CRUD visual completo del calendario.
+
+ACTIVIDAD 4 — Implementar participación de usuarios (2h)
+
+Qué se tiene que hacer:
+- Añadir lógica visual de asistencia.
+
+Ejercicios o tareas concretas:
+- Representar estados invited, accepted y declined.
+- Mostrar lista de participantes.
+- Simular cambio de estado por usuario.
+
+Resultado esperado:
+- Eventos con seguimiento visual de asistencia.
+
+ACTIVIDAD 5 — Integrar el calendario con dashboard y scrims (1.5h)
+
+Qué se tiene que hacer:
+- Conectar el módulo con el resto de la app a nivel de experiencia.
+
+Ejercicios o tareas concretas:
+- Mostrar próximos eventos en dashboard.
+- Relacionar scrims con el calendario cuando corresponda.
+
+Resultado esperado:
+- Ecosistema más cohesionado entre módulos.
+
+Criterios de cierre del sprint:
+- El usuario puede consultar y crear eventos visualmente.
+- La asistencia está representada de forma clara.
+- El calendario encaja con la lógica de equipos y scrims.
+
+======================================================================
+
+SPRINT 7 — KANBAN Y GESTIÓN INTERNA DE TAREAS
+
+Objetivo del sprint:
+Desarrollar un tablero Kanban por equipo para organizar trabajo interno,
+seguimiento de tareas y prioridades.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+Sistema Kanban funcional a nivel visual con columnas, tareas y movimientos.
+
+ACTIVIDAD 1 — Diseñar la estructura del board (2h)
+
+Qué se tiene que hacer:
+- Definir la lógica visual del tablero.
+- Confirmar columnas mínimas y estado general.
+
+Ejercicios o tareas concretas:
+- Establecer columnas Pendiente, En progreso y Completado.
+- Preparar layout horizontal o adaptable.
+
+Resultado esperado:
+- Estructura base del tablero preparada.
+
+ACTIVIDAD 2 — Crear tablero y columnas (2.5h)
+
+Qué se tiene que hacer:
+- Maquetar columnas y contenedores de tareas.
+
+Ejercicios o tareas concretas:
+- Crear columna reutilizable.
+- Mostrar nombre de columna y número de tareas.
+- Diseñar estados vacíos por columna.
+
+Resultado esperado:
+- Tablero visual listo para recibir tareas.
+
+ACTIVIDAD 3 — Crear tarjetas de tarea (3h)
+
+Qué se tiene que hacer:
+- Definir la representación de cada tarea.
+
+Ejercicios o tareas concretas:
+- Añadir título, prioridad, fecha límite y asignado.
+- Usar colores o badges para prioridad.
+- Añadir acciones de editar y eliminar.
+
+Resultado esperado:
+- Tarjetas legibles y consistentes con la UI global.
+
+ACTIVIDAD 4 — Implementar CRUD visual de tareas (2.5h)
+
+Qué se tiene que hacer:
+- Permitir crear y modificar tareas de forma visual.
+
+Ejercicios o tareas concretas:
+- Añadir formulario de tarea.
+- Validar título y prioridad.
+- Simular guardado y actualización.
+
+Resultado esperado:
+- Gestión básica de tareas operativa.
+
+ACTIVIDAD 5 — Simular movimiento entre columnas (2h)
+
+Qué se tiene que hacer:
+- Permitir el avance de una tarea dentro del flujo de trabajo.
+
+Ejercicios o tareas concretas:
+- Implementar drag and drop simple o botones de mover.
+- Refrescar visualmente el estado de la tarea.
+- Comprobar que la tarea aparece en la columna correcta.
+
+Resultado esperado:
+- Flujo Kanban entendible y demostrable.
+
+Criterios de cierre del sprint:
+- Existe al menos un board por equipo.
+- Las tareas se pueden crear, ver, editar y mover visualmente.
+- El tablero refleja prioridades y estado del trabajo.
+
+======================================================================
+
+SPRINT 8 — NOTAS, AJUSTES, PULIDO Y CIERRE DE V1
+
+Objetivo del sprint:
+Completar el módulo de notas estratégicas, cerrar ajustes de usuario y dejar la
+aplicación preparada para evaluación o conexión futura con backend.
+
+Duración estimada:
+12 horas
+
+Entregable principal:
+V1 visual completa, coherente, revisada y documentada.
+
+ACTIVIDAD 1 — Diseñar módulo de notas estratégicas (2h)
+
+Qué se tiene que hacer:
+- Definir cómo se mostrarán notas y etiquetas.
+- Pensar el módulo como repositorio táctico interno.
+
+Ejercicios o tareas concretas:
+- Definir vista de listado.
+- Definir vista de detalle o edición.
+- Definir uso de tags para filtrado.
+
+Resultado esperado:
+- Base clara del módulo antes de maquetarlo.
+
+ACTIVIDAD 2 — Implementar CRUD visual de notas (3h)
+
+Qué se tiene que hacer:
+- Construir el módulo principal de notas.
+
+Ejercicios o tareas concretas:
+- Crear, editar y eliminar notas.
+- Añadir campos título y contenido.
+- Mostrar notas en formato lista o cards.
+
+Resultado esperado:
+- Repositorio de notas funcional a nivel visual.
+
+ACTIVIDAD 3 — Implementar tags y filtros (2h)
+
+Qué se tiene que hacer:
+- Facilitar clasificación de contenido táctico.
+
+Ejercicios o tareas concretas:
+- Añadir tags a las notas.
+- Filtrar por tag.
+- Mostrar claramente qué filtros están activos.
+
+Resultado esperado:
+- Módulo de notas más ordenado y útil.
+
+ACTIVIDAD 4 — Construir pantalla de ajustes (2h)
+
+Qué se tiene que hacer:
+- Crear un espacio visual para configuración del usuario.
+
+Ejercicios o tareas concretas:
+- Añadir opciones de avatar, email, contraseña y preferencias.
+- Simular actualización de datos.
+- Mantener coherencia con perfil de usuario.
+
+Resultado esperado:
+- Módulo de settings integrado en navegación.
+
+ACTIVIDAD 5 — Pulido general, pruebas visuales y documentación (3h)
+
+Qué se tiene que hacer:
+- Revisar el sistema completo antes de cerrar la V1.
+
+Ejercicios o tareas concretas:
+- Revisar consistencia de colores, tipografía y componentes.
+- Corregir enlaces rotos o flujos incoherentes.
+- Revisar responsive básico.
+- Verificar que todas las páginas usan el layout común.
+- Documentar módulos, mocks y puntos de integración futura.
+
+Resultado esperado:
+- Aplicación estable a nivel visual y lista para evaluación.
+
+Criterios de cierre del sprint:
+- Todos los módulos principales están presentes.
+- La navegación entre módulos funciona.
+- La documentación deja claro qué es mock y qué queda pendiente.
+
+======================================================================
+
+DEPENDENCIAS ENTRE SPRINTS
+
+Relación recomendada entre bloques:
+
+- Sprint 1 crea la base estructural y visual de todo el proyecto.
+- Sprint 2 depende del acceso simulado y del layout común.
+- Sprint 3 depende de los mocks base y del dashboard ya operativo.
+- Sprint 4 depende del contexto de organización activa.
+- Sprint 5 depende del módulo de equipos.
+- Sprint 6 depende de equipos y de la lógica temporal del proyecto.
+- Sprint 7 depende del contexto de equipo activo.
+- Sprint 8 depende de la navegación global ya cerrada.
+
+======================================================================
+
+RESULTADO FINAL ESPERADO AL TERMINAR LOS 8 SPRINTS
+
+Al terminar esta planificación extendida, el proyecto debe contar con:
+
+- una identidad visual consistente
+- una arquitectura modular clara
+- autenticación simulada operativa
+- dashboard inicial útil
+- gestión visual de organizaciones y equipos
+- módulo de scrims
+- calendario de eventos
+- sistema Kanban
+- módulo de notas
+- pantalla de ajustes
+- navegación integrada entre todos los módulos
+- base preparada para backend y base de datos futura
+
+======================================================================
+
+CONCLUSIÓN
+
+Esta planificación extendida transforma el plan original en una guía de trabajo
+mucho más ejecutable. Cada sprint queda dividido en actividades concretas y en
+tareas entendibles, lo que facilita tanto el desarrollo como la presentación
+académica del proyecto.
+
+La ventaja principal de este documento es que ya no solo indica "qué módulo se
+hace en cada semana", sino también "cómo se trabaja", "qué ejercicios lo
+componen" y "qué debe existir al terminar cada sprint".
