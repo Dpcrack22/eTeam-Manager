@@ -173,6 +173,37 @@ p {
   grid-template-columns: var(--sidebar-width) 1fr;
 }
 
+/* When sidebar is hidden we switch to a single-column layout */
+.app--no-sidebar {
+  grid-template-columns: 1fr;
+}
+
+/* Make main stretch and center content when sidebar is hidden */
+.app--no-sidebar .main {
+  width: 100%;
+}
+
+.app--no-sidebar .container {
+  max-width: 720px;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Center the page content when sidebar is hidden (login/register) */
+.app--no-sidebar .page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  min-height: calc(100vh - 120px);
+}
+
+.app--no-sidebar .card {
+  width: 100%;
+  max-width: 560px;
+}
+
 .sidebar {
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);

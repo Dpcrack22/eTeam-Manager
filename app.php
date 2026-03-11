@@ -98,6 +98,16 @@ $moduleConfig = [
 			'Preferencias basicas del usuario.',
 		],
 	],
+	'login' => [
+		'title' => 'Login',
+		'eyebrow' => 'Acceso',
+		'description' => 'Inicia sesión en eTeam Manager',
+	],
+	'register' => [
+		'title' => 'Registro',
+		'eyebrow' => 'Crear cuenta',
+		'description' => 'Registra una cuenta de demo en eTeam Manager',
+	],
 ];
 
 if (!isset($moduleConfig[$view])) {
@@ -110,6 +120,19 @@ $pageEyebrow = $currentModule['eyebrow'];
 $pageDescription = $currentModule['description'];
 $activeSection = $view;
 
+// Decide per-view UI tweaks
+$hideSidebar = in_array($view, ['login', 'register'], true);
+
 require __DIR__ . '/includes/app-layout-start.php';
-require __DIR__ . '/pages/dashboard.php';
+$layoutIncluded = true;
+
+// Load the matching page from /pages. We already ensured $view exists in $moduleConfig.
+$pageFile = __DIR__ . '/pages/' . $view . '.php';
+if (is_file($pageFile)) {
+	require $pageFile;
+} else {
+	// Fallback to dashboard if the specific page file is missing.
+	require __DIR__ . '/pages/dashboard.php';
+}
+
 require __DIR__ . '/includes/app-layout-end.php';
