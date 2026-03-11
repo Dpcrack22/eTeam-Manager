@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eTeam Manager — Plataforma para equipos de Valorant</title>
+    <title>eTeam Manager — Gestion interna para equipos de eSports</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,18 +16,19 @@
         <div class="container landing-nav" style="padding: 0;">
             <a class="landing-brand" href="#inicio" aria-label="Ir al inicio">
                 <span class="landing-brand-title">eTeam Manager</span>
-                <span class="small" style="margin-left: 10px;">Valorant · Gestión de equipo</span>
+                <span class="small" style="margin-left: 10px;">eSports ops platform · V1 académica</span>
             </a>
 
             <nav aria-label="Navegación principal" class="landing-nav-right">
                 <div class="landing-links">
                     <a class="landing-link" href="#inicio">Inicio</a>
-                    <a class="landing-link" href="#caracteristicas">Características</a>
-                    <a class="landing-link" href="#equipos">Equipos</a>
+                    <a class="landing-link" href="#funciones">Funciones</a>
+                    <a class="landing-link" href="#flujo">Flujo</a>
+                    <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
                     <a class="landing-link" id="login-register" href="#" data-auth-open="login">Login/Registro</a>
                 </div>
-                <a class="btn btn-primary landing-cta" href="#" data-auth-open="login">Entrar en la app</a>
+                <a class="btn btn-primary landing-cta" href="app.php">Entrar a la app</a>
             </nav>
         </div>
     </header>
@@ -37,97 +38,182 @@
             <div class="container">
                 <div class="landing-hero-content">
                     <div>
-                        <span class="badge" style="margin-bottom: 12px;">DEV Demo · Valorant</span>
-                        <h1 class="h1" style="margin-bottom: 12px;">Centraliza y organiza tu equipo de Valorant</h1>
-                        <p style="max-width: 720px;">Gestiona scrims, partidas, estrategias y tareas en un solo lugar.</p>
+                        <span class="badge" style="margin-bottom: 12px;">Organiza el dia a dia de una organizacion competitiva</span>
+                        <h1 class="h1" style="margin-bottom: 12px;">Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.</h1>
+                        <p style="max-width: 720px;">eTeam Manager es una aplicacion para llevar la gestion interna de organizaciones y equipos de eSports. Sirve para organizar miembros y roles, controlar equipos, programar eventos, registrar scrims, mover tareas en tableros y guardar notas estrategicas sin depender de varias herramientas separadas.</p>
 
                         <div class="landing-hero-actions">
-                            <a class="btn btn-primary" href="ui-kit.html">Prueba la demo</a>
-                            <a class="btn btn-secondary" href="#" data-auth-open="register">Regístrate ahora</a>
+                            <a class="btn btn-primary" href="#funciones">Ver funciones</a>
+                            <a class="btn btn-secondary" href="app.php">Entrar a la app interna</a>
+                            <a class="btn btn-secondary" href="#" data-auth-open="register">Abrir registro demo</a>
                         </div>
                     </div>
 
                     <div class="card landing-hero-card" aria-label="Resumen rápido">
-                        <h2 class="h3" style="margin-top: 0;">Todo lo que tu staff necesita</h2>
-                        <p class="small" style="margin-bottom: 0;">Calendario, scrims, roles, kanban y notas. Preparado para crecer con estadísticas multi-juego, empezando por Valorant.</p>
+                        <h2 class="h3" style="margin-top: 0;">Que hace la aplicacion</h2>
+                        <div class="landing-list">
+                            <div class="landing-list-item">Centraliza la informacion del equipo en un unico sistema.</div>
+                            <div class="landing-list-item">Facilita coordinar staff, jugadores, tareas y eventos.</div>
+                            <div class="landing-list-item">Deja preparada la operativa para crecer con backend y datos reales.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="landing-stat-strip" aria-label="Datos clave del proyecto">
+                    <div class="card landing-stat-card">
+                        <div class="landing-stat-value">Teams</div>
+                        <div class="small">gestion de equipos y roster</div>
+                    </div>
+                    <div class="card landing-stat-card">
+                        <div class="landing-stat-value">Scrims</div>
+                        <div class="small">registro de resultados y mapas</div>
+                    </div>
+                    <div class="card landing-stat-card">
+                        <div class="landing-stat-value">Boards</div>
+                        <div class="small">tareas y seguimiento interno</div>
+                    </div>
+                    <div class="card landing-stat-card">
+                        <div class="landing-stat-value">Notes</div>
+                        <div class="small">documentacion y estrategia</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="caracteristicas" class="landing-section">
+        <section id="funciones" class="landing-section">
             <div class="container">
                 <div class="landing-section-head">
-                    <h2 class="h2">Características principales</h2>
-                    <p>Diseñado para organizaciones que quieren orden y velocidad en el día a día.</p>
+                    <h2 class="h2">Funciones principales de la app</h2>
+                    <p>La aplicacion esta pensada para cubrir el trabajo operativo diario de una organizacion o de un roster competitivo en un entorno unificado.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-4">
-                    <div class="card">
+                    <a class="card landing-feature-card" href="app.php?view=dashboard">
+                        <h3 class="h3">Dashboard</h3>
+                        <p>Muestra un resumen general con la organizacion activa, el equipo seleccionado, eventos cercanos, scrims recientes y tareas pendientes.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge badge-info">Vista general</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=organizations">
+                        <h3 class="h3">Organizaciones</h3>
+                        <p>Permite crear y editar organizaciones, ver sus miembros y asignar roles segun la responsabilidad de cada usuario.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge">Contexto activo</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=teams">
+                        <h3 class="h3">Equipos</h3>
+                        <p>Permite gestionar varios equipos dentro de una organizacion, ver el detalle del roster y organizar jugadores, coach o analyst.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge">Roster</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=scrims">
+                        <h3 class="h3">Scrims</h3>
+                        <p>Permite registrar scrims con rival, fecha, resultado, score y mapas jugados para llevar historial competitivo.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge badge-success">Competitivo</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=calendar">
                         <h3 class="h3">Calendario</h3>
-                        <p>Entrenamientos, scrims y reuniones en un calendario centralizado.</p>
-                        <span class="badge badge-info">Eventos</span>
-                    </div>
-                    <div class="card">
-                        <h3 class="h3">Jugadores y roles</h3>
-                        <p>Owner, coach, players y analyst con estructura clara por equipo.</p>
-                        <span class="badge">Roles</span>
-                    </div>
-                    <div class="card">
+                        <p>Permite programar eventos como entrenamientos, reuniones, torneos o scrims con fecha, lugar y estados de asistencia.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge badge-info">Eventos</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=boards">
                         <h3 class="h3">Kanban</h3>
-                        <p>Tableros para tareas, estrategia, VOD reviews y preparación de scrims.</p>
-                        <span class="badge badge-warning">Tareas</span>
-                    </div>
-                    <div class="card">
-                        <h3 class="h3">Partidas y estadísticas</h3>
-                        <p>Registro de scrims, mapas y rendimiento por jugador.</p>
-                        <span class="badge badge-success">Stats</span>
-                    </div>
+                        <p>Permite gestionar tareas del staff o del equipo en columnas, con prioridad, fecha limite y persona asignada.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge badge-warning">Tareas</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=notes">
+                        <h3 class="h3">Notas estrategicas</h3>
+                        <p>Sirve para guardar analisis de rivales, estrategias, ideas de trabajo y apuntes internos etiquetados.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge">Estrategia</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
+                    <a class="card landing-feature-card" href="app.php?view=settings">
+                        <h3 class="h3">Perfil y ajustes</h3>
+                        <p>Permite editar los datos del usuario, el avatar, el correo, la contrasena y otras preferencias personales.</p>
+                        <div class="landing-feature-footer">
+                            <span class="badge">Cuenta</span>
+                            <span class="landing-feature-link">Abrir modulo</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
 
-        <section class="landing-section" aria-label="Cómo funciona" id="como-funciona">
+        <section id="flujo" class="landing-section">
             <div class="container">
                 <div class="landing-section-head">
-                    <h2 class="h2">Cómo funciona</h2>
-                    <p>Un flujo simple para pasar de “desorden” a “operación sólida”.</p>
+                    <h2 class="h2">Como funciona el flujo dentro de la app</h2>
+                    <p>El sistema sigue un flujo simple para que la organizacion y el equipo trabajen con contexto y orden.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-3">
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 1</div>
-                        <h3 class="h3">Crear equipo y añadir jugadores</h3>
-                        <p>Define la organización, el roster y los roles del staff.</p>
+                        <h3 class="h3">Entrar y seleccionar contexto</h3>
+                        <p>El usuario entra en la aplicacion, selecciona su organizacion y trabaja sobre el equipo que tenga activo.</p>
                     </div>
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 2</div>
-                        <h3 class="h3">Organizar eventos, scrims y tareas</h3>
-                        <p>Planifica la semana: calendario, kanban, notas y objetivos.</p>
+                        <h3 class="h3">Organizar el trabajo del roster</h3>
+                        <p>Desde ese contexto puede programar scrims, eventos, tareas internas, asistentes y notas de trabajo del roster.</p>
                     </div>
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 3</div>
-                        <h3 class="h3">Analizar y mejorar</h3>
-                        <p>Revisa resultados, detecta patrones y ajusta la estrategia.</p>
+                        <h3 class="h3">Revisar, coordinar y mejorar</h3>
+                        <p>El dashboard y las vistas de detalle permiten revisar pendientes, coordinar al staff y mantener la informacion conectada.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="equipos" class="landing-section">
+        <section id="roles" class="landing-section">
             <div class="container">
                 <div class="landing-section-head">
-                    <h2 class="h2">Equipos</h2>
-                    <p>Ejemplo de estructura para un roster competitivo.</p>
+                    <h2 class="h2">Pensada para distintos roles dentro del equipo</h2>
+                    <p>La aplicacion no esta pensada solo para jugadores. Tambien sirve para staff, gestion y responsables de organizacion.</p>
                 </div>
 
-                <div class="card">
-                    <div class="landing-team">
-                        <div>
-                            <h3 class="h3" style="margin-top: 0;">Parallax V <span class="badge" style="margin-left: 10px;">PV</span></h3>
-                            <p style="margin-bottom: 0;">Equipo de Valorant con roles claros: coach, players, analyst y owner como substitute.</p>
+                <div class="landing-grid landing-grid-3">
+                    <div class="card">
+                        <h3 class="h3">Direccion y gestion</h3>
+                        <div class="landing-list">
+                            <div class="landing-list-item">Owner y admin para control general.</div>
+                            <div class="landing-list-item">Manager para organizacion operativa.</div>
+                            <div class="landing-list-item">Gestion de miembros y permisos.</div>
                         </div>
-                        <a class="btn btn-secondary" href="ui-kit.html">Ver demo (UI Kit)</a>
+                    </div>
+                    <div class="card">
+                        <h3 class="h3">Staff tecnico</h3>
+                        <div class="landing-list">
+                            <div class="landing-list-item">Coach y analyst para scrims, calendario y notas.</div>
+                            <div class="landing-list-item">Seguimiento tactico y preparacion de trabajo semanal.</div>
+                            <div class="landing-list-item">Uso de boards y documentacion interna.</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="h3">Roster competitivo</h3>
+                        <div class="landing-list">
+                            <div class="landing-list-item">Players y substitutes dentro de cada team.</div>
+                            <div class="landing-list-item">Participacion en eventos y scrims.</div>
+                            <div class="landing-list-item">Consulta de informacion operativa desde un entorno comun.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,10 +223,13 @@
             <div class="container">
                 <div class="card landing-cta-card">
                     <div>
-                        <h2 class="h2" style="margin-top: 0;">¿Listo para entrar al dashboard?</h2>
-                        <p style="margin-bottom: 0;">Accede a la demo y valida el look & feel base mientras se construye el backend.</p>
+                        <h2 class="h2" style="margin-top: 0;">Todo el trabajo interno del equipo, reunido en una sola aplicacion.</h2>
+                        <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que organizacion, staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
-                    <a class="btn btn-primary" href="#" data-auth-open="login">Accede a tu dashboard</a>
+                    <div class="landing-hero-actions" style="margin-top: 0;">
+                        <a class="btn btn-primary" href="app.php">Entrar a la app interna</a>
+                        <a class="btn btn-secondary" href="#" data-auth-open="login">Abrir login demo</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -149,7 +238,7 @@
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Contacto</h2>
-                    <p>Para colaborar o pedir acceso a la demo.</p>
+                    <p>La landing explica el producto y la app interna muestra el entorno de trabajo del equipo.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-2">
@@ -158,11 +247,11 @@
                         <p style="margin-bottom: 0;"><a class="badge" href="mailto:contacto@parallax.gg">contacto@parallax.gg</a></p>
                     </div>
                     <div class="card">
-                        <h3 class="h3">Redes</h3>
+                        <h3 class="h3">Estado del proyecto</h3>
                         <div style="display:flex; gap: 10px; flex-wrap: wrap;">
-                            <a class="badge" href="#">X / Twitter</a>
-                            <a class="badge" href="#">Discord</a>
-                            <a class="badge" href="#">YouTube</a>
+                            <span class="badge">V1 académica</span>
+                            <span class="badge badge-info">Frontend modular</span>
+                            <span class="badge badge-warning">Mocks activos</span>
                         </div>
                     </div>
                 </div>
@@ -232,12 +321,14 @@
         <div class="container landing-footer-inner">
             <div>
                 <div class="landing-footer-brand">eTeam Manager</div>
-                <div class="small">Parallax Esports · DEV build</div>
+                <div class="small">Sistema de gestion interna para organizaciones y equipos competitivos</div>
             </div>
             <div class="landing-footer-links">
-                <a class="landing-link" href="#caracteristicas">Características</a>
+                <a class="landing-link" href="#funciones">Funciones</a>
+                <a class="landing-link" href="#flujo">Flujo</a>
+                <a class="landing-link" href="#roles">Roles</a>
                 <a class="landing-link" href="#contacto">Contacto</a>
-                <a class="landing-link" href="ui-kit.html">Entrar</a>
+                <a class="landing-link" href="app.php">App interna</a>
             </div>
             <div class="small">© 2026 Parallax Esports. Todos los derechos reservados.</div>
         </div>

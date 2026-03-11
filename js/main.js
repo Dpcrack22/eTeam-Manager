@@ -127,7 +127,7 @@
 
       showMessage("Login demo OK. Redirigiendo...", "success");
       window.setTimeout(function () {
-        window.location.href = "ui-kit.html";
+        window.location.href = "app.php";
       }, 450);
     });
 
