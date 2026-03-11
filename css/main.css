@@ -173,6 +173,12 @@ p {
   grid-template-columns: var(--sidebar-width) 1fr;
 }
 
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .sidebar {
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);
@@ -245,10 +251,54 @@ p {
   margin: 8px 0 0;
 }
 
+.app-breadcrumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.app-breadcrumb-link {
+  position: relative;
+  padding-right: 14px;
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+}
+
+.app-breadcrumb-link:not(:last-child)::after {
+  content: "/";
+  position: absolute;
+  right: 4px;
+  color: var(--text-muted);
+}
+
 .app-topbar-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.app-state-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+}
+
+.app-state-chip.is-authenticated {
+  background: color-mix(in srgb, var(--success) 18%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--success) 48%, var(--border-subtle));
+  color: var(--text-main);
+}
+
+.app-state-chip.is-guest {
+  background: color-mix(in srgb, var(--warning) 18%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--warning) 48%, var(--border-subtle));
+  color: var(--text-main);
 }
 
 .grid-2,
@@ -273,6 +323,36 @@ p {
 
 .app-module-card {
   height: 100%;
+}
+
+.app-footer {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  padding: var(--space-4) 0;
+}
+
+.app-footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.app-footer-title {
+  font-size: var(--font-size-secondary);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-main);
+}
+
+.sidebar-user-card {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-user-name {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-main);
 }
 
 /* Cards */
@@ -870,6 +950,11 @@ textarea:focus {
 @media (max-width: 768px) {
   .app {
     grid-template-columns: 1fr;
+  }
+
+  .app-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .sidebar {
