@@ -1,0 +1,682 @@
+eTeam Manager — Guía técnica por actividades
+
+Fecha: 11 de marzo de 2026
+
+======================================================================
+
+OBJETIVO DEL DOCUMENTO
+
+Este documento sirve como anexo práctico de la planificación extendida.
+Su función es indicar, para cada actividad de cada sprint:
+
+- qué archivos conviene tocar
+- qué archivos nuevos conviene crear
+- qué responsabilidad debería tener cada archivo
+- qué decisiones ayudan a que el proyecto no se vuelva caótico
+
+No es una regla cerrada, pero sí una guía recomendada para que el desarrollo
+sea más ordenado y escalable.
+
+======================================================================
+
+ESTRUCTURA RECOMENDADA DEL PROYECTO
+
+Tomando como base el repo actual, la estructura recomendada para crecer sin
+complicarse demasiado sería esta:
+
+- index.php
+- css/main.css
+- js/main.js
+- js/auth.js
+- js/session.js
+- js/mocks/app-data.js
+- js/modules/dashboard.js
+- js/modules/organizations.js
+- js/modules/teams.js
+- js/modules/scrims.js
+- js/modules/calendar.js
+- js/modules/boards.js
+- js/modules/notes.js
+- js/modules/settings.js
+- includes/head.php
+- includes/header.php
+- includes/sidebar.php
+- includes/footer.php
+- includes/layout-start.php
+- includes/layout-end.php
+- pages/dashboard.php
+- pages/profile.php
+- pages/organizations.php
+- pages/organization-form.php
+- pages/teams.php
+- pages/team-detail.php
+- pages/team-form.php
+- pages/scrims.php
+- pages/scrim-form.php
+- pages/scrim-detail.php
+- pages/calendar.php
+- pages/event-form.php
+- pages/boards.php
+- pages/notes.php
+- pages/settings.php
+
+Si queréis una versión todavía más simple, podéis reducirlo a:
+
+- includes para layout compartido
+- pages para vistas
+- js/mocks para datos simulados
+- js/modules para lógica de cada módulo
+
+======================================================================
+
+REGLAS PRÁCTICAS PARA TODO EL PROYECTO
+
+1) No meter toda la lógica en js/main.js
+   main.js debe quedarse para inicialización general y utilidades globales.
+
+2) No duplicar HTML de cabecera o menú en cada página
+   Para eso están includes/header.php, includes/sidebar.php y footer.php.
+
+3) No hacer un CSS distinto por cada página si no hace falta
+   main.css debe llevar la mayor parte del sistema visual.
+
+4) Separar datos mock de la interfaz
+   Los mocks deben vivir aparte de los scripts que pintan la UI.
+
+5) Cada página debe tener una responsabilidad clara
+   Ejemplo: teams.php lista equipos, team-detail.php muestra uno concreto,
+   team-form.php crea o edita.
+
+======================================================================
+
+SPRINT 1 — BASE VISUAL, LAYOUT Y AUTH
+
+ACTIVIDAD 1 — Preparar estructura general de la aplicación
+
+Archivos a tocar:
+- index.php
+- css/main.css
+- js/main.js
+
+Archivos recomendados para crear:
+- includes/head.php
+- includes/header.php
+- includes/sidebar.php
+- includes/footer.php
+- includes/layout-start.php
+- includes/layout-end.php
+
+Para qué sirven:
+- head.php: metadatos, fuentes y carga de CSS.
+- header.php: barra superior compartida.
+- sidebar.php: navegación principal.
+- footer.php: pie común.
+- layout-start.php y layout-end.php: apertura y cierre del layout general.
+
+Recomendación:
+Antes de hacer módulos, cerrad una plantilla base reutilizable. Si no lo hacéis
+ahora, luego tendréis que reescribir todas las páginas.
+
+ACTIVIDAD 2 — Diseñar layout compartido y navegación principal
+
+Archivos a tocar:
+- includes/header.php
+- includes/sidebar.php
+- css/main.css
+
+Archivos recomendados para crear:
+- pages/dashboard.php
+- pages/teams.php
+- pages/calendar.php
+- pages/scrims.php
+- pages/boards.php
+- pages/notes.php
+- pages/settings.php
+
+Para qué sirven:
+- Cada archivo de pages representa una vista navegable del sistema.
+
+Recomendación:
+Aunque al principio estén casi vacíos, cread ya los archivos de las páginas.
+Eso os permite montar la navegación real desde el sprint 1.
+
+ACTIVIDAD 3 — Consolidar identidad visual global
+
+Archivos a tocar:
+- css/main.css
+- ui-kit.html
+
+Archivos recomendados para crear:
+- includes/ui-helpers.php
+
+Para qué sirve:
+- ui-helpers.php puede servir más adelante para helpers sencillos de clases,
+  títulos o migas de pan si veis que repetís mucho bloque visual.
+
+Recomendación:
+Usad ui-kit.html como referencia visual, pero haced que la verdad final viva en
+main.css y en las páginas PHP reales.
+
+ACTIVIDAD 4 — Construir login y registro
+
+Archivos a tocar:
+- index.php
+- js/main.js
+
+Archivos recomendados para crear:
+- pages/login.php
+- pages/register.php
+- js/auth.js
+
+Para qué sirven:
+- login.php y register.php: versión separada de acceso si más adelante dejáis de
+  usar modal.
+- auth.js: validación e interacciones de autenticación.
+
+Recomendación:
+Aunque ahora tengáis modal en la landing, os conviene dejar prevista una ruta de
+login independiente. Luego será mucho más fácil proteger páginas.
+
+ACTIVIDAD 5 — Validaciones front y sesión simulada
+
+Archivos a tocar:
+- js/main.js
+- js/auth.js
+
+Archivos recomendados para crear:
+- js/session.js
+
+Para qué sirve:
+- session.js debe tener funciones tipo loginDemo, logoutDemo, isAuthenticated,
+  getCurrentUser y requireAuth.
+
+Recomendación:
+Separar sesión de auth os ahorra mezclar validación de formularios con control
+de acceso.
+
+======================================================================
+
+SPRINT 2 — DASHBOARD Y PERFIL
+
+ACTIVIDAD 1 — Diseñar la experiencia inicial tras el login
+
+Archivos a tocar:
+- pages/dashboard.php
+- ui-kit.html
+
+Archivos recomendados para crear:
+- js/mocks/app-data.js
+
+Para qué sirve:
+- app-data.js centraliza datos mock comunes.
+
+Recomendación:
+No metáis datos mock directamente dentro del HTML o del script de dashboard.
+
+ACTIVIDAD 2 — Construir el dashboard principal
+
+Archivos a tocar:
+- pages/dashboard.php
+- css/main.css
+
+Archivos recomendados para crear:
+- js/modules/dashboard.js
+
+Para qué sirve:
+- dashboard.js pinta widgets, resúmenes y tarjetas usando los mocks.
+
+Recomendación:
+El dashboard debe leer datos de organizaciones, equipos, eventos y tareas, pero
+sin contener toda esa lógica mezclada en el mismo archivo PHP.
+
+ACTIVIDAD 3 — Definir y centralizar mocks del sistema
+
+Archivos recomendados para crear:
+- js/mocks/app-data.js
+- js/mocks/users.js
+- js/mocks/organizations.js
+- js/mocks/teams.js
+- js/mocks/events.js
+- js/mocks/tasks.js
+
+Recomendación:
+Si queréis ir simples, con un solo archivo app-data.js basta. Si veis que crece
+mucho, entonces lo dividís por dominio.
+
+ACTIVIDAD 4 — Crear módulo de perfil de usuario
+
+Archivos a tocar:
+- css/main.css
+
+Archivos recomendados para crear:
+- pages/profile.php
+- js/modules/profile.js
+
+Para qué sirve:
+- profile.js se encarga de leer el usuario mock y reflejar cambios visuales.
+
+Recomendación:
+Perfil y settings no deberían ser la misma página. Pueden compartir datos, pero
+es mejor separarlos.
+
+ACTIVIDAD 5 — Revisar flujo entre login, dashboard y perfil
+
+Archivos a tocar:
+- includes/sidebar.php
+- js/session.js
+- js/modules/dashboard.js
+- js/modules/profile.js
+
+Recomendación:
+En esta actividad no añadáis cosas nuevas si no hacen falta. Es una actividad de
+integración y revisión, no de meter más funcionalidades.
+
+======================================================================
+
+SPRINT 3 — ORGANIZACIONES, MIEMBROS Y ROLES
+
+ACTIVIDAD 1 — Modelar el contexto de organización activa
+
+Archivos recomendados para crear:
+- js/state.js
+- js/modules/organizations.js
+
+Para qué sirven:
+- state.js puede guardar estado global simple como organización activa y equipo
+  activo.
+- organizations.js controla la vista de organizaciones.
+
+Recomendación:
+Si no queréis crear state.js, al menos dejad funciones claras para guardar la
+organización activa en sessionStorage.
+
+ACTIVIDAD 2 — Crear listado de organizaciones
+
+Archivos a tocar:
+- css/main.css
+
+Archivos recomendados para crear:
+- pages/organizations.php
+- js/modules/organizations.js
+
+Recomendación:
+El listado debe ser una vista y no un modal gigante dentro del dashboard.
+
+ACTIVIDAD 3 — Crear formulario de alta y edición de organización
+
+Archivos recomendados para crear:
+- pages/organization-form.php
+- js/modules/organizations.js
+
+Recomendación:
+Usad el mismo formulario para crear y editar cambiando el modo visual. Así no
+duplicáis HTML.
+
+ACTIVIDAD 4 — Implementar vista de miembros y roles
+
+Archivos a tocar:
+- pages/organizations.php
+- css/main.css
+
+Archivos recomendados para crear:
+- js/modules/organization-members.js
+
+Recomendación:
+Si la gestión de miembros se complica, separadla del archivo principal de
+organizations.js para no mezclar demasiadas responsabilidades.
+
+ACTIVIDAD 5 — Revisar coherencia entre organización y dashboard
+
+Archivos a tocar:
+- js/modules/dashboard.js
+- js/modules/organizations.js
+- js/state.js
+
+Recomendación:
+La organización activa debe reflejarse como mínimo en el título, breadcrumbs o
+widgets del dashboard.
+
+======================================================================
+
+SPRINT 4 — EQUIPOS, ROSTER Y ROLES INTERNOS
+
+ACTIVIDAD 1 — Diseñar la estructura del módulo de equipos
+
+Archivos recomendados para crear:
+- js/mocks/teams.js
+- js/modules/teams.js
+
+Recomendación:
+Definid bien desde el principio la diferencia entre organization member y team
+member. En base de datos son cosas distintas y en UI también deberían notarse.
+
+ACTIVIDAD 2 — Crear listado de equipos
+
+Archivos recomendados para crear:
+- pages/teams.php
+- js/modules/teams.js
+
+Archivos a tocar:
+- css/main.css
+
+Recomendación:
+Si luego habrá filtros por juego, dejad ya preparado un bloque de filtros aunque
+al principio sea simple.
+
+ACTIVIDAD 3 — Crear alta y edición de equipos
+
+Archivos recomendados para crear:
+- pages/team-form.php
+- js/modules/teams.js
+
+Recomendación:
+Mantened un solo archivo para alta y edición igual que en organizaciones.
+
+ACTIVIDAD 4 — Construir detalle de equipo
+
+Archivos recomendados para crear:
+- pages/team-detail.php
+- js/modules/team-detail.js
+
+Recomendación:
+El detalle del equipo debería ser la página hub para conectar scrims, board,
+notas y calendario del roster.
+
+ACTIVIDAD 5 — Gestionar miembros y roles del equipo
+
+Archivos a tocar:
+- pages/team-detail.php
+
+Archivos recomendados para crear:
+- js/modules/team-members.js
+
+Recomendación:
+Separad roster del resto del detalle del equipo si la pantalla empieza a tener
+mucha lógica.
+
+======================================================================
+
+SPRINT 5 — SCRIMS Y DETALLE COMPETITIVO
+
+ACTIVIDAD 1 — Definir el flujo del módulo de scrims
+
+Archivos recomendados para crear:
+- js/mocks/scrims.js
+- js/modules/scrims.js
+
+Recomendación:
+Tened una estructura de datos consistente con el esquema de matches y match_maps
+del documento de base de datos.
+
+ACTIVIDAD 2 — Crear listado de scrims
+
+Archivos recomendados para crear:
+- pages/scrims.php
+- js/modules/scrims.js
+
+Archivos a tocar:
+- css/main.css
+
+Recomendación:
+Usad tabla o cards según os resulte más claro, pero mantened filtros por estado.
+
+ACTIVIDAD 3 — Crear formularios de alta y edición
+
+Archivos recomendados para crear:
+- pages/scrim-form.php
+- js/modules/scrim-form.js
+
+Recomendación:
+Si scrims.js empieza a mezclar listado y formulario, separadlo pronto.
+
+ACTIVIDAD 4 — Construir detalle del scrim
+
+Archivos recomendados para crear:
+- pages/scrim-detail.php
+- js/modules/scrim-detail.js
+
+Recomendación:
+El detalle debe ser donde luego podáis conectar mapas, notas y estadísticas sin
+romper la lista principal.
+
+ACTIVIDAD 5 — Añadir mapas y orden del enfrentamiento
+
+Archivos a tocar:
+- pages/scrim-detail.php
+- js/modules/scrim-detail.js
+
+Archivos recomendados para crear:
+- js/mocks/maps.js
+
+Recomendación:
+Aunque sea mock, respetad la idea de order_index para que luego no tengáis que
+rehacer la estructura.
+
+======================================================================
+
+SPRINT 6 — CALENDARIO Y GESTIÓN DE EVENTOS
+
+ACTIVIDAD 1 — Planificar estructura temporal del módulo
+
+Archivos recomendados para crear:
+- js/mocks/events.js
+- js/modules/calendar.js
+
+Recomendación:
+Definid desde el principio el formato de fechas y horas para no tener luego
+inconsistencias visuales.
+
+ACTIVIDAD 2 — Construir vista de calendario y listado
+
+Archivos recomendados para crear:
+- pages/calendar.php
+- js/modules/calendar.js
+
+Archivos a tocar:
+- css/main.css
+
+Recomendación:
+Si un calendario visual completo os complica demasiado, haced primero una lista
+de eventos sólida y luego una vista tipo grid sencilla.
+
+ACTIVIDAD 3 — Crear alta y edición de eventos
+
+Archivos recomendados para crear:
+- pages/event-form.php
+- js/modules/event-form.js
+
+Recomendación:
+Usad un único formulario y diferenciad crear o editar por estado o parámetro.
+
+ACTIVIDAD 4 — Implementar participación de usuarios
+
+Archivos a tocar:
+- pages/calendar.php
+- js/modules/calendar.js
+
+Archivos recomendados para crear:
+- js/modules/event-participants.js
+
+Recomendación:
+La asistencia puede ser un bloque independiente dentro del detalle o tarjeta del
+evento. No hace falta complicarlo más en V1.
+
+ACTIVIDAD 5 — Integrar el calendario con dashboard y scrims
+
+Archivos a tocar:
+- js/modules/dashboard.js
+- js/modules/calendar.js
+- js/modules/scrims.js
+
+Recomendación:
+No dupliquéis datos. Un scrim puede ser leído como scrim y también como evento,
+pero la fuente mock debería estar clara.
+
+======================================================================
+
+SPRINT 7 — KANBAN Y GESTIÓN DE TAREAS
+
+ACTIVIDAD 1 — Diseñar la estructura del board
+
+Archivos recomendados para crear:
+- js/mocks/boards.js
+- js/modules/boards.js
+
+Recomendación:
+Seguid la lógica de board, columns y tasks del esquema de base de datos. Eso os
+facilita muchísimo el salto a backend.
+
+ACTIVIDAD 2 — Crear tablero y columnas
+
+Archivos recomendados para crear:
+- pages/boards.php
+- js/modules/boards.js
+
+Archivos a tocar:
+- css/main.css
+
+Recomendación:
+La columna debe ser un componente reutilizable, no tres bloques copiados a mano.
+
+ACTIVIDAD 3 — Crear tarjetas de tarea
+
+Archivos a tocar:
+- pages/boards.php
+- css/main.css
+
+Archivos recomendados para crear:
+- js/modules/task-card.js
+
+Recomendación:
+Si no queréis crear task-card.js, al menos dejad una función renderTaskCard en
+boards.js y no pintéis la tarjeta repetida en varios sitios.
+
+ACTIVIDAD 4 — Implementar CRUD visual de tareas
+
+Archivos recomendados para crear:
+- pages/task-form.php
+- js/modules/task-form.js
+
+Recomendación:
+Aunque task-form.php al principio sea un modal o bloque embebido, os conviene
+pensarlo como unidad separada.
+
+ACTIVIDAD 5 — Simular movimiento entre columnas
+
+Archivos a tocar:
+- js/modules/boards.js
+
+Recomendación:
+Si el drag and drop os consume demasiado tiempo, haced botones mover a la
+izquierda y mover a la derecha. Para una V1 académica es totalmente válido.
+
+======================================================================
+
+SPRINT 8 — NOTAS, AJUSTES Y CIERRE
+
+ACTIVIDAD 1 — Diseñar módulo de notas estratégicas
+
+Archivos recomendados para crear:
+- js/mocks/notes.js
+- js/modules/notes.js
+- pages/notes.php
+
+Recomendación:
+Pensad las notas como contenido de equipo, no como notas sueltas del usuario.
+
+ACTIVIDAD 2 — Implementar CRUD visual de notas
+
+Archivos recomendados para crear:
+- pages/note-form.php
+- js/modules/note-form.js
+
+Recomendación:
+Usad el mismo patrón de formularios reutilizables que en organizaciones,
+equipos, scrims y eventos.
+
+ACTIVIDAD 3 — Implementar tags y filtros
+
+Archivos a tocar:
+- pages/notes.php
+- js/modules/notes.js
+
+Archivos recomendados para crear:
+- js/mocks/tags.js
+
+Recomendación:
+No metáis los tags hardcodeados en el HTML. Dejadlos en mocks para poder
+reutilizarlos.
+
+ACTIVIDAD 4 — Construir pantalla de ajustes
+
+Archivos recomendados para crear:
+- pages/settings.php
+- js/modules/settings.js
+
+Recomendación:
+Settings no debería mezclar datos tácticos del equipo. Debe centrarse en cuenta,
+preferencias y perfil del usuario.
+
+ACTIVIDAD 5 — Pulido general, pruebas visuales y documentación
+
+Archivos a tocar:
+- css/main.css
+- js/main.js
+- todas las páginas de pages
+- index.php
+
+Archivos recomendados para crear:
+- README.md
+- docs/mock-flow.txt
+
+Para qué sirven:
+- README.md: explicar estructura, módulos y estado del proyecto.
+- docs/mock-flow.txt: dejar por escrito de dónde salen los datos mock y cómo se
+  relacionan entre sí.
+
+Recomendación:
+En el cierre no intentéis reinventar módulos. Solo corregid, alinead y dejad el
+proyecto demostrable.
+
+======================================================================
+
+RECOMENDACIONES EXTRA QUE OS VAN A AHORRAR PROBLEMAS
+
+1) Cread primero el esqueleto completo de páginas vacías
+   Tener ya dashboard.php, teams.php, calendar.php, scrims.php y demás os ayuda
+   a probar navegación desde el principio.
+
+2) Usad includes para todo lo repetido
+   Header, sidebar, footer y carga de recursos no deberían repetirse.
+
+3) Mantened los mocks cercanos a la estructura de la base de datos
+   Si el mock ya se parece al esquema real, el salto a backend será más fácil.
+
+4) No sobrecarguéis el sprint 1 con demasiada lógica
+   Lo importante ahí es cerrar base visual, estructura y auth simulada.
+
+5) Cada módulo debería tener como mínimo una página y un script propio
+   Eso os da orden mental y técnico.
+
+6) Revisad siempre qué depende de organización activa y qué depende de equipo activo
+   Esa diferencia os va a afectar en dashboard, scrims, calendar, boards y notes.
+
+7) Priorizad primero la navegación real y luego el detalle fino
+   Es mejor una app completa simple que dos módulos muy bonitos y el resto roto.
+
+======================================================================
+
+CONCLUSIÓN
+
+Si seguís este reparto de archivos, el proyecto va a quedar mucho más limpio,
+más fácil de presentar y mucho mejor preparado para conectar backend después.
+
+La clave es esta:
+
+- includes para layout compartido
+- pages para vistas
+- js/mocks para datos simulados
+- js/modules para lógica por dominio
+- main.css y main.js solo para lo global
+
+Con esa base, cada sprint se vuelve mucho más fácil de ejecutar.
