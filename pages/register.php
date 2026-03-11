@@ -12,7 +12,7 @@ if (empty($layoutIncluded)) {
 }
 
 // Comprobaciones basicas para que el register sea correcto
-function validateRegister($name, $surname, $email, $birthday, $password, $rol) {
+function validateRegister($name, $surname, $email, $date, $password, $rol) {
     $errors = [];
 
     // Validamos el nombre
@@ -52,7 +52,7 @@ function validateRegister($name, $surname, $email, $birthday, $password, $rol) {
     if ($date === "") {
         $errors["date"] = "La fecha es obligatoria";
     } else {
-        if (!checkdate($month, $day, $year)) {
+        if (!checkdate($day, $month, $year)) {
             $errors["date"] = "La fecha introducida no es válida";
         } elseif ($birthdate > date("Y-m-d")) {
             $errors["date"] = "La fecha no puede ser futura";
@@ -72,6 +72,7 @@ function validateRegister($name, $surname, $email, $birthday, $password, $rol) {
         }
     }
 
+    // Validamos el rol
     if ($rol === "") {
         $errors["rol"] = "El rol és obligatorio";
     } else {
@@ -84,7 +85,41 @@ function validateRegister($name, $surname, $email, $birthday, $password, $rol) {
 
     return $errors;
 }
+
+$name = "";
+$surname = "";
+$email = "";
+$date = "";
+$password = "";
+$rol = "";
+$errors = [];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $name = trim($_POST["name"] ?? "");
+    $surname = trim($_POST["surname"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $date = $_POST["date"] ?? "";
+    $password = $_POST["password"] ?? "";
+    $rol = $_POST["role"] ?? "";
+    $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
+
+    if (empty($errors)) {
+        header("Location: app.php?view=login");
+        exit;
+    }
+}
 ?>
+
+<!-- Mostrar los errores -->
+<?php if (!empty($errors)): ?>
+    <div class="error-container">
+        <?php foreach ($errors as $error): ?>
+            <div class="error-box">
+                <?php echo $error; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 <div class="card" style="max-width: 640px; margin: 24px auto;">
     <form class="form" method="post" novalidate>
@@ -104,8 +139,8 @@ function validateRegister($name, $surname, $email, $birthday, $password, $rol) {
         </div>
 
         <div class="field">
-            <label for="birthday">Birthday</label>
-            <input id="birthday" name="birthday" type="date" placeholder="30/09/2006" />
+            <label for="date">Birthday</label>
+            <input id="date" name="date" type="date" placeholder="30/09/2006" />
         </div>
 
         <div class="field">
