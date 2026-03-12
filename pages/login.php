@@ -1,17 +1,13 @@
 <?php
-session_start();
-$pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Login');
-$pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Acceso');
-$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Inicia sesión en eTeam Manager');
+$email = "";
+$password = "";
+$errors = [];
 
-// ensure login page hides the sidebar when loaded directly
-$hideSidebar = $hideSidebar ?? true;
-$shouldCloseLayout = false;
-if (empty($layoutIncluded)) {
-    require __DIR__ . '/../includes/app-layout-start.php';
-    $shouldCloseLayout = true;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = trim($_POST["email"] ?? "");
+    $password = $_POST["password"] ?? "";
+    $errors = validateLogin($email, $password);
 }
-
 // Comprobaciones basicas para que el login sea correcto
 function validateLogin($email, $password) {
     $errors = [];
@@ -43,23 +39,18 @@ function validateLogin($email, $password) {
     return $errors;
 }
 
-$email = "";
-$password = "";
-$errors = [];
+$pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Login');
+$pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Acceso');
+$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Inicia sesión en eTeam Manager');
+$shouldCloseLayout = false;
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = trim($_POST["email"] ?? "");
-    $password = $_POST["password"] ?? "";
-    $errors = validateLogin($email, $password);
-
-    if (empty($errors)) {
-        header("Location: app.php?view=dashboard");
-        exit;
-    }
+// ensure login page hides the sidebar when loaded directly
+$hideSidebar = $hideSidebar ?? true;
+if (empty($layoutIncluded)) {
+    require __DIR__ . '/../includes/app-layout-start.php';
+    $shouldCloseLayout = true;
 }
 ?>
-
-<!-- Mostrar los errores -->
 <?php if (!empty($errors)): ?>
     <div class="error-container">
         <?php foreach ($errors as $error): ?>
@@ -88,6 +79,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </form>
 </div>
+<?php if (empty($errors) && $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+    <script>
+        // Redirige automáticamente al dashboard
+        window.location.href = "app.php?view=dashboard";
+    </script>
+<?php endif; ?>
 
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
-

@@ -1,4 +1,5 @@
 <?php
+session_start();
 $resolvedTitle = isset($pageTitle) ? $pageTitle . ' | eTeam Manager' : 'eTeam Manager';
 ?>
 <!DOCTYPE html>

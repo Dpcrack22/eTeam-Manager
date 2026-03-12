@@ -1,14 +1,21 @@
 <?php
-$pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Registro');
-$pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Crear cuenta');
-$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Registra una cuenta de demo en eTeam Manager');
+$name = "";
+$surname = "";
+$email = "";
+$date = "";
+$password = "";
+$rol = "";
+$errors = [];
 
-// ensure register page hides the sidebar when loaded directly
-$hideSidebar = $hideSidebar ?? true;
-$shouldCloseLayout = false;
-if (empty($layoutIncluded)) {
-    require __DIR__ . '/../includes/app-layout-start.php';
-    $shouldCloseLayout = true;
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $name = trim($_POST["name"] ?? "");
+    $surname = trim($_POST["surname"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $date = $_POST["date"] ?? "";
+    $password = $_POST["password"] ?? "";
+    $rol = $_POST["role"] ?? "";
+    $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
 }
 
 // Comprobaciones basicas para que el register sea correcto
@@ -52,12 +59,21 @@ function validateRegister($name, $surname, $email, $date, $password, $rol) {
     if ($date === "") {
         $errors["date"] = "La fecha es obligatoria";
     } else {
-        if (!checkdate($day, $month, $year)) {
+
+        list($year, $month, $day) = explode("-", $date);
+
+        if (!checkdate((int)$month, (int)$day, (int)$year)) {
             $errors["date"] = "La fecha introducida no es válida";
-        } elseif ($birthdate > date("Y-m-d")) {
-            $errors["date"] = "La fecha no puede ser futura";
-        } elseif ($age > 120) {
-            $errors["date"] = "La fecha introducida no es válida";
+        } else {
+            $birthdate = new DateTime($date);
+            $today = new DateTime();
+            $age = $today->diff($birthdate)->y;
+
+            if ($birthdate > $today) {
+                $errors["date"] = "La fecha no puede ser futura";
+            } elseif ($age > 120) {
+                $errors["date"] = "La fecha introducida no es válida";
+            }
         }
     }
 
@@ -85,31 +101,19 @@ function validateRegister($name, $surname, $email, $date, $password, $rol) {
 
     return $errors;
 }
+$pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Registro');
+$pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Crear cuenta');
+$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Registra una cuenta de demo en eTeam Manager');
 
-$name = "";
-$surname = "";
-$email = "";
-$date = "";
-$password = "";
-$rol = "";
-$errors = [];
+// ensure register page hides the sidebar when loaded directly
+$hideSidebar = $hideSidebar ?? true;
+$shouldCloseLayout = false;
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST["name"] ?? "");
-    $surname = trim($_POST["surname"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $date = $_POST["date"] ?? "";
-    $password = $_POST["password"] ?? "";
-    $rol = $_POST["role"] ?? "";
-    $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
-
-    if (empty($errors)) {
-        header("Location: app.php?view=login");
-        exit;
-    }
+if (empty($layoutIncluded)) {
+    require __DIR__ . '/../includes/app-layout-start.php';
+    $shouldCloseLayout = true;
 }
 ?>
-
 <!-- Mostrar los errores -->
 <?php if (!empty($errors)): ?>
     <div class="error-container">
@@ -140,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="field">
             <label for="date">Birthday</label>
-            <input id="date" name="date" type="date" placeholder="30/09/2006" />
+            <input id="date" name="date" type="date" />
         </div>
 
         <div class="field">
@@ -151,11 +155,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="field">
             <label for="role">Rol</label>
             <select id="role" name="role">
-                <option>Owner</option>
-                <option>Manager</option>
-                <option>Coach</option>
-                <option>Player</option>
-                <option>Viewer</option>
+                <option value="">Selecciona un rol</option>
+                <option value="Owner">Owner</option>
+                <option value="Manager">Manager</option>
+                <option value="Coach">Coach</option>
+                <option value="Player">Player</option>
+                <option value="Viewer">Viewer</option>
             </select>
         </div>
 
@@ -165,6 +170,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </form>
 </div>
+<?php if (empty($errors) && $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+    <script>
+        // Redirige automáticamente al dashboard
+        window.location.href = "app.php?view=login";
+    </script>
+<?php endif; ?>
 
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
 
