@@ -1,4 +1,5 @@
 <?php
+$usersFile = __DIR__ . "/../database/users.json";
 $name = "";
 $surname = "";
 $email = "";
@@ -6,6 +7,12 @@ $date = "";
 $password = "";
 $rol = "";
 $errors = [];
+$users = [];
+
+// Leer los usuarios que ya estan en el archivo
+if (file_exists($usersFile)) {
+    $users = json_decode(file_get_contents($usersFile), true) ?? [];
+}
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -16,6 +23,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST["password"] ?? "";
     $rol = $_POST["role"] ?? "";
     $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
+
+    // Comprobar que el email no exista ya
+    foreach ($users as $user) {
+        if ($user["email"] === $email) {
+            $errors["email"] = "Este correo ya está registrado";
+            break;
+        }
+    }
+
+    if (empty($errors)) {
+        // Añadir usuario nuevo
+        $users[] = [
+            'email' => $email,
+            'password' => $password
+        ];
+        file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
+
+        echo '<script>window.location.href="app.php?view=login";</script>';
+        exit;
+    }
 }
 
 // Comprobaciones basicas para que el register sea correcto
@@ -170,12 +197,5 @@ if (empty($layoutIncluded)) {
         </div>
     </form>
 </div>
-<?php if (empty($errors) && $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-    <script>
-        // Redirige automáticamente al dashboard
-        window.location.href = "app.php?view=login";
-    </script>
-<?php endif; ?>
-
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
 

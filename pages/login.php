@@ -1,12 +1,34 @@
 <?php
+$usersFile = __DIR__ . "/../database/users.json";
 $email = "";
 $password = "";
 $errors = [];
+$users = file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) : [];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $validUser = false;
     $email = trim($_POST["email"] ?? "");
     $password = $_POST["password"] ?? "";
     $errors = validateLogin($email, $password);
+
+    if (empty($errors)) {
+        foreach ($users as $user) {
+            if ($user["email"] === $email) {
+                if ($user['password'] === $password) {
+                    $validUser = true;
+                }
+                break;
+            }
+        }
+    }
+
+    if ($validUser) {
+        // Redirigir con JS
+        echo '<script>window.location.href="app.php?view=dashboard";</script>';
+        exit;
+    } else {
+        $errors['login'] = "Usuario o contraseña incorrectos";
+    }
 }
 // Comprobaciones basicas para que el login sea correcto
 function validateLogin($email, $password) {
@@ -79,11 +101,5 @@ if (empty($layoutIncluded)) {
         </div>
     </form>
 </div>
-<?php if (empty($errors) && $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-    <script>
-        // Redirige automáticamente al dashboard
-        window.location.href = "app.php?view=dashboard";
-    </script>
-<?php endif; ?>
 
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
