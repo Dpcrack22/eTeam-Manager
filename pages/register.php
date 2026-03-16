@@ -137,7 +137,7 @@ $hideSidebar = $hideSidebar ?? true;
 $shouldCloseLayout = false;
 
 if (empty($layoutIncluded)) {
-    require __DIR__ . '/../includes/app-layout-start.php';
+    require __DIR__ . '/../includes/layout-start.php';
     $shouldCloseLayout = true;
 }
 ?>
@@ -197,5 +197,5 @@ if (empty($layoutIncluded)) {
         </div>
     </form>
 </div>
-<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
+<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; }
 

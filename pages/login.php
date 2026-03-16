@@ -69,7 +69,7 @@ $shouldCloseLayout = false;
 // ensure login page hides the sidebar when loaded directly
 $hideSidebar = $hideSidebar ?? true;
 if (empty($layoutIncluded)) {
-    require __DIR__ . '/../includes/app-layout-start.php';
+    require __DIR__ . '/../includes/layout-start.php';
     $shouldCloseLayout = true;
 }
 ?>
@@ -102,4 +102,4 @@ if (empty($layoutIncluded)) {
     </form>
 </div>
 
-<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/app-layout-end.php'; }
+<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; }
