@@ -26,7 +26,7 @@
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="#" data-auth-open="login">Login/Registro</a>
+                    <a class="landing-link" id="login-register" href="app.php?view=login">Login/Registro</a>
                 </div>
                 <a class="btn btn-primary landing-cta" href="app.php">Entrar a la app</a>
             </nav>
@@ -45,7 +45,7 @@
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
                             <a class="btn btn-secondary" href="app.php">Entrar a la app interna</a>
-                            <a class="btn btn-secondary" href="#" data-auth-open="register">Abrir registro demo</a>
+                            <a class="btn btn-secondary" href="app.php?view=register">Abrir registro demo</a>
                         </div>
                     </div>
 
@@ -228,7 +228,7 @@
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">
                         <a class="btn btn-primary" href="app.php">Entrar a la app interna</a>
-                        <a class="btn btn-secondary" href="#" data-auth-open="login">Abrir login demo</a>
+                        <a class="btn btn-secondary" href="app.php?view=login">Abrir login demo</a>
                     </div>
                 </div>
             </div>
@@ -259,63 +259,7 @@
         </section>
     </main>
 
-    <!-- Auth Dialog (Login / Register) - Frontend demo only -->
-    <div class="modal-backdrop" id="authModalBackdrop" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-label="Autenticación">
-            <div class="modal-header">
-                <h3 class="modal-title" id="authModalTitle">Entrar</h3>
-                <button class="btn btn-secondary" type="button" data-auth-close>Cerrar</button>
-            </div>
-
-            <div class="auth-tabs" role="tablist" aria-label="Cambiar entre login y registro">
-                <button class="btn btn-primary auth-tab" type="button" data-auth-tab="login" role="tab" aria-selected="true">Login</button>
-                <button class="btn btn-secondary auth-tab" type="button" data-auth-tab="register" role="tab" aria-selected="false">Registro</button>
-            </div>
-
-            <div id="authMessage" class="badge" role="status" aria-live="polite" style="display:none; margin-top: 12px;"></div>
-
-            <form class="form" id="loginForm" action="#" method="post" style="margin-top: 16px;">
-                <div class="field">
-                    <label for="loginEmail">Email</label>
-                    <input id="loginEmail" name="email" type="email" placeholder="player@team.gg" autocomplete="email" required />
-                </div>
-
-                <div class="field">
-                    <label for="loginPassword">Contraseña</label>
-                    <input id="loginPassword" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
-                    <div class="help">Demo frontend: todavía no hay backend real.</div>
-                </div>
-
-                <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" type="submit">Entrar</button>
-                    <button class="btn btn-secondary" type="button" data-auth-open="register">Crear cuenta</button>
-                </div>
-            </form>
-
-            <form class="form" id="registerForm" action="#" method="post" style="margin-top: 16px; display:none;">
-                <div class="field">
-                    <label for="registerUsername">Username</label>
-                    <input id="registerUsername" name="username" type="text" placeholder="pv_player" autocomplete="username" required />
-                </div>
-
-                <div class="field">
-                    <label for="registerEmail">Email</label>
-                    <input id="registerEmail" name="email" type="email" placeholder="player@team.gg" autocomplete="email" required />
-                </div>
-
-                <div class="field">
-                    <label for="registerPassword">Contraseña</label>
-                    <input id="registerPassword" name="password" type="password" placeholder="••••••••" autocomplete="new-password" required />
-                    <div class="help">Se registrará cuando el backend esté listo. Por ahora es una simulación.</div>
-                </div>
-
-                <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                    <button class="btn btn-secondary" type="button" data-auth-open="login">Ya tengo cuenta</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Auth modal removed: login/register are available at app.php?view=login and app.php?view=register -->
 
     <footer class="landing-footer">
         <div class="container landing-footer-inner">
