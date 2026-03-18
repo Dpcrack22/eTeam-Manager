@@ -1,35 +1,20 @@
 <?php
-$usersFile = __DIR__ . "/../database/users.json";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . "/../includes/db.php";
+require_once __DIR__ . "/../includes/auth.php";
+
+function isLoggedIn()
+{
+    return !empty($_SESSION['user']);
+}
+
 $email = "";
 $password = "";
 $errors = [];
 $users = file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) : [];
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $validUser = false;
-    $email = trim($_POST["email"] ?? "");
-    $password = $_POST["password"] ?? "";
-    $errors = validateLogin($email, $password);
-
-    if (empty($errors)) {
-        foreach ($users as $user) {
-            if ($user["email"] === $email) {
-                if ($user['password'] === $password) {
-                    $validUser = true;
-                }
-                break;
-            }
-        }
-    }
-
-    if ($validUser) {
-        // Redirigir con JS
-        echo '<script>window.location.href="app.php?view=dashboard";</script>';
-        exit;
-    } else {
-        $errors['login'] = "Usuario o contraseña incorrectos";
-    }
-}
 // Comprobaciones basicas para que el login sea correcto
 function validateLogin($email, $password) {
     $errors = [];
@@ -59,6 +44,37 @@ function validateLogin($email, $password) {
     }
 
     return $errors;
+}
+
+if (isLoggedIn()) {
+    // Redirigir con JS
+    echo '<script>window.location.href="app.php?view=dashboard";</script>';
+    exit;
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $validUser = false;
+    $email = trim($_POST["email"] ?? "");
+    $password = $_POST["password"] ?? "";
+    $errors = validateLogin($email, $password);
+
+    if (empty($errors)) {
+        $result = login($email, $password);
+        if ($result["success"]) {
+            $validUser = true;
+        } else {
+            if (isset($result["errors"])) {
+                $errors = $result["errors"];
+            }
+        }
+    }
+
+    if ($validUser) {
+        echo '<script>window.location.href="app.php?view=dashboard";</script>';
+        exit;
+    } elseif (empty($errors)) {
+        $errors['login'] = "Usuario o contraseña incorrectos";
+    }
 }
 
 $pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Login');
