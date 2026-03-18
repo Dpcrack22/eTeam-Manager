@@ -38,7 +38,7 @@ function validateLogin($email, $password) {
     } else {
         if (strlen($password) < 5) {
             $errors["password"] = "La contraseña introducida es demasiado corta (minimo 5 caracteres)";
-        } elseif (strlen($password) > 30) {
+        } elseif (strlen($password) > 120) {
             $errors["password"] = "Como vas a poner mas de 30 caracteres maldito loco";
         }
     }

@@ -3,7 +3,7 @@
 
 $env = parse_ini_file(__DIR__ . "/../.env");
 var_dump($env);
-$servername = "127.0.0.1";
+$servername = "localhost";
 $username = $env['db_user'];
 $password = $env['db_password'];
 $dbname = "eteam_manager";
