@@ -81,12 +81,17 @@ $activeSection = $activeSection ?? $view;
 $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
+$pageScripts = $pageScripts ?? [];
 $appAuthState = $appAuthState ?? 'authenticated';
 $appCurrentUser = $appCurrentUser ?? [
     'name' => 'Demo User',
     'role' => 'Manager',
     'organization' => 'Parallax Esports',
 ];
+
+if ($view === 'dashboard') {
+    $pageScripts[] = 'js/modules/dashboard.js';
+}
 
 if (!isset($appNavItems)) {
     $appNavItems = [];
