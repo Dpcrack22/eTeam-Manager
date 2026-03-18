@@ -3,7 +3,7 @@
 
 $env = parse_ini_file(__DIR__ . "/../.env");
 var_dump($env);
-$servername = "localhost";
+$servername = "127.0.0.1";
 $username = $env['db_user'];
 $password = $env['db_password'];
 $dbname = "eteam_manager";
@@ -20,6 +20,6 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("Error en connectar amb la base de dades.");
+    die("Error en connectar amb la base de dades." . $e->getMessage());
 }
 ?>
