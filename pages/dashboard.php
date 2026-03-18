@@ -95,10 +95,20 @@
                     <strong>Calendario</strong>
                     <span>Consultar entrenamientos, scrims y reuniones programadas.</span>
                 </a>
+                <a class="dashboard-action-tile" href="app.php?view=scrims">
+                    <span class="small">Competitivo</span>
+                    <strong>Scrims</strong>
+                    <span>Entrar al historial competitivo y revisar resultados recientes.</span>
+                </a>
                 <a class="dashboard-action-tile" href="app.php?view=boards">
                     <span class="small">Trabajo interno</span>
                     <strong>Tableros</strong>
                     <span>Revisar tareas operativas y prioridades pendientes.</span>
+                </a>
+                <a class="dashboard-action-tile" href="app.php?view=settings">
+                    <span class="small">Cuenta</span>
+                    <strong>Perfil y ajustes</strong>
+                    <span>Consultar datos del usuario y preferencias del entorno interno.</span>
                 </a>
             </div>
         </article>

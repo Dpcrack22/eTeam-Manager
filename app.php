@@ -4,9 +4,9 @@ $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strt
 $appModules = [
     'dashboard' => [
         'label' => 'Dashboard',
-        'title' => 'Dashboard base',
+        'title' => 'Dashboard',
         'eyebrow' => 'App interna',
-        'description' => 'Resumen inicial del sistema con acceso al contexto principal de trabajo.',
+        'description' => 'Resumen operativo del contexto actual, la agenda inmediata, las tareas abiertas y el seguimiento competitivo del roster.',
         'page' => __DIR__ . '/../pages/dashboard.php',
     ],
     'organizations' => [
