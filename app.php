@@ -1,9 +1,5 @@
 <?php
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
-if ($view === 'logout') {
-    require __DIR__ . '/includes/logout.php';
-    exit;
-}
 
 $appModules = [
     'dashboard' => [
