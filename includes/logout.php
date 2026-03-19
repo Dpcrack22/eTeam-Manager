@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 require_once "auth.php"; // para tener la función logout()
 
 logout(); // limpia la sesión
