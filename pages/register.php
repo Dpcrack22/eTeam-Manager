@@ -6,13 +6,7 @@ $email = "";
 $date = "";
 $password = "";
 $rol = "";
-$errors = [];
-$users = [];
-
-// Leer los usuarios que ya estan en el archivo
-if (file_exists($usersFile)) {
-    $users = json_decode(file_get_contents($usersFile), true) ?? [];
-}
+$errores_campos = array();
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -22,14 +16,70 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $date = $_POST["date"] ?? "";
     $password = $_POST["password"] ?? "";
     $rol = $_POST["role"] ?? "";
-    $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
+    
+    $errors = array();
+    $errores_campos = array();
 
-    // Comprobar que el email no exista ya
-    foreach ($users as $user) {
-        if ($user["email"] === $email) {
-            $errors["email"] = "Este correo ya está registrado";
-            break;
+    if (!$name) {
+        $errors[] = "El nombre és obligatorio.";
+        $campos_error["nombre"] = true;
+    }
+    if (!$surname) {
+        $errors[] = "Los apellidos son obligatorios.";
+        $campos_error["apellidos"] = true;
+    }
+    if (!$email) {
+        $errors[] = "El email es obligatorio.";
+        $campos_error["email"] = true;
+    }
+    if (!$password) {
+        $errors[] = "La constraseña es obligatoria.";
+        $campos_error["password"] = true;
+    }
+    if ($password && strlen($password) < 8) {
+        $errors[] = "La contraseña debe tener al menos 8 caracteres.";
+        $campos_error["password"] = true;
+    }
+    if ($password && strlen($password) > 30) {
+        $errors[] = "La contraseña no puede superar los 30 caracteres.";
+        $campos_error["password"] = true;
+    }
+    if (!$date) {
+        $errors[] = "La fecha es obligatoria.";
+        $campos_error["date"] = true;
+    }
+    list($year, $month, $day) = explode("-", $date);
+    if (!checkdate((int)$month, (int)$day, (int)$year)) {
+        $errors[] = "La fecha introducida no es válida";
+        $campos_error["date"] = true;
+    } else {
+        $birthdate = new DateTime($date);
+        $today = new DateTime();
+        $age = $today->diff($birthdate)->y;
+
+        if ($birthdate > $today) {
+            $errors[] = "La fecha no puede ser futura";
+            $campos_error["date"] = true;
+        } elseif ($age > 120) {
+            $errors[] = "La fecha introducida no es válida";
+            $campos_error["date"] = true;
         }
+    }
+    if (!$rol) {
+        $errors[] = "Los roles son obligatorios.";
+        $campos_error["rol"] = true;
+    }
+    $allowed = ['Owner', 'Manager', 'Coach', "Player", "Viewer"];
+    if (!in_array($rol, $allowed)) {
+        $errors[] = "Selección inválida";
+        $campos_error["rol"] = true;
+    }
+
+    if (count($errors) > 0) {
+        $mensaje = '<div class="error"><ul><li>' . implode('</li><li>', $errores) . '</li></ul></div>';
+    } else {
+        // Comprobar primero que el email no exista
+        
     }
 
     if (empty($errors)) {
