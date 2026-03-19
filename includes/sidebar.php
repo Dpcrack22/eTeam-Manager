@@ -38,7 +38,7 @@ if (!isset($appNavItems)) {
             <div class="small"><?php echo htmlspecialchars($appCurrentUser['role'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($appCurrentUser['organization'], ENT_QUOTES, 'UTF-8'); ?></div>
             <div class="stack-sm" style="margin-top: 12px;">
                 <a class="btn btn-secondary" href="app.php?view=settings">Mi cuenta</a>
-                <a class="btn btn-primary" href="logout.php">Logout demo</a>
+                <a class="btn btn-primary" href="includes/logout.php">Logout demo</a>
             </div>
         </div>
     <?php else: ?>
