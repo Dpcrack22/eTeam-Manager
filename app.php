@@ -69,7 +69,7 @@ $appModules = [
 		'title' => 'Registro',
 		'eyebrow' => 'Crear cuenta',
 		'description' => 'Registra una cuenta de demo en eTeam Manager',
-	],
+	]
 ];
 
 if (!isset($appModules[$view])) {
@@ -117,6 +117,11 @@ if (is_file($pageFile)) {
 } else {
 	// Fallback to dashboard if the specific page file is missing.
 	require __DIR__ . '/pages/dashboard.php';
+}
+
+if ($view === 'logout') {
+    require __DIR__ . '/includes/logout.php';
+    exit;
 }
 
 require __DIR__ . '/includes/layout-end.php';
