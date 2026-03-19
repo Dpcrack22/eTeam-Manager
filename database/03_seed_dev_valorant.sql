@@ -70,18 +70,25 @@ VALUES
 -- 2) Usuarios + Organización
 -- ------------------------------------------------------------
 
--- NOTE: password_hash is a dummy value for development only.
--- (Looks like a bcrypt hash format but it is not meant for real auth.)
+-- NOTE: password_hash uses SHA2(256) hashing. For dev, use simple passwords.
+-- Test credentials (dev only - change in production!):
+-- parallax_owner / owner123
+-- parallax_coach / coach123
+-- pv_ace / ace123
+-- pv_lumen / lumen123
+-- pv_nova / nova123
+-- pv_kairo / kairo123
+-- parallax_analyst / analyst123
 INSERT INTO users (
   id, username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at
 ) VALUES
-  (1, 'parallax_owner',  'owner@parallax.gg',  '$2y$10$devonlydummyhashowner000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (2, 'parallax_coach',  'coach@parallax.gg',  '$2y$10$devonlydummyhashcoach000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (3, 'pv_ace',          'ace@parallax.gg',    '$2y$10$devonlydummyhashace0000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (4, 'pv_lumen',        'lumen@parallax.gg',  '$2y$10$devonlydummyhashlumen00000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (5, 'pv_nova',         'nova@parallax.gg',   '$2y$10$devonlydummyhashnova000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (6, 'pv_kairo',        'kairo@parallax.gg',  '$2y$10$devonlydummyhashkairo00000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (7, 'parallax_analyst','analyst@parallax.gg','$2y$10$devonlydummyhashanalyst000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW());
+  (1, 'parallax_owner',  'owner@parallax.gg',  SHA2('owner123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (2, 'parallax_coach',  'coach@parallax.gg',  SHA2('coach123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (3, 'pv_ace',          'ace@parallax.gg',    SHA2('ace123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (4, 'pv_lumen',        'lumen@parallax.gg',  SHA2('lumen123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (5, 'pv_nova',         'nova@parallax.gg',   SHA2('nova123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (6, 'pv_kairo',        'kairo@parallax.gg',  SHA2('kairo123', 256), NULL, 1, NOW(), NOW(), NOW()),
+  (7, 'parallax_analyst','analyst@parallax.gg',SHA2('analyst123', 256), NULL, 1, NOW(), NOW(), NOW());
 
 INSERT INTO organizations (
   id, name, slug, logo_url, description, owner_id, created_at, updated_at
