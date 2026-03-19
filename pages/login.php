@@ -1,8 +1,6 @@
 <?php
+session_start();
 function isLoggedIn() {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
     return !empty($_SESSION['user']);
 }
 require_once __DIR__ . "/../includes/db.php";
