@@ -4,6 +4,7 @@ require_once "auth.php"; // para tener la función logout()
 
 logout(); // limpia la sesión
 var_dump($_SESSION); // debería estar vacío
+die;
 // redirige al login
 echo '<script>window.location.href="../app.php?view=login";</script>';
 exit;
