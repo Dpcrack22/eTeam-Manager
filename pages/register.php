@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/../includes/db.php";
 require_once __DIR__ . "/../includes/auth.php";
+require_once __DIR__ . "/../includes/register_functions.php";
 $name = "";
 $email = "";
 $date = "";
@@ -81,9 +82,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($stmt->fetch()) {
             $mensaje = '<div class="error">El email ya está registrado.</div>';
         } else {
-            $password_hash = hash('sha256', $password);
-            $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, NULL, 1, '2026-03-20 16:56:30', '2026-03-20 16:56:30', '2026-03-20 16:56:30')");
-            $stmt->execute([$name, $email, $password_hash]);
+            $userId = createUser($conn, $name, $email, $password);
+            addUserToOrganization($conn, $userId, )
 
             // Mensaje de creación de cuenta
             $mensaje = '<div class="success">Registro exitoso. Revisa tu correo para validar la cuenta.</div>';
