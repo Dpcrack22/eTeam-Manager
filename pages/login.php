@@ -9,7 +9,6 @@ require_once __DIR__ . "/../includes/auth.php";
 $email = "";
 $password = "";
 $errors = [];
-$users = file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) : [];
 
 // Comprobaciones basicas para que el login sea correcto
 function validateLogin($email, $password) {
