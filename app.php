@@ -57,21 +57,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Configuracion del usuario, preferencias y datos personales.',
         'page' => __DIR__ . '/../pages/settings.php',
-    ],
-	'login' => [
-		'label' => 'Login',
-		'title' => 'Login',
-		'eyebrow' => 'Acceso',
-		'description' => 'Inicia sesión en eTeam Manager',
-        'page' => __DIR__ . '/../pages/login.php',
-	],
-	'register' => [
-		'label' => 'Registro',
-		'title' => 'Registro',
-		'eyebrow' => 'Crear cuenta',
-		'description' => 'Registra una cuenta de demo en eTeam Manager',
-        'page' => __DIR__ . '/../pages/register.php',
-	]
+    ]
 ];
 
 if (!isset($appModules[$view])) {
