@@ -57,6 +57,20 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Configuracion del usuario, preferencias y datos personales.',
         'page' => __DIR__ . '/../pages/settings.php',
+    ],
+    'login' => [
+        'label' => 'Login/Registro',
+        'title' => 'Login y Registro',
+        'eyebrow' => 'Modulo',
+        'description' => 'Logearse con usuario propio o crea uno para empezar o unirte',
+        'page' => __DIR__ . '/../pages/login.php',
+    ],
+    'register' => [
+        'label' => 'Registro',
+        'title' => 'Registro',
+        'eyebrow' => 'Modulo',
+        'description' => 'Registarse como usuario nuevo y unirse a un equipo',
+        'page' => __DIR__ . '/../pages/register.php',
     ]
 ];
 

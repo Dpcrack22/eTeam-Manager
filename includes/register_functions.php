@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "db.php";
+    require_once __DIR__ . "/db.php";
     function createUser(PDO $conn, $name, $email, $password) {
         $password_hash = hash('sha256', $password);
         $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, NULL, 1, '2026-03-20 16:56:30', '2026-03-20 16:56:30', '2026-03-20 16:56:30')");

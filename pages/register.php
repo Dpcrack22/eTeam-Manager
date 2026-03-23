@@ -10,13 +10,13 @@ $rol = "";
 $errores_campos = array();
 $mensaje = "";
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["name"] ?? "");
     $email = trim($_POST["email"] ?? "");
     $date = $_POST["date"] ?? "";
     $password = $_POST["password"] ?? "";
     $rol = $_POST["role"] ?? "";
+    $organizationId = $_POST["organization_id"] ?? null;
     
     $errors = array();
     $errores_campos = array();
@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $campos_error["date"] = true;
         }
     }
+    */
     if (!$rol) {
         $errors[] = "Los roles son obligatorios.";
         $campos_error["rol"] = true;
@@ -71,7 +72,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!in_array($rol, $allowed)) {
         $errors[] = "Selección inválida";
         $campos_error["rol"] = true;
-    }*/
+    }
+    if ($organizationId && !validateOrganization($conn, $organizationId)) {
+        $errors[] = "La organización seleccionada no existe.";
+    }
 
     if (count($errors) > 0) {
         $mensaje = '<div class="error"><ul><li>' . implode('</li><li>', $errors) . '</li></ul></div>';
@@ -83,10 +87,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $mensaje = '<div class="error">El email ya está registrado.</div>';
         } else {
             $userId = createUser($conn, $name, $email, $password);
-            addUserToOrganization($conn, $userId, )
+            addUserToOrganization($conn, $userId, $organizationId, $rol);
 
             // Mensaje de creación de cuenta
-            $mensaje = '<div class="success">Registro exitoso. Revisa tu correo para validar la cuenta.</div>';
+            $mensaje = '<div class="success">Registro exitoso</div>';
             echo '<script>window.location.href="app.php?view=login";</script>';
             exit;
         }
@@ -140,8 +144,23 @@ if (empty($layoutIncluded)) {
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" placeholder="••••••••" value="<?php echo htmlspecialchars($password ?? ''); ?>"/>
             </div>
+
+            <?php
+                $organizations = getAllOrganizations($conn);
+            ?>
+
+            <div class="field">
+                <label for="organization">Organización</label>
+                <select id="organization" name="organization_id" required>
+                    <option value="">Selecciona una organización</option>
+                    <?php foreach ($organizations as $org): ?>
+                        <option value="<?php echo $org['id']; ?>">
+                            <?php echo htmlspecialchars($org['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             
-            <!--
             <div class="field">
                 <label for="role">Rol</label>
                 <select id="role" name="role">
@@ -153,7 +172,6 @@ if (empty($layoutIncluded)) {
                     <option value="Viewer">Viewer</option>
                 </select>
             </div>
-            -->
 
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
                 <button class="btn btn-primary" type="submit">Crear cuenta</button>
@@ -181,5 +199,4 @@ if (empty($layoutIncluded)) {
         </script>
     </div>
 </div>
-<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; }
-
+<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; } ?>
