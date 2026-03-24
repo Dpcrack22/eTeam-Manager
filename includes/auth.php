@@ -1,5 +1,8 @@
 <?php
 require_once "db.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 function login($email, $password) {
     global $conn;
@@ -76,4 +79,8 @@ function logout() {
             $params["httponly"]
         );
     }
+}
+
+function estaLogeado() {
+    return isset($_SESSION['user']);
 }
