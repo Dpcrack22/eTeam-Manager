@@ -1,9 +1,8 @@
 <?php
-require_once __DIR__ . "/../includes/auth.php";
 require_once __DIR__ . "/../includes/db.php";
 require_once __DIR__ . "/../includes/profile_functions.php";
 
-if (!estaLogeado()) {
+if (isLogged()) {
     echo '<script>window.location.href="app.php?view=login";</script>';
     exit;
 }
@@ -44,6 +43,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // Cargar el usuario
 $user = getUserProfile($conn, $userEmail);
+$pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Perfil Usuario');
+$pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Acceso');
+$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Observa tu perfil');
+$shouldCloseLayout = false;
+
+// ensure login page hides the sidebar when loaded directly
+$hideSidebar = $hideSidebar ?? true;
+if (empty($layoutIncluded)) {
+    require __DIR__ . '/../includes/layout-start.php';
+    $shouldCloseLayout = true;
+}
 ?>
 
 <div class="profile-page">
@@ -68,7 +78,7 @@ $user = getUserProfile($conn, $userEmail);
                     id="avatar-preview"
                     src="<?php echo htmlspecialchars($_SESSION["user"]['avatar_url'] ?: 'https://via.placeholder.com/100'); ?>"
                     style="width:100px; height:100px; border-radius:50%; object-fit:cover;"
-                >
+                />
             </div>
             <!-- USERNAME -->
             <div class="field">
@@ -126,6 +136,5 @@ $user = getUserProfile($conn, $userEmail);
         </form>
     </div>
 </div>
-
-
-<script src="<?php __DIR__ . "/../js/profile.js" ?>"></script>
+<script src="/js/profile.js"></script>
+<?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; }

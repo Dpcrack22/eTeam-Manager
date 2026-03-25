@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/includes/auth.php';
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
 
 $appModules = [
@@ -71,6 +72,13 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Registarse como usuario nuevo y unirse a un equipo',
         'page' => __DIR__ . '/../pages/register.php',
+    ],
+    'profile' => [
+        'label' => 'Profile',
+        'title' => 'Profile',
+        'eyebrow' => 'Modulo',
+        'description' => 'Ver el perfil del usuario registrado',
+        'page' => __DIR__ . '/../pages/profile.php',
     ]
 ];
 

@@ -3,7 +3,6 @@ require_once "db.php";
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 function login($email, $password) {
     global $conn;
     try {
@@ -53,7 +52,7 @@ function login($email, $password) {
 }
 
 function isLogged() {
-    return isset($_SESSION["user"]);
+    return !empty($_SESSION['user']);
 }
 
 function logout() {
@@ -80,8 +79,4 @@ function logout() {
             $params["httponly"]
         );
     }
-}
-
-function estaLogeado() {
-    return isset($_SESSION['user']);
 }

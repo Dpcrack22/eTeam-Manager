@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../includes/db.php";
-require_once __DIR__ . "/../includes/auth.php";
 require_once __DIR__ . "/../includes/register_functions.php";
 $name = "";
 $email = "";
@@ -17,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST["password"] ?? "";
     $rol = $_POST["role"] ?? "";
     $organizationId = $_POST["organization_id"] ?? null;
-    $avatarInput = trim($_FILES["avatar_file"] ?? "");
+    $avatarInput = $_FILES["avatar_file"] ?? "";
     
     $errors = array();
     $errores_campos = array();

@@ -1,6 +1,5 @@
 <?php
 /* Codigo para cargar la base de datos */
-
 $env = parse_ini_file(__DIR__ . "/../.env");
 $servername = "localhost";
 $username = $env['db_user'];
