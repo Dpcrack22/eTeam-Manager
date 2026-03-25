@@ -19,13 +19,22 @@
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    function updateUserProfile(PDO $conn, string $email, string $username, string $avatarUrl = null): bool {
-        $stmt = $conn->prepare("
-            UPDATE users
-            set username = ?, avatar_url = ?, updated_at = NOW()
-            WHERE email = ?
-        ");
-        return $stmt->execute([$username, $avatarUrl, $email]);
+    function updateUserProfile(PDO $conn, string $email, string $username, ?string $avatarUrl = null): bool {
+        if ($avatarUrl !== null) {
+            $stmt = $conn->prepare("
+                UPDATE users
+                SET username = ?, avatar_url = ?, updated_at = NOW()
+                WHERE email = ?
+            ");
+            return $stmt->execute([$username, $avatarUrl, $email]);
+        } else {
+            $stmt = $conn->prepare("
+                UPDATE users
+                SET username = ?, updated_at = NOW()
+                WHERE email = ?
+            ");
+            return $stmt->execute([$username, $email]);
+        }
     }
 
     function changeUserPassword(PDO $conn, string $email, string $currentPassword, string $newPassword) {

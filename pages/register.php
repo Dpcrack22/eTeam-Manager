@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST["password"] ?? "";
     $rol = $_POST["role"] ?? "";
     $organizationId = $_POST["organization_id"] ?? null;
+    $avatarInput = trim($_FILES["avatar_file"] ?? "");
     
     $errors = array();
     $errores_campos = array();
@@ -75,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     if ($organizationId && !validateOrganization($conn, $organizationId)) {
         $errors[] = "La organización seleccionada no existe.";
+        $campos_error["organization"] = true;
     }
 
     if (count($errors) > 0) {
@@ -86,8 +88,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($stmt->fetch()) {
             $mensaje = '<div class="error">El email ya está registrado.</div>';
         } else {
-            $userId = createUser($conn, $name, $email, $password);
-            addUserToOrganization($conn, $userId, $organizationId, $rol);
+            $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
+            if ($organizationId) {
+                addUserToOrganization($conn, $userId, $organizationId, $rol);
+            }
 
             // Mensaje de creación de cuenta
             $mensaje = '<div class="success">Registro exitoso</div>';
@@ -122,7 +126,7 @@ if (empty($layoutIncluded)) {
         </div>
     <?php endif; ?>
     <div class="card" style="max-width: 640px; margin: 24px auto;">
-        <form class="form" method="post" novalidate autocomplete="off">
+        <form class="form" method="post" enctype="multipart/form-data" novalidate autocomplete="off">
             <div class="field" <?php echo isset($campos_error['nombre']) ? 'form-group-error' : ''; ?>>
                 <label for="name">Name</label>
                 <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name ?? ''); ?>"/>
@@ -140,7 +144,7 @@ if (empty($layoutIncluded)) {
             </div>
             -->
 
-            <div class="field" <?php echo isset($campos_error['email']) ? 'form-group-error' : ''; ?>>
+            <div class="field" <?php echo isset($campos_error['password']) ? 'form-group-error' : ''; ?>>
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" placeholder="••••••••" value="<?php echo htmlspecialchars($password ?? ''); ?>"/>
             </div>
@@ -149,7 +153,7 @@ if (empty($layoutIncluded)) {
                 $organizations = getAllOrganizations($conn);
             ?>
 
-            <div class="field">
+            <div class="field" <?php echo isset($campos_error['organization']) ? 'form-group-error' : ''; ?>>
                 <label for="organization">Organización</label>
                 <select id="organization" name="organization_id" required>
                     <option value="">Selecciona una organización</option>
@@ -160,16 +164,21 @@ if (empty($layoutIncluded)) {
                     <?php endforeach; ?>
                 </select>
             </div>
-            
+
             <div class="field">
+                <label for="avatar">Avatar</label>
+                <input type="file" name="avatar_file" accept="image/*">
+            </div>
+            
+            <div class="field" <?php echo isset($campos_error['rol']) ? 'form-group-error' : ''; ?>>
                 <label for="role">Rol</label>
                 <select id="role" name="role">
                     <option value="">Selecciona un rol</option>
-                    <option value="Owner">Owner</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Coach">Coach</option>
-                    <option value="Player">Player</option>
-                    <option value="Viewer">Viewer</option>
+                    <option value="Owner" <?php echo ($rol == 'Owner') ? 'selected' : ''; ?>>Owner</option>
+                    <option value="Manager" <?php echo ($rol == 'Manager') ? 'selected' : ''; ?>>Manager</option>
+                    <option value="Coach" <?php echo ($rol == 'Coach') ? 'selected' : ''; ?>>Coach</option>
+                    <option value="Player" <?php echo ($rol == 'Player') ? 'selected' : ''; ?>>Player</option>
+                    <option value="Viewer" <?php echo ($rol == 'Viewer') ? 'selected' : ''; ?>>Viewer</option>
                 </select>
             </div>
 

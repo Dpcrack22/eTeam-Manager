@@ -39,7 +39,8 @@ function login($email, $password) {
         $_SESSION["user"] = [
             "id" => $user["id"],
             "email" => $user["email"],
-            "name" => $user["username"]
+            "name" => $user["username"],
+            "avatar_url" => $user["avatar_url"]
         ];
         return ["success" => true];
     } catch (PDOException $e) {
