@@ -3,14 +3,14 @@ $activeSection = $activeSection ?? 'dashboard';
 
 if (!isset($appNavItems)) {
     $appNavItems = [
-        'dashboard' => ['label' => 'Dashboard', 'href' => 'app.php?view=dashboard'],
-        'organizations' => ['label' => 'Organizaciones', 'href' => 'app.php?view=organizations'],
-        'teams' => ['label' => 'Equipos', 'href' => 'app.php?view=teams'],
-        'scrims' => ['label' => 'Scrims', 'href' => 'app.php?view=scrims'],
-        'calendar' => ['label' => 'Calendario', 'href' => 'app.php?view=calendar'],
-        'boards' => ['label' => 'Tableros', 'href' => 'app.php?view=boards'],
-        'notes' => ['label' => 'Notas', 'href' => 'app.php?view=notes'],
-        'settings' => ['label' => 'Configuracion', 'href' => 'app.php?view=settings'],
+        'dashboard' => ['label' => 'Dashboard', 'href' => 'app.php?view=dashboard', "showInSidebar" => true],
+        'organizations' => ['label' => 'Organizaciones', 'href' => 'app.php?view=organizations', "showInSidebar" => true],
+        'teams' => ['label' => 'Equipos', 'href' => 'app.php?view=teams', "showInSidebar" => true],
+        'scrims' => ['label' => 'Scrims', 'href' => 'app.php?view=scrims', "showInSidebar" => true],
+        'calendar' => ['label' => 'Calendario', 'href' => 'app.php?view=calendar', "showInSidebar" => true],
+        'boards' => ['label' => 'Tableros', 'href' => 'app.php?view=boards', "showInSidebar" => true],
+        'notes' => ['label' => 'Notas', 'href' => 'app.php?view=notes', "showInSidebar" => true],
+        'settings' => ['label' => 'Configuracion', 'href' => 'app.php?view=settings', "showInSidebar" => true],
     ];
 }
 ?>
@@ -24,10 +24,13 @@ if (!isset($appNavItems)) {
         <div class="card sidebar-panel">
             <div class="small">Navegacion principal</div>
             <nav class="sidebar-nav" aria-label="Navegacion interna">
-                <?php foreach ($appNavItems as $sectionKey => $item): ?>
-                    <a class="sidebar-link<?php echo $activeSection === $sectionKey ? ' is-active' : ''; ?>" href="<?php echo htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8'); ?>">
-                        <?php echo htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
+               <?php foreach ($appNavItems as $sectionKey => $item): ?>
+                    <?php if (isset($item['showInSidebar']) && $item['showInSidebar'] === true): ?>
+                        <a class="sidebar-link<?php echo $activeSection === $sectionKey ? ' is-active' : ''; ?>" 
+                        href="<?php echo htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8'); ?>
+                        </a>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </nav>
         </div>

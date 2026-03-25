@@ -9,6 +9,7 @@ $appModules = [
         'eyebrow' => 'App interna',
         'description' => 'Resumen inicial del sistema con acceso al contexto principal de trabajo.',
         'page' => __DIR__ . '/../pages/dashboard.php',
+        "showInSidebar" => true
     ],
     'organizations' => [
         'label' => 'Organizaciones',
@@ -16,6 +17,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Gestion visual de organizaciones, miembros y roles internos.',
         'page' => __DIR__ . '/../pages/organizations.php',
+        "showInSidebar" => true
     ],
     'teams' => [
         'label' => 'Equipos',
@@ -23,6 +25,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Gestion de roster, detalle de equipos y relacion con la organizacion activa.',
         'page' => __DIR__ . '/../pages/teams.php',
+        "showInSidebar" => true
     ],
     'scrims' => [
         'label' => 'Scrims',
@@ -30,6 +33,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Registro de enfrentamientos, resultados, mapas y detalle competitivo.',
         'page' => __DIR__ . '/../pages/scrims.php',
+        "showInSidebar" => true
     ],
     'calendar' => [
         'label' => 'Calendario',
@@ -37,6 +41,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Planificacion de eventos de equipo y organizacion con estados de asistencia.',
         'page' => __DIR__ . '/../pages/calendar.php',
+        "showInSidebar" => true
     ],
     'boards' => [
         'label' => 'Tableros',
@@ -44,6 +49,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Kanban interno para tareas, prioridades y seguimiento del trabajo.',
         'page' => __DIR__ . '/../pages/boards.php',
+        "showInSidebar" => true
     ],
     'notes' => [
         'label' => 'Notas',
@@ -51,6 +57,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Repositorio interno para estrategia, analisis y documentacion del equipo.',
         'page' => __DIR__ . '/../pages/notes.php',
+        "showInSidebar" => true
     ],
     'settings' => [
         'label' => 'Configuracion',
@@ -58,6 +65,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Configuracion del usuario, preferencias y datos personales.',
         'page' => __DIR__ . '/../pages/settings.php',
+        "showInSidebar" => true
     ],
     'login' => [
         'label' => 'Login/Registro',
@@ -65,6 +73,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Logearse con usuario propio o crea uno para empezar o unirte',
         'page' => __DIR__ . '/../pages/login.php',
+        "showInSidebar" => true
     ],
     'register' => [
         'label' => 'Registro',
@@ -72,6 +81,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Registarse como usuario nuevo y unirse a un equipo',
         'page' => __DIR__ . '/../pages/register.php',
+        "showInSidebar" => false
     ],
     'profile' => [
         'label' => 'Profile',
@@ -79,6 +89,7 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Ver el perfil del usuario registrado',
         'page' => __DIR__ . '/../pages/profile.php',
+        "showInSidebar" => false
     ]
 ];
 
