@@ -3,10 +3,11 @@ require_once "db.php";
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 function login($email, $password) {
     global $conn;
     try {
-        $stmt = $conn->prepare("SELECT id, username, email, password_hash, is_active FROM users WHERE email = :email LIMIT 1");
+        $stmt = $conn->prepare("SELECT id, username, email, password_hash, avatar_url, is_active FROM users WHERE email = :email LIMIT 1");
         $stmt->bindParam(":email", $email, PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

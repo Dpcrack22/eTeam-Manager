@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../includes/db.php";
 require_once __DIR__ . "/../includes/profile_functions.php";
 
-if (isLogged()) {
+if (!isLogged()) {
     echo '<script>window.location.href="app.php?view=login";</script>';
     exit;
 }
@@ -15,28 +15,34 @@ $success = "";
 // Actualizar el perfil
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
-    $avatarInput = trim($_FILES["avatar_file"] ?? "");
+    $avatarUrl = null;
 
     if (!$username) {
         $errors[] = "El nombre es obligatorio";
     }
 
+    // si se subió un archivo
     if (!empty($_FILES["avatar_file"]["tmp_name"])) {
         $targetDir = __DIR__ . "/../uploads/avatars/";
+        if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
+
         $filename = uniqid() . "-" . basename($_FILES["avatar_file"]["name"]);
         $targetPath = $targetDir . $filename;
 
         if (move_uploaded_file($_FILES["avatar_file"]["tmp_name"], $targetPath)) {
+            // esto es lo que debes pasar a updateUserProfile
             $avatarUrl = "/uploads/avatars/" . $filename;
+        } else {
+            $errors[] = "Error subiendo el avatar.";
         }
     }
 
     if (empty($errors)) {
-        updateUserProfile($conn, $userEmail, $username, $avatarInput);
+        updateUserProfile($conn, $userEmail, $username, $avatarUrl);
 
         // actualizar sesióm
         $_SESSION["user"]["name"] = $username;
-        $_SESSION["user"]["avatar_url"] = $avatarInput;
+        $_SESSION["user"]["avatar_url"] = $avatarUrl;
         $success = "Perfil actualizado correctamente";
     }
 }
@@ -71,12 +77,12 @@ if (empty($layoutIncluded)) {
     <?php endif; ?>
 
     <div class="card" style="max-width: 640px; margin: 24px auto;">
-        <form method="POST" id="profile-form">
+        <form method="POST" id="profile-form" enctype="multipart/form-data">
             <!-- AVATAR -->
             <div style="text-align:center; margin-bottom:20px;">
                 <img
                     id="avatar-preview"
-                    src="<?php echo htmlspecialchars($_SESSION["user"]['avatar_url'] ?: 'https://via.placeholder.com/100'); ?>"
+                    src="<?php echo htmlspecialchars($avatarUrl); ?>"
                     style="width:100px; height:100px; border-radius:50%; object-fit:cover;"
                 />
             </div>
