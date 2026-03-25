@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . "/db.php";
+    require_once "db.php";
     
     function getUserProfile(PDO $conn, string $email) : array|false {
         $stmt = $conn->prepare("

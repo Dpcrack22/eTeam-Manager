@@ -82,7 +82,7 @@ if (empty($layoutIncluded)) {
             <div style="text-align:center; margin-bottom:20px;">
                 <img
                     id="avatar-preview"
-                    src="<?php echo htmlspecialchars($avatarUrl); ?>"
+                    src="<?php echo htmlspecialchars($user["avatar_url"]); ?>"
                     style="width:100px; height:100px; border-radius:50%; object-fit:cover;"
                 />
             </div>

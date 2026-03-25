@@ -116,6 +116,7 @@ if (!isset($appNavItems)) {
         $appNavItems[$moduleKey] = [
             'label' => $module['label'],
             'href' => 'app.php?view=' . $moduleKey,
+            "showInSidebar" => $module["showInSidebar"] ?? false,
         ];
     }
 }

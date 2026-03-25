@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/db.php";
+require_once __DIR__ . "/auth.php";
+require_once __DIR__ . "/profile_functions.php";
 $activeSection = $activeSection ?? 'dashboard';
 
 if (!isset($appNavItems)) {
@@ -12,6 +15,26 @@ if (!isset($appNavItems)) {
         'notes' => ['label' => 'Notas', 'href' => 'app.php?view=notes', "showInSidebar" => true],
         'settings' => ['label' => 'Configuracion', 'href' => 'app.php?view=settings', "showInSidebar" => true],
     ];
+}
+
+// Inicializar variables por defecto
+$appCurrentUser = [
+    'name' => 'Invitado',
+    'role' => 'Sin rol',
+    'organization' => 'Sin organización',
+    'avatar_url' => '/uploads/avatars/default.png'
+];
+
+if (isset($_SESSION['user']['email'])) {
+    $userData = getUserProfile($conn, $_SESSION['user']['email']);
+    if ($userData) {
+        $appCurrentUser = [
+            'name' => $userData['username'] ?? 'Usuario',
+            'role' => $userData['role'] ?? 'Sin rol',
+            'organization' => $userData['organization_name'] ?? 'Sin organización',
+            'avatar_url' => $userData['avatar_url'] ?? '/uploads/avatars/default.png'
+        ];
+    }
 }
 ?>
 <aside class="sidebar">
@@ -35,13 +58,30 @@ if (!isset($appNavItems)) {
             </nav>
         </div>
 
-        <div class="card sidebar-panel sidebar-user-card">
-            <div class="small">Sesion actual</div>
-            <div class="sidebar-user-name"><?php echo htmlspecialchars($appCurrentUser['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="small"><?php echo htmlspecialchars($appCurrentUser['role'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($appCurrentUser['organization'], ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="stack-sm" style="margin-top: 12px;">
-                <a class="btn btn-secondary" href="app.php?view=profile">Mi cuenta</a>
-                <a class="btn btn-primary" href="/includes/logout.php">Logout demo</a>
+        <div class="card sidebar-panel sidebar-user-card" style="display:flex; align-items:center; gap:12px; padding:12px;">
+            <!-- Avatar del usuario -->
+            <div style="flex-shrink:0;">
+                <img 
+                    src="<?php echo htmlspecialchars($appCurrentUser['avatar_url']); ?>" 
+                    alt="Avatar <?php echo htmlspecialchars($appCurrentUser['name']); ?>" 
+                    style="width:48px; height:48px; border-radius:50%; object-fit:cover;"
+                />
+            </div>
+
+            <!-- Información del usuario -->
+            <div style="flex-grow:1;">
+                <div class="sidebar-user-name" style="font-weight:bold; font-size:0.95rem;">
+                    <?php echo htmlspecialchars($appCurrentUser['name']); ?>
+                </div>
+                <div class="small" style="font-size:0.8rem; color:#666;">
+                    <?php echo htmlspecialchars($appCurrentUser['role']); ?>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="stack-sm" style="display:flex; flex-direction:column; gap:6px;">
+                <a class="btn btn-secondary btn-sm" href="app.php?view=profile">Mi cuenta</a>
+                <a class="btn btn-primary btn-sm" href="/includes/logout.php">Logout demo</a>
             </div>
         </div>
     <?php else: ?>
