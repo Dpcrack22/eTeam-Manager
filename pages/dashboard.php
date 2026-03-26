@@ -1,3 +1,31 @@
+<?php 
+require_once __DIR__ . "/../includes/db.php";
+require_once __DIR__ . "/../includes/auth.php";
+require_once __DIR__ . "/../includes/profile_functions.php";
+
+// Inicializar variables por defecto
+$appCurrentUser = [
+    'name' => 'Invitado',
+    'role' => 'Sin rol',
+    'organization' => 'Sin organización',
+    'avatar_url' => '/uploads/avatars/default.jpg',
+    "team" => "Sin equipo"
+];
+
+if (isset($_SESSION['user']['email'])) {
+    $userData = getUserProfile($conn, $_SESSION['user']['email']);
+    if ($userData) {
+        $appCurrentUser = [
+            'name' => $userData['username'] ?? 'Usuario',
+            'role' => $userData['role'] ?? 'Sin rol',
+            'organization' => $userData['organization_name'] ?? 'Sin organización',
+            'avatar_url' => $userData['avatar_url'] ?? '/uploads/avatars/default.jpg',
+            "team" => $userData["team_name"] ?? "Sin equipo",
+            "email" => $userData["email"] ?? "noemail@gmail.com"
+        ];
+    }
+}
+?>
 <section class="dashboard" data-dashboard-root>
     <div class="dashboard-hero card">
         <div>
@@ -13,11 +41,15 @@
         <div class="dashboard-hero-meta">
             <div class="dashboard-hero-chip">
                 <div class="small">Organizacion activa</div>
-                <div class="dashboard-hero-value" data-dashboard-org-name>Parallax Esports</div>
+                <div class="dashboard-hero-value" data-dashboard-org-name>
+                    <?php echo htmlspecialchars($appCurrentUser["organization"]); ?>
+                </div>
             </div>
             <div class="dashboard-hero-chip">
                 <div class="small">Equipo activo</div>
-                <div class="dashboard-hero-value" data-dashboard-team-name>Parallax V</div>
+                <div class="dashboard-hero-value" data-dashboard-team-name>
+                    <?php echo htmlspecialchars($appCurrentUser["team"]); ?>
+                </div>
             </div>
         </div>
     </div>
@@ -25,7 +57,7 @@
     <div class="dashboard-kpis">
         <article class="card dashboard-kpi">
             <div class="small">Mi rol actual</div>
-            <div class="dashboard-kpi-value" data-dashboard-user-role>Manager</div>
+            <div class="dashboard-kpi-value" data-dashboard-user-role><?php echo htmlspecialchars($appCurrentUser["role"]); ?></div>
             <p class="dashboard-kpi-copy">Rol del usuario en el contexto activo de trabajo.</p>
         </article>
 
@@ -59,12 +91,17 @@
             </div>
 
             <div class="dashboard-profile-summary">
-                <div class="dashboard-avatar" data-dashboard-avatar>DU</div>
+                <div class="sidebar-user-avatar"> 
+                    <img 
+                        src="<?php echo htmlspecialchars($appCurrentUser['avatar_url']); ?>" 
+                        alt="Avatar <?php echo htmlspecialchars($appCurrentUser['name']); ?>" 
+                    />
+                </div>
                 <div>
-                    <div class="h4" data-dashboard-user-name>Demo User</div>
-                    <p class="dashboard-inline-copy" data-dashboard-user-email>demo@eteam.dev</p>
+                    <div class="h4" data-dashboard-user-name><?php echo htmlspecialchars($appCurrentUser["name"]); ?></div>
+                    <p class="dashboard-inline-copy" data-dashboard-user-email><?php echo htmlspecialchars($appCurrentUser["email"]); ?></p>
                     <div class="stack-sm">
-                        <span class="badge" data-dashboard-org-slug>parallax</span>
+                        <span class="badge" data-dashboard-org-slug> <?php echo htmlspecialchars($appCurrentUser["team"]); ?></span>
                         <span class="badge badge-info" data-dashboard-team-tag>PV</span>
                     </div>
                 </div>

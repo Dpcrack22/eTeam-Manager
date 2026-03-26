@@ -116,16 +116,10 @@
     return "badge-info";
   }
 
-  setText("[data-dashboard-org-name]", appData.activeOrganization.name);
-  setText("[data-dashboard-team-name]", appData.activeTeam.name);
-  setText("[data-dashboard-user-role]", appData.currentUser.role);
+
   setText("[data-dashboard-events-count]", String(appData.upcomingEvents.length));
   setText("[data-dashboard-tasks-count]", String(appData.pendingTasks.length));
   setText("[data-dashboard-scrims-count]", String(appData.recentScrims.length));
-  setText("[data-dashboard-user-name]", appData.currentUser.name);
-  setText("[data-dashboard-user-email]", appData.currentUser.email);
-  setText("[data-dashboard-avatar]", appData.currentUser.avatarInitials);
-  setText("[data-dashboard-org-slug]", appData.activeOrganization.slug);
   setText("[data-dashboard-team-tag]", appData.activeTeam.tag);
 
   renderList(

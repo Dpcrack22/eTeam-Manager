@@ -8,10 +8,13 @@
                 u.email,
                 u.avatar_url,
                 om.role,
-                o.name AS organization_name
+                o.name AS organization_name,
+                t.name AS team_name
             FROM users u
             LEFT JOIN organization_members om ON om.user_id = u.id
             LEFT JOIN organizations o ON o.id = om.organization_id
+            LEFT JOIN team_members tm ON tm.user_id = u.id
+            LEFT JOIN teams t ON t.id = tm.team_id
             WHERE u.email = ?
             LIMIT 1
         ");
