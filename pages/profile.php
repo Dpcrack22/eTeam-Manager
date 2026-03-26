@@ -73,13 +73,15 @@ if (empty($layoutIncluded)) {
     <?php endif; ?>
 
     <?php if ($success): ?>
-        <div id="success-box" style="background: lightgreen; padding: 10px; color: black; text-align: center;"><?php echo $success; ?></div>
+        <div id="success-box" class="success-box">
+            <?php echo $success; ?>
+        </div>
     <?php endif; ?>
 
-    <div class="card" style="max-width: 640px; margin: 24px auto;">
+    <div class="card profile-card">
         <form method="POST" id="profile-form" enctype="multipart/form-data">
             <!-- AVATAR -->
-            <div style="text-align:center; margin-bottom:20px;">
+            <div class="avatar-container">
                 <img
                     id="avatar-preview"
                     src="<?php echo htmlspecialchars($user["avatar_url"]); ?>"
@@ -129,7 +131,7 @@ if (empty($layoutIncluded)) {
             </div>
 
             <!-- BOTONES -->
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <div class="button-group">
                 <button type="button" class="btn btn-secondary" id="edit-btn">Editar Perfil</button>
                 <button type="submit" class="btn btn-primary" id="save-btn" style="display:none;">
                     Guardar

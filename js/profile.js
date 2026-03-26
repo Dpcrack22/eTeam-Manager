@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     setTimeout(() => {
+        successBox.style.opacity = "0";
         successBox.style.display = "none";
     }, 3000); // 3000ms son 3s
 
