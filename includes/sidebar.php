@@ -64,13 +64,12 @@ if (isset($_SESSION['user']['email'])) {
                 <img 
                     src="<?php echo htmlspecialchars($appCurrentUser['avatar_url']); ?>" 
                     alt="Avatar <?php echo htmlspecialchars($appCurrentUser['name']); ?>" 
-                    style="width:48px; height:48px; border-radius:50%; object-fit:cover;"
                 />
             </div>
 
             <!-- Información del usuario -->
             <div class="sidebar-user-info">
-                <div class="sidebar-user-name" style="font-weight:bold; font-size:0.95rem;">
+                <div class="sidebar-user-name">
                     <?php echo htmlspecialchars($appCurrentUser['name']); ?>
                 </div>
                 <div class="small" style="font-size:0.8rem; color:#666;">
