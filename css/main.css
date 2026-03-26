@@ -225,6 +225,70 @@ p {
   color: var(--text-main);
 }
 
+.sidebar-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  flex-wrap: wrap; /* 🔥 clave */
+}
+
+/* Avatar */
+.sidebar-user-avatar {
+  flex-shrink: 0;
+}
+
+.sidebar-user-avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Info usuario */
+.sidebar-user-info {
+  flex-grow: 1;
+  min-width: 120px; /* evita que se rompa feo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 🔥 centra verticalmente nombre + rol dentro del div */
+}
+
+.sidebar-user-name {
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.sidebar-user-role {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Botones */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+@media (max-width: 1024px) {
+  .sidebar-user-card {
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    width: 100%;
+    flex-direction: row; /* pasan a horizontal */
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons .btn {
+    flex: 1; /* ocupan espacio proporcional */
+    min-width: 100px;
+    text-align: center;
+  }
+}
+
 .main {
   min-width: 0;
 }
@@ -1235,6 +1299,14 @@ textarea:focus {
 /* Mensaje de éxito */
 .success-box {
   background: lightgreen;
+  padding: 10px;
+  color: black;
+  text-align: center;
+  transition: opacity 0.5s ease;
+}
+
+#error-box {
+  background: lightcoral;
   padding: 10px;
   color: black;
   text-align: center;

@@ -65,9 +65,9 @@ if (empty($layoutIncluded)) {
 <div class="profile-page">
     <!-- MENSAJES -->
     <?php if (!empty($errors)): ?>
-        <div class="error-container">
+        <div id="error-box">
             <?php foreach ($errors as $error): ?>
-                <div class="error-box"><?php echo $error; ?></div>
+                <?php echo $error; ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

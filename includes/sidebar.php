@@ -58,9 +58,9 @@ if (isset($_SESSION['user']['email'])) {
             </nav>
         </div>
 
-        <div class="card sidebar-panel sidebar-user-card" style="display:flex; align-items:center; gap:12px; padding:12px;">
+        <div class="card sidebar-panel sidebar-user-card">
             <!-- Avatar del usuario -->
-            <div style="flex-shrink:0;">
+            <div class="sidebar-user-avatar">
                 <img 
                     src="<?php echo htmlspecialchars($appCurrentUser['avatar_url']); ?>" 
                     alt="Avatar <?php echo htmlspecialchars($appCurrentUser['name']); ?>" 
@@ -69,7 +69,7 @@ if (isset($_SESSION['user']['email'])) {
             </div>
 
             <!-- Información del usuario -->
-            <div style="flex-grow:1;">
+            <div class="sidebar-user-info">
                 <div class="sidebar-user-name" style="font-weight:bold; font-size:0.95rem;">
                     <?php echo htmlspecialchars($appCurrentUser['name']); ?>
                 </div>
@@ -79,7 +79,7 @@ if (isset($_SESSION['user']['email'])) {
             </div>
 
             <!-- Botones de acción -->
-            <div class="stack-sm" style="display:flex; flex-direction:column; gap:6px;">
+            <div class="stack-sm action-buttons">
                 <a class="btn btn-secondary btn-sm" href="app.php?view=profile">Cuenta</a>
                 <a class="btn btn-primary btn-sm" href="/includes/logout.php">Logout</a>
             </div>

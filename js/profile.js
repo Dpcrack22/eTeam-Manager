@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const avatarPreview = document.getElementById("avatar-preview");
 
     const successBox = document.getElementById("success-box");
+    const errorBox = document.getElementById("error-box");
 
     if (!editBtn || !saveBtn || !cancelBtn || !usernameInput || !avatarInput || !avatarPreview) {
         console.warn("Perfil: algún elemento no existe en el DOM.");
@@ -44,7 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
         successBox.style.opacity = "0";
         successBox.style.display = "none";
-    }, 3000); // 3000ms son 3s
+    }, 3000);
+    
+    setTimeout(() => {
+        errorBox.style.opacity = "0";
+        errorBox.style.display = "none";
+    }, 3000);// 3000ms son 3s
 
     editBtn.addEventListener("click", showEditMode);
     cancelBtn.addEventListener("click", hideEditMode);
