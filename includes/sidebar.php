@@ -22,7 +22,7 @@ $appCurrentUser = [
     'name' => 'Invitado',
     'role' => 'Sin rol',
     'organization' => 'Sin organización',
-    'avatar_url' => '/uploads/avatars/default.png'
+    'avatar_url' => '/uploads/avatars/default.jpg'
 ];
 
 if (isset($_SESSION['user']['email'])) {
@@ -32,7 +32,7 @@ if (isset($_SESSION['user']['email'])) {
             'name' => $userData['username'] ?? 'Usuario',
             'role' => $userData['role'] ?? 'Sin rol',
             'organization' => $userData['organization_name'] ?? 'Sin organización',
-            'avatar_url' => $userData['avatar_url'] ?? '/uploads/avatars/default.png'
+            'avatar_url' => $userData['avatar_url'] ?? '/uploads/avatars/default.jpg'
         ];
     }
 }
@@ -80,8 +80,8 @@ if (isset($_SESSION['user']['email'])) {
 
             <!-- Botones de acción -->
             <div class="stack-sm" style="display:flex; flex-direction:column; gap:6px;">
-                <a class="btn btn-secondary btn-sm" href="app.php?view=profile">Mi cuenta</a>
-                <a class="btn btn-primary btn-sm" href="/includes/logout.php">Logout demo</a>
+                <a class="btn btn-secondary btn-sm" href="app.php?view=profile">Cuenta</a>
+                <a class="btn btn-primary btn-sm" href="/includes/logout.php">Logout</a>
             </div>
         </div>
     <?php else: ?>

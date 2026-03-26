@@ -10,14 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const avatarInput = document.getElementById("avatar-input");
     const avatarPreview = document.getElementById("avatar-preview");
 
-    if (!editBtn || !saveBtn || !cancelBtn || !usernameText || !usernameInput || !avatarInput || !avatarPreview) {
+    const successBox = document.getElementById("success-box");
+
+    if (!editBtn || !saveBtn || !cancelBtn || !usernameInput || !avatarInput || !avatarPreview) {
         console.warn("Perfil: algún elemento no existe en el DOM.");
         return;
     }
 
     const showEditMode = () => {
-        usernameText.style.display = "none";
-        usernameInput.style.display = "block";
+        usernameInput.disabled = false;
         if(avatarField) avatarField.style.display = "block";
 
         editBtn.style.display = "none";
@@ -26,8 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const hideEditMode = () => {
-        usernameText.style.display = "block";
-        usernameInput.style.display = "none";
+        usernameInput.disabled = true;
         if(avatarField) avatarField.style.display = "none";
 
         editBtn.style.display = "inline-block";
@@ -40,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
             avatarPreview.src = avatarPreview.dataset.original || avatarPreview.src;
         }
     };
+
+    setTimeout(() => {
+        successBox.style.display = "none";
+    }, 3000); // 3000ms son 3s
 
     editBtn.addEventListener("click", showEditMode);
     cancelBtn.addEventListener("click", hideEditMode);

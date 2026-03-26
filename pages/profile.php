@@ -73,7 +73,7 @@ if (empty($layoutIncluded)) {
     <?php endif; ?>
 
     <?php if ($success): ?>
-        <div class="success-box"><?php echo $success; ?></div>
+        <div id="success-box" style="background: lightgreen; padding: 10px; color: black; text-align: center;"><?php echo $success; ?></div>
     <?php endif; ?>
 
     <div class="card" style="max-width: 640px; margin: 24px auto;">
@@ -89,27 +89,27 @@ if (empty($layoutIncluded)) {
             <!-- USERNAME -->
             <div class="field">
                 <label>Username</label>
-                <span id="username-text"><?php echo htmlspecialchars($user['username']); ?></span>
                 <input
                     type="text"
                     name="username"
                     id="username-input"
                     value="<?php echo htmlspecialchars($user['username']); ?>"
-                    style="display:none;"
+                    style="display:block;"
+                    disabled
                 >
-            </div>
+            </div><br>
 
             <!-- EMAIL (Solo lectura) -->
             <div class="field">
                 <label>Email</label>
                 <input type="text" value="<?php echo htmlspecialchars($user["email"]); ?>" disabled>
-            </div>
+            </div><br>
 
             <!-- ROL -->
             <div class="field">
                 <label>Rol</label>
                 <input type="text" value="<?php echo htmlspecialchars($user["role"] ?? "Sin rol"); ?>" disabled>
-            </div>
+            </div><br>
 
             <!-- ORGANIZACIÓN -->
             <div class="field">
