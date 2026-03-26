@@ -5,9 +5,9 @@ $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strt
 $appModules = [
     'dashboard' => [
         'label' => 'Dashboard',
-        'title' => 'Dashboard base',
+        'title' => 'Dashboard',
         'eyebrow' => 'App interna',
-        'description' => 'Resumen inicial del sistema con acceso al contexto principal de trabajo.',
+        'description' => 'Resumen operativo del contexto actual, la agenda inmediata, las tareas abiertas y el seguimiento competitivo del roster.',
         'page' => __DIR__ . '/../pages/dashboard.php',
         "showInSidebar" => true
     ],
@@ -102,12 +102,17 @@ $activeSection = $activeSection ?? $view;
 $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
+$pageScripts = $pageScripts ?? [];
 $appAuthState = $appAuthState ?? 'authenticated';
 $appCurrentUser = $appCurrentUser ?? [
     'name' => 'Demo User',
     'role' => 'Manager',
     'organization' => 'Parallax Esports',
 ];
+
+if ($view === 'dashboard') {
+    $pageScripts[] = 'js/modules/dashboard.js';
+}
 
 if (!isset($appNavItems)) {
     $appNavItems = [];
