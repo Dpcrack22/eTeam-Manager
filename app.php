@@ -1,5 +1,18 @@
 <?php
+require_once __DIR__ . '/includes/auth.php';
+
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
+$isAuthenticated = isLogged();
+
+if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
+    header('Location: app.php?view=login');
+    exit;
+}
+
+if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
+    header('Location: app.php?view=dashboard');
+    exit;
+}
 
 $appModules = [
     'dashboard' => [
@@ -82,11 +95,11 @@ $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
 $pageScripts = $pageScripts ?? [];
-$appAuthState = $appAuthState ?? 'authenticated';
+$appAuthState = $appAuthState ?? ($isAuthenticated ? 'authenticated' : 'guest');
 $appCurrentUser = $appCurrentUser ?? [
-    'name' => 'Demo User',
-    'role' => 'Manager',
-    'organization' => 'Parallax Esports',
+    'name' => $_SESSION['user']['name'] ?? 'Demo User',
+    'role' => $_SESSION['user']['role'] ?? 'Manager',
+    'organization' => $_SESSION['user']['organization'] ?? 'Parallax Esports',
 ];
 
 if ($view === 'dashboard') {

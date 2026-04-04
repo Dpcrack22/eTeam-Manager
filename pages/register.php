@@ -1,132 +1,81 @@
 <?php
-$usersFile = __DIR__ . "/../database/users.json";
-$name = "";
-$surname = "";
-$email = "";
-$date = "";
-$password = "";
-$rol = "";
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/register_functions.php';
+
+$name = '';
+$email = '';
+$password = '';
+$rol = '';
+$organizationId = '';
 $errors = [];
-$users = [];
+$organizations = getAllOrganizations($conn);
 
-// Leer los usuarios que ya estan en el archivo
-if (file_exists($usersFile)) {
-    $users = json_decode(file_get_contents($usersFile), true) ?? [];
+if (isLogged()) {
+    echo '<script>window.location.href="app.php?view=dashboard";</script>';
+    exit;
 }
 
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST["name"] ?? "");
-    $surname = trim($_POST["surname"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $date = $_POST["date"] ?? "";
-    $password = $_POST["password"] ?? "";
-    $rol = $_POST["role"] ?? "";
-    $errors = validateRegister($name, $surname, $email, $date, $password, $rol);
-
-    // Comprobar que el email no exista ya
-    foreach ($users as $user) {
-        if ($user["email"] === $email) {
-            $errors["email"] = "Este correo ya está registrado";
-            break;
-        }
-    }
-
-    if (empty($errors)) {
-        // Añadir usuario nuevo
-        $users[] = [
-            'email' => $email,
-            'password' => $password
-        ];
-        file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
-
-        echo '<script>window.location.href="app.php?view=login";</script>';
-        exit;
-    }
-}
-
-// Comprobaciones basicas para que el register sea correcto
-function validateRegister($name, $surname, $email, $date, $password, $rol) {
+function validateRegister(string $name, string $email, string $password, string $rol, string $organizationId): array
+{
     $errors = [];
 
-    // Validamos el nombre
-    if ($name === "") {
-        $errors["name"] = "El nombre es obligatorio";
-    } else {
-        if (strpos($name, " ") !== false) {
-            $errors["name"] = "El nombre no puede contener espacios";
-        } else if (strlen($name) <= 2) {
-            $errors["name"] = "El nombre no puede contener menos o igual que 2 caracteres";
-        }
+    if ($name === '') {
+        $errors['name'] = 'El nombre es obligatorio';
+    } elseif (strlen($name) < 3) {
+        $errors['name'] = 'El nombre debe tener al menos 3 caracteres';
     }
 
-    // Validamos el apellido
-    if ($surname === "") {
-        $errors["surname"] = "El apellido es obligatorio";
-    } else {
-        if (strlen($surname) <= 4) {
-            $errors["surname"] = "El apellido no puede contener menos o igual que 4 caracteres";
-        }
+    if ($email === '') {
+        $errors['email'] = 'El correo electronico es obligatorio';
+    } elseif (strpos($email, '@') === false) {
+        $errors['email'] = 'El correo electronico introducido no es valido (falta "@")';
+    } elseif (strpos($email, ' ') !== false) {
+        $errors['email'] = 'El correo electronico no puede contener espacios';
     }
 
-    // Validamos el email
-    if ($email === "") {
-        $errors["email"] = "El correo electronico es obligatorio";
-    } else {
-        if (strpos($email, "@") === false) {
-            $errors["email"] = 'El correo electronico introducido no es valido (falta "@")';
-        } else if (strpos($email, " ") !== false) {
-            $errors["email"] = "El correo electronico no puede contener espacios";
-        } else if (strlen($email) < 5) {
-            $errors["email"] = "El correo electronico introducido es demasiado corto";
-        }
+    if ($password === '') {
+        $errors['password'] = 'La contraseña es obligatoria';
+    } elseif (strlen($password) < 8) {
+        $errors['password'] = 'La contraseña debe tener al menos 8 caracteres';
     }
 
-    // Validamos la fecha
-    if ($date === "") {
-        $errors["date"] = "La fecha es obligatoria";
-    } else {
-
-        list($year, $month, $day) = explode("-", $date);
-
-        if (!checkdate((int)$month, (int)$day, (int)$year)) {
-            $errors["date"] = "La fecha introducida no es válida";
-        } else {
-            $birthdate = new DateTime($date);
-            $today = new DateTime();
-            $age = $today->diff($birthdate)->y;
-
-            if ($birthdate > $today) {
-                $errors["date"] = "La fecha no puede ser futura";
-            } elseif ($age > 120) {
-                $errors["date"] = "La fecha introducida no es válida";
-            }
-        }
+    if ($organizationId === '') {
+        $errors['organization'] = 'Selecciona una organización';
     }
 
-    // Validamos la contraseña
-    if ($password === "") {
-        $errors["password"] = "La contraseña és obligatoria";
-    } else {
-        if (strlen($password) < 5) {
-            $errors["password"] = "La contraseña introducida es demasiado corta (minimo 5 caracteres)";
-        } elseif (strlen($password) > 30) {
-            $errors["password"] = "Como vas a poner mas de 30 caracteres maldito loco";
-        }
-    }
-
-    // Validamos el rol
-    if ($rol === "") {
-        $errors["rol"] = "El rol és obligatorio";
-    } else {
-        $allowed = ['Owner', 'Manager', 'Coach', "Player", "Viewer"];
-
-        if (!in_array($rol, $allowed)) {
-            $errors['rol'] = "Selección inválida";
-        }
+    $allowedRoles = ['Owner', 'Manager', 'Coach', 'Player', 'Viewer'];
+    if ($rol === '' || !in_array($rol, $allowedRoles, true)) {
+        $errors['rol'] = 'Selecciona un rol válido';
     }
 
     return $errors;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = (string) ($_POST['password'] ?? '');
+    $rol = trim($_POST['role'] ?? '');
+    $organizationId = (string) ($_POST['organization_id'] ?? '');
+
+    $errors = validateRegister($name, $email, $password, $rol, $organizationId);
+
+    if (empty($errors)) {
+        $statement = $conn->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
+        $statement->execute([$email]);
+
+        if ($statement->fetch()) {
+            $errors['email'] = 'Este correo ya está registrado';
+        } elseif (!validateOrganization($conn, (int) $organizationId)) {
+            $errors['organization'] = 'La organización seleccionada no existe';
+        } else {
+            $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
+            addUserToOrganization($conn, $userId, (int) $organizationId, $rol);
+
+            echo '<script>window.location.href="app.php?view=login";</script>';
+            exit;
+        }
+    }
 }
 $pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Registro');
 $pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Crear cuenta');
@@ -141,54 +90,60 @@ if (empty($layoutIncluded)) {
     $shouldCloseLayout = true;
 }
 ?>
-<!-- Mostrar los errores -->
 <?php if (!empty($errors)): ?>
     <div class="error-container">
         <?php foreach ($errors as $error): ?>
             <div class="error-box">
-                <?php echo $error; ?>
+                <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
 
 <div class="card" style="max-width: 640px; margin: 24px auto;">
-    <form class="form" method="post" novalidate>
-        <div class="field">
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text" placeholder="Paco"/>
+    <form class="form" method="post" enctype="multipart/form-data" novalidate>
+        <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
+            <label for="name">Nombre</label>
+            <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
         </div>
 
-        <div class="field">
-            <label for="surname">Username</label>
-            <input id="surname" name="surname" type="text" placeholder="Gonzalez Fernandez" />
-        </div>
-
-        <div class="field">
+        <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
             <label for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="player@team.gg" />
+            <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
         </div>
 
-        <div class="field">
-            <label for="date">Birthday</label>
-            <input id="date" name="date" type="date" />
-        </div>
-
-        <div class="field">
-            <label for="password">Password</label>
+        <div class="field <?php echo isset($errors['password']) ? 'form-group-error' : ''; ?>">
+            <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" placeholder="••••••••" />
         </div>
 
-        <div class="field">
+        <div class="field <?php echo isset($errors['organization']) ? 'form-group-error' : ''; ?>">
+            <label for="organization">Organización</label>
+            <select id="organization" name="organization_id">
+                <option value="">Selecciona una organización</option>
+                <?php foreach ($organizations as $organization): ?>
+                    <option value="<?php echo (int) $organization['id']; ?>" <?php echo (string) $organizationId === (string) $organization['id'] ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($organization['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="field <?php echo isset($errors['rol']) ? 'form-group-error' : ''; ?>">
             <label for="role">Rol</label>
             <select id="role" name="role">
                 <option value="">Selecciona un rol</option>
-                <option value="Owner">Owner</option>
-                <option value="Manager">Manager</option>
-                <option value="Coach">Coach</option>
-                <option value="Player">Player</option>
-                <option value="Viewer">Viewer</option>
+                <option value="Owner" <?php echo $rol === 'Owner' ? 'selected' : ''; ?>>Owner</option>
+                <option value="Manager" <?php echo $rol === 'Manager' ? 'selected' : ''; ?>>Manager</option>
+                <option value="Coach" <?php echo $rol === 'Coach' ? 'selected' : ''; ?>>Coach</option>
+                <option value="Player" <?php echo $rol === 'Player' ? 'selected' : ''; ?>>Player</option>
+                <option value="Viewer" <?php echo $rol === 'Viewer' ? 'selected' : ''; ?>>Viewer</option>
             </select>
+        </div>
+
+        <div class="field">
+            <label for="avatar_file">Avatar</label>
+            <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
         </div>
 
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
