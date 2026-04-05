@@ -14,6 +14,8 @@ if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     exit;
 }
 
+$isTeamDetailView = $view === 'team-detail';
+
 $appModules = [
     'dashboard' => [
         'label' => 'Dashboard',
@@ -35,6 +37,13 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Gestion de roster, detalle de equipos y relacion con la organizacion activa.',
         'page' => __DIR__ . '/../pages/teams.php',
+    ],
+    'team-detail' => [
+        'label' => 'Detalle de equipo',
+        'title' => 'Detalle de equipo',
+        'eyebrow' => 'Modulo',
+        'description' => 'Ficha del roster, sus miembros y sus roles internos.',
+        'page' => __DIR__ . '/../pages/team-detail.php',
     ],
     'scrims' => [
         'label' => 'Scrims',
@@ -87,10 +96,11 @@ $appModules = [
 
 if (!isset($appModules[$view])) {
     $view = 'dashboard';
+    $isTeamDetailView = false;
 }
 
 $currentModule = $appModules[$view];
-$activeSection = $activeSection ?? $view;
+$activeSection = $activeSection ?? ($isTeamDetailView ? 'teams' : $view);
 $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
@@ -110,6 +120,10 @@ if (!isset($appNavItems)) {
     $appNavItems = [];
 
     foreach ($appModules as $moduleKey => $module) {
+        if ($moduleKey === 'team-detail') {
+            continue;
+        }
+
         $appNavItems[$moduleKey] = [
             'label' => $module['label'],
             'href' => 'app.php?view=' . $moduleKey,
@@ -117,10 +131,18 @@ if (!isset($appNavItems)) {
     }
 }
 
-$appBreadcrumbs = [
-    ['label' => 'App', 'href' => 'app.php?view=dashboard'],
-    ['label' => $currentModule['label'], 'href' => 'app.php?view=' . $view],
-];
+if ($isTeamDetailView) {
+    $appBreadcrumbs = [
+        ['label' => 'App', 'href' => 'app.php?view=dashboard'],
+        ['label' => 'Equipos', 'href' => 'app.php?view=teams'],
+        ['label' => $currentModule['label'], 'href' => 'app.php?view=team-detail'],
+    ];
+} else {
+    $appBreadcrumbs = [
+        ['label' => 'App', 'href' => 'app.php?view=dashboard'],
+        ['label' => $currentModule['label'], 'href' => 'app.php?view=' . $view],
+    ];
+}
 
 // Decide per-view UI tweaks
 $hideSidebar = in_array($view, ['login', 'register'], true);

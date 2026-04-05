@@ -77,6 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'El juego seleccionado no es válido';
         }
 
+        if (empty($errors) && teamExistsByNameAndGame($conn, (int) $activeOrganizationId, $teamName, $gameId)) {
+            $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
+        }
+
         if (empty($errors)) {
             $newTeamId = createTeam(
                 $conn,
@@ -154,13 +158,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <p class="small"><?php echo htmlspecialchars($team['description'] ?: 'Sin descripción', ENT_QUOTES, 'UTF-8'); ?></p>
 
-                        <form method="post">
-                            <input type="hidden" name="action" value="activate_team" />
-                            <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
-                            <button class="btn <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
-                                <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'Equipo actual' : 'Usar este equipo'; ?>
-                            </button>
-                        </form>
+                        <div class="stack-sm">
+                            <a class="btn btn-secondary" href="app.php?view=team-detail&amp;team_id=<?php echo (int) $team['id']; ?>">Ver detalle</a>
+
+                            <form method="post">
+                                <input type="hidden" name="action" value="activate_team" />
+                                <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
+                                <button class="btn <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
+                                    <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'Equipo actual' : 'Usar este equipo'; ?>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -210,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="landing-list" style="margin-top: 24px;">
             <div class="landing-list-item">El equipo activo se usa como contexto operativo del dashboard.</div>
-            <div class="landing-list-item">La gestión de miembros del roster vendrá después.</div>
+            <div class="landing-list-item">La gestión de miembros y roles vive en el detalle de cada equipo.</div>
             <div class="landing-list-item">Solo roles de gestión pueden crear equipos.</div>
         </div>
     </div>

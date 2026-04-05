@@ -25,6 +25,26 @@ function getOrganizationTeams(PDO $conn, int $organizationId): array
     return $statement->fetchAll();
 }
 
+function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, int $gameId, ?int $ignoreTeamId = null): bool
+{
+    $sql = 'SELECT id FROM teams WHERE organization_id = :organization_id AND game_id = :game_id AND name = :name';
+    if ($ignoreTeamId !== null) {
+        $sql .= ' AND id <> :ignore_team_id';
+    }
+    $sql .= ' LIMIT 1';
+
+    $statement = $conn->prepare($sql);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->bindValue(':game_id', $gameId, PDO::PARAM_INT);
+    $statement->bindValue(':name', $name, PDO::PARAM_STR);
+    if ($ignoreTeamId !== null) {
+        $statement->bindValue(':ignore_team_id', $ignoreTeamId, PDO::PARAM_INT);
+    }
+    $statement->execute();
+
+    return (bool) $statement->fetch();
+}
+
 function getTeamById(PDO $conn, int $teamId, int $organizationId = 0): array|false
 {
     $sql = 'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, g.name AS game_name
@@ -71,6 +91,121 @@ function createTeam(PDO $conn, int $organizationId, int $gameId, string $name, ?
     $statement->execute();
 
     return (int) $conn->lastInsertId();
+}
+
+function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, string $name, ?string $tag = null, ?string $description = null): bool
+{
+    if ($tag !== null) {
+        $tag = trim($tag);
+        if ($tag === '') {
+            $tag = null;
+        }
+    }
+
+    if ($description !== null) {
+        $description = trim($description);
+        if ($description === '') {
+            $description = null;
+        }
+    }
+
+    $statement = $conn->prepare(
+        'UPDATE teams
+         SET game_id = :game_id, name = :name, tag = :tag, description = :description
+         WHERE id = :team_id AND organization_id = :organization_id'
+    );
+    $statement->bindValue(':game_id', $gameId, PDO::PARAM_INT);
+    $statement->bindValue(':name', $name, PDO::PARAM_STR);
+    $statement->bindValue(':tag', $tag, $tag === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+    $statement->bindValue(':description', $description, $description === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+
+    return $statement->execute();
+}
+
+function getTeamMembers(PDO $conn, int $teamId): array
+{
+    $statement = $conn->prepare(
+        'SELECT tm.id, tm.user_id, tm.role, tm.joined_at, tm.is_active, u.username, u.email, u.avatar_url
+         FROM team_members tm
+         INNER JOIN users u ON u.id = tm.user_id
+         WHERE tm.team_id = :team_id AND tm.is_active = 1
+         ORDER BY FIELD(tm.role, "coach", "player", "analyst", "substitute"), u.username ASC'
+    );
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+function addOrUpdateTeamMemberByEmail(PDO $conn, int $teamId, string $email, string $role): array
+{
+    $userStatement = $conn->prepare('SELECT id, username FROM users WHERE email = :email LIMIT 1');
+    $userStatement->bindValue(':email', $email, PDO::PARAM_STR);
+    $userStatement->execute();
+    $user = $userStatement->fetch();
+
+    if (!$user) {
+        return [
+            'success' => false,
+            'error' => 'No existe ningún usuario con ese email',
+        ];
+    }
+
+    $memberStatement = $conn->prepare('SELECT id, is_active FROM team_members WHERE team_id = :team_id AND user_id = :user_id LIMIT 1');
+    $memberStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $memberStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
+    $memberStatement->execute();
+    $member = $memberStatement->fetch();
+
+    if ($member) {
+        $updateStatement = $conn->prepare(
+            'UPDATE team_members SET role = :role, is_active = 1 WHERE team_id = :team_id AND user_id = :user_id'
+        );
+        $updateStatement->bindValue(':role', $role, PDO::PARAM_STR);
+        $updateStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $updateStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
+        $updateStatement->execute();
+    } else {
+        $insertStatement = $conn->prepare(
+            'INSERT INTO team_members (team_id, user_id, role, joined_at, is_active)
+             VALUES (:team_id, :user_id, :role, NOW(), 1)'
+        );
+        $insertStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $insertStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
+        $insertStatement->bindValue(':role', $role, PDO::PARAM_STR);
+        $insertStatement->execute();
+    }
+
+    return [
+        'success' => true,
+        'user_id' => (int) $user['id'],
+        'username' => $user['username'],
+    ];
+}
+
+function updateTeamMemberRole(PDO $conn, int $teamId, int $userId, string $role): bool
+{
+    $statement = $conn->prepare(
+        'UPDATE team_members SET role = :role, is_active = 1 WHERE team_id = :team_id AND user_id = :user_id'
+    );
+    $statement->bindValue(':role', $role, PDO::PARAM_STR);
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+
+    return $statement->execute();
+}
+
+function removeTeamMember(PDO $conn, int $teamId, int $userId): bool
+{
+    $statement = $conn->prepare(
+        'UPDATE team_members SET is_active = 0 WHERE team_id = :team_id AND user_id = :user_id'
+    );
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+
+    return $statement->execute();
 }
 
 function setActiveTeamContext(PDO $conn, int $organizationId, int $teamId): array
