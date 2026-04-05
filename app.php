@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/organization_functions.php';
+require_once __DIR__ . '/includes/team_functions.php';
 
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
 $isAuthenticated = isLogged();
@@ -148,6 +150,25 @@ if (empty($appCurrentUser['initials'])) {
 
         if ($initials !== '') {
             $appCurrentUser['initials'] = $initials;
+        }
+    }
+}
+
+if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
+    $appShellUserId = (int) $_SESSION['user']['id'];
+    $appShellOrganizationId = getActiveOrganizationId($conn, $appShellUserId);
+
+    if ($appShellOrganizationId !== null) {
+        $appShellTeamId = getActiveTeamId($conn, (int) $appShellOrganizationId);
+
+        if ($appShellTeamId !== null) {
+            $appShellTeam = getTeamById($conn, (int) $appShellTeamId, (int) $appShellOrganizationId);
+
+            if ($appShellTeam) {
+                $appCurrentUser['team'] = $appShellTeam['name'];
+                $appCurrentUser['team_id'] = (int) $appShellTeam['id'];
+                $appCurrentUser['team_tag'] = $appShellTeam['tag'] ?: '--';
+            }
         }
     }
 }

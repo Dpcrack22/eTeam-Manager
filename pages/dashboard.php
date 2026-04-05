@@ -68,7 +68,10 @@ $activeTeam = [
     'id' => null,
     'name' => 'Sin equipo',
     'tag' => '--',
+    'game_name' => 'Sin juego',
+    'description' => 'Sin contexto operativo todavía.',
 ];
+$activeTeamMembers = [];
 $upcomingEvents = [];
 $pendingTasks = [];
 $recentScrims = [];
@@ -88,9 +91,15 @@ if ($activeOrganization['id'] !== null) {
                 'id' => (int) $teamRow['id'],
                 'name' => $teamRow['name'],
                 'tag' => $teamRow['tag'] ?: '--',
+                'game_name' => $teamRow['game_name'],
+                'description' => $teamRow['description'] ?: 'Roster activo cargado desde la base de datos.',
             ];
             break;
         }
+    }
+
+    if ($activeTeam['id'] !== null) {
+        $activeTeamMembers = getTeamMembers($conn, (int) $activeTeam['id']);
     }
 
     $eventsSql = 'SELECT title, event_type, DATE_FORMAT(start_datetime, "%d %b · %H:%i") AS date_label, location FROM events WHERE organization_id = :organization_id';
@@ -215,6 +224,96 @@ $dashboardData = [
             Todavía no hay un equipo activo. Ve a Equipos para crear o activar uno y el dashboard mostrará su información aquí.
         </div>
     <?php endif; ?>
+
+    <div class="dashboard-overview-grid">
+        <article class="card dashboard-overview-card dashboard-overview-card--accent">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Resumen del roster</div>
+                    <h3 class="h3">Equipo activo</h3>
+                </div>
+                <a class="btn btn-secondary" href="app.php?view=team-detail">Abrir detalle</a>
+            </div>
+
+            <div class="dashboard-team-highlight">
+                <div class="dashboard-team-highlight-main">
+                    <div class="dashboard-team-name"><?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?></div>
+                    <div class="dashboard-team-subtitle"><?php echo htmlspecialchars($activeTeam['game_name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($activeTeam['tag'], ENT_QUOTES, 'UTF-8'); ?></div>
+                    <p class="dashboard-inline-copy"><?php echo htmlspecialchars($activeTeam['description'], ENT_QUOTES, 'UTF-8'); ?></p>
+                </div>
+
+                <div class="dashboard-team-meta-grid">
+                    <div class="dashboard-team-meta-item">
+                        <div class="small">Miembros activos</div>
+                        <div class="dashboard-team-meta-value"><?php echo count($activeTeamMembers); ?></div>
+                    </div>
+                    <div class="dashboard-team-meta-item">
+                        <div class="small">Eventos visibles</div>
+                        <div class="dashboard-team-meta-value"><?php echo count($upcomingEvents); ?></div>
+                    </div>
+                    <div class="dashboard-team-meta-item">
+                        <div class="small">Scrims recientes</div>
+                        <div class="dashboard-team-meta-value"><?php echo count($recentScrims); ?></div>
+                    </div>
+                    <div class="dashboard-team-meta-item">
+                        <div class="small">Tareas abiertas</div>
+                        <div class="dashboard-team-meta-value"><?php echo count($pendingTasks); ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stack-sm dashboard-overview-actions">
+                <a class="btn btn-primary" href="app.php?view=teams">Cambiar equipo</a>
+                <a class="btn btn-secondary" href="app.php?view=scrims">Ver scrims</a>
+                <a class="btn btn-secondary" href="app.php?view=calendar">Abrir calendario</a>
+            </div>
+        </article>
+
+        <article class="card dashboard-overview-card">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Actividad reciente</div>
+                    <h3 class="h3">Resumen combinado</h3>
+                </div>
+            </div>
+
+            <div class="dashboard-timeline">
+                <?php if (!empty($upcomingEvents)): ?>
+                    <div class="dashboard-timeline-item">
+                        <span class="dashboard-timeline-dot is-event"></span>
+                        <div>
+                            <div class="dashboard-timeline-title">Próximo evento</div>
+                            <div class="dashboard-timeline-copy"><?php echo htmlspecialchars($upcomingEvents[0]['title'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($upcomingEvents[0]['date_label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($pendingTasks)): ?>
+                    <div class="dashboard-timeline-item">
+                        <span class="dashboard-timeline-dot is-task"></span>
+                        <div>
+                            <div class="dashboard-timeline-title">Tarea activa</div>
+                            <div class="dashboard-timeline-copy"><?php echo htmlspecialchars($pendingTasks[0]['title'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($pendingTasks[0]['meta'], ENT_QUOTES, 'UTF-8'); ?></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($recentScrims)): ?>
+                    <div class="dashboard-timeline-item">
+                        <span class="dashboard-timeline-dot is-scrim"></span>
+                        <div>
+                            <div class="dashboard-timeline-title">Último scrim</div>
+                            <div class="dashboard-timeline-copy">vs <?php echo htmlspecialchars($recentScrims[0]['opponent_name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($recentScrims[0]['score_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($recentScrims[0]['meta_label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (empty($upcomingEvents) && empty($pendingTasks) && empty($recentScrims)): ?>
+                    <div class="dashboard-empty-state">Todavía no hay actividad suficiente para construir un resumen.</div>
+                <?php endif; ?>
+            </div>
+        </article>
+    </div>
 
     <div class="dashboard-kpis">
         <article class="card dashboard-kpi">

@@ -23,6 +23,11 @@ $activeTeam = null;
 $errors = [];
 $successMessage = '';
 
+if (!empty($_SESSION['flash_success'])) {
+    $successMessage = (string) $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
+}
+
 if ($activeOrganizationId) {
     $teams = getOrganizationTeams($conn, $activeOrganizationId);
 
@@ -92,7 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
             setActiveTeamContext($conn, $activeOrganizationId, $newTeamId);
-            $successMessage = 'Equipo creado y marcado como activo';
+            $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
+            header('Location: app.php?view=teams');
+            exit;
         }
     }
 
@@ -101,8 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = setActiveTeamContext($conn, (int) $activeOrganizationId, $teamId);
 
         if (!empty($result['success'])) {
-            $activeTeam = $result['team'];
-            $successMessage = 'Equipo activo actualizado';
+            $_SESSION['flash_success'] = 'Equipo activo actualizado';
+            header('Location: app.php?view=teams');
+            exit;
         } else {
             $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
         }

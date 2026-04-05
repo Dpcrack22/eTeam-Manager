@@ -77,6 +77,7 @@ $pageTitle = 'Calendario';
 $pageEyebrow = 'Modulo';
 $pageDescription = 'Agenda del equipo activo con un calendario mensual real, scrims recientes y eventos para mantener conectada la planificación competitiva.';
 $activeSection = 'calendar';
+$pageScripts[] = 'js/modules/calendar.js';
 ?>
 
 <section class="calendar-page">
@@ -133,7 +134,11 @@ $activeSection = 'calendar';
                         <article class="calendar-day<?php echo $day['is_current_month'] ? '' : ' is-muted'; ?><?php echo $day['is_today'] ? ' is-today' : ''; ?>">
                             <div class="calendar-day-top">
                                 <span class="calendar-day-number"><?php echo htmlspecialchars($day['day'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                <span class="small"><?php echo $day['is_current_month'] ? ' ' : 'Otro mes'; ?></span>
+                                <?php if (!empty($day['entries'])): ?>
+                                    <span class="calendar-day-count"><?php echo count($day['entries']); ?></span>
+                                <?php else: ?>
+                                    <span class="small"><?php echo $day['is_current_month'] ? ' ' : 'Otro mes'; ?></span>
+                                <?php endif; ?>
                             </div>
 
                             <div class="calendar-day-events">
@@ -142,13 +147,21 @@ $activeSection = 'calendar';
                                 <?php else: ?>
                                     <?php foreach (array_slice($day['entries'], 0, 3) as $entry): ?>
                                         <?php $entryClass = $entry['kind'] === 'scrim' ? 'is-scrim' : 'is-event'; ?>
-                                        <a class="calendar-event-pill <?php echo $entryClass; ?>" href="<?php echo htmlspecialchars($entry['href'] ?? 'app.php?view=calendar', ENT_QUOTES, 'UTF-8'); ?>">
-                                            <span class="calendar-event-time"><?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <button class="calendar-event-pill <?php echo $entryClass; ?>" type="button"
+                                            data-calendar-entry="true"
+                                            data-entry-kind="<?php echo htmlspecialchars($entry['kind'], ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-title="<?php echo htmlspecialchars($entry['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-time="<?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-badge="<?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-meta="<?php echo htmlspecialchars($entry['meta'], ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-description="<?php echo htmlspecialchars((string) ($entry['description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-entry-href="<?php echo htmlspecialchars((string) ($entry['href'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+                                            <span class="calendar-event-mark"></span>
                                             <span class="calendar-event-copy">
                                                 <strong><?php echo htmlspecialchars($entry['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                                <span><?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                                <span><?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?></span>
                                             </span>
-                                        </a>
+                                        </button>
                                     <?php endforeach; ?>
                                     <?php if (count($day['entries']) > 3): ?>
                                         <div class="calendar-more">+<?php echo count($day['entries']) - 3; ?> más</div>
@@ -185,6 +198,30 @@ $activeSection = 'calendar';
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
+                </div>
+
+                <div class="card calendar-detail-card" data-calendar-detail-card>
+                    <div class="dashboard-section-head">
+                        <div>
+                            <div class="small">Detalle mock</div>
+                            <h3 class="h3">Evento seleccionado</h3>
+                        </div>
+                    </div>
+
+                    <div class="calendar-detail-empty" data-calendar-detail-empty>
+                        Haz clic en cualquier evento del calendario para ver un resumen rápido aquí.
+                    </div>
+
+                    <div class="calendar-detail-content" data-calendar-detail-content hidden>
+                        <div class="calendar-detail-title" data-calendar-detail-title></div>
+                        <div class="calendar-detail-meta" data-calendar-detail-meta></div>
+                        <div class="calendar-detail-badges">
+                            <span class="badge badge-info" data-calendar-detail-kind></span>
+                            <span class="badge" data-calendar-detail-time></span>
+                        </div>
+                        <div class="scrim-note-box calendar-detail-note" data-calendar-detail-description></div>
+                        <a class="btn btn-primary" data-calendar-detail-link href="#" hidden>Ver relacionado</a>
+                    </div>
                 </div>
 
                 <div class="card app-module-card">

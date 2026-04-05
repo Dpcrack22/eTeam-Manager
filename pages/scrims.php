@@ -143,80 +143,67 @@ $statusOptions = getScrimStatusOptions();
             </form>
         </div>
 
-        <div class="grid-2">
-            <div class="card app-module-card">
-                <div class="dashboard-section-head">
-                    <div>
-                        <div class="small">Historial</div>
-                        <h3 class="h3">Listado de scrims</h3>
-                    </div>
-                    <div class="small">Visibles: <span data-scrims-visible-count><?php echo count($scrims); ?></span></div>
+        <div class="card scrim-list-shell">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Historial</div>
+                    <h3 class="h3">Listado de scrims</h3>
                 </div>
-
-                <?php if (empty($scrims)): ?>
-                    <div class="dashboard-empty-state">
-                        No hay scrims para el filtro actual. Prueba con otro estado o crea el primero desde el formulario.
-                    </div>
-                <?php else: ?>
-                    <div class="table-wrap scrim-table-wrap">
-                        <table class="table scrim-table">
-                            <thead>
-                                <tr>
-                                    <th>Rival</th>
-                                    <th>Fecha</th>
-                                    <th>Modo</th>
-                                    <th>Resultado</th>
-                                    <th>Score</th>
-                                    <th>Mapas</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($scrims as $scrim): ?>
-                                    <tr data-scrim-row data-status="<?php echo htmlspecialchars($scrim['result'], ENT_QUOTES, 'UTF-8'); ?>" data-search="<?php echo htmlspecialchars(strtolower($scrim['opponent_name'] . ' ' . ($scrim['opponent_tag'] ?? '') . ' ' . $scrim['game_mode_name']), ENT_QUOTES, 'UTF-8'); ?>">
-                                        <td>
-                                            <div class="scrim-table-opponent"><?php echo htmlspecialchars($scrim['opponent_name'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                            <div class="small"><?php echo !empty($scrim['opponent_tag']) ? htmlspecialchars($scrim['opponent_tag'], ENT_QUOTES, 'UTF-8') : 'Sin tag'; ?></div>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($scrim['match_date_label'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><?php echo htmlspecialchars($scrim['game_mode_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><span class="badge <?php echo htmlspecialchars($scrim['result_badge'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($scrim['result_label'], ENT_QUOTES, 'UTF-8'); ?></span></td>
-                                        <td><?php echo htmlspecialchars($scrim['score_label'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><?php echo (int) $scrim['maps_count']; ?></td>
-                                        <td>
-                                            <div class="scrim-row-actions">
-                                                <a class="btn btn-secondary" href="app.php?view=scrim-detail&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Ver</a>
-                                                <a class="btn btn-primary" href="app.php?view=scrim-form&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Editar</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
+                <div class="small">Visibles: <span data-scrims-visible-count><?php echo count($scrims); ?></span></div>
             </div>
 
-            <div class="card">
-                <div class="dashboard-section-head">
-                    <div>
-                        <div class="small">Sprint 5</div>
-                        <h3 class="h3">Lo que cubre este módulo</h3>
-                    </div>
+            <?php if (empty($scrims)): ?>
+                <div class="dashboard-empty-state">
+                    No hay scrims para el filtro actual. Prueba con otro estado o crea el primero desde el formulario.
                 </div>
+            <?php else: ?>
+                <div class="scrim-list-grid">
+                    <?php foreach ($scrims as $scrim): ?>
+                        <article class="scrim-list-item" data-scrim-row data-status="<?php echo htmlspecialchars($scrim['result'], ENT_QUOTES, 'UTF-8'); ?>" data-search="<?php echo htmlspecialchars(strtolower($scrim['opponent_name'] . ' ' . ($scrim['opponent_tag'] ?? '') . ' ' . $scrim['game_mode_name']), ENT_QUOTES, 'UTF-8'); ?>">
+                            <div class="scrim-list-main">
+                                <div class="scrim-list-title-row">
+                                    <div>
+                                        <div class="scrim-table-opponent"><?php echo htmlspecialchars($scrim['opponent_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                        <div class="small"><?php echo !empty($scrim['opponent_tag']) ? htmlspecialchars($scrim['opponent_tag'], ENT_QUOTES, 'UTF-8') : 'Sin tag'; ?></div>
+                                    </div>
+                                    <span class="badge <?php echo htmlspecialchars($scrim['result_badge'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($scrim['result_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </div>
 
-                <div class="landing-list">
-                    <div class="landing-list-item">Historial por rival, modo y fecha.</div>
-                    <div class="landing-list-item">Formularios de alta y edición visual.</div>
-                    <div class="landing-list-item">Detalle con mapas y orden de enfrentamiento.</div>
-                    <div class="landing-list-item">Puente directo con el equipo activo.</div>
+                                <div class="scrim-list-meta-grid">
+                                    <div class="scrim-list-meta-item">
+                                        <div class="small">Fecha</div>
+                                        <div><?php echo htmlspecialchars($scrim['match_date_label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    </div>
+                                    <div class="scrim-list-meta-item">
+                                        <div class="small">Modo</div>
+                                        <div><?php echo htmlspecialchars($scrim['game_mode_name'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    </div>
+                                    <div class="scrim-list-meta-item">
+                                        <div class="small">Mapas</div>
+                                        <div><?php echo (int) $scrim['maps_count']; ?></div>
+                                    </div>
+                                    <div class="scrim-list-meta-item">
+                                        <div class="small">Score</div>
+                                        <div class="scrim-list-score"><?php echo htmlspecialchars($scrim['score_label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scrim-list-actions">
+                                <a class="btn btn-secondary" href="app.php?view=scrim-detail&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Ver</a>
+                                <a class="btn btn-primary" href="app.php?view=scrim-form&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Editar</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
+            <?php endif; ?>
 
+            <div class="scrim-list-footer">
                 <div class="scrim-note-box">
-                    El siguiente paso lógico ya no es crear más vistas sueltas, sino conectar calendario y estadísticas sobre este mismo modelo de scrims.
+                    Este listado está pensado para leer rápido la relación rival, resultado, score y fecha sin obligarte a desplazar la pantalla en horizontal.
                 </div>
 
-                <div class="stack-sm" style="margin-top: 16px;">
+                <div class="stack-sm">
                     <a class="btn btn-secondary" href="app.php?view=calendar">Abrir calendario</a>
                     <a class="btn btn-secondary" href="app.php?view=scrim-form">Nuevo scrim</a>
                 </div>
