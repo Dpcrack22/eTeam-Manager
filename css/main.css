@@ -635,6 +635,13 @@ p {
   min-width: 0;
 }
 
+.dashboard > .card,
+.dashboard-kpis > .card,
+.dashboard-main-grid > .card,
+.dashboard-content-grid > .card {
+  margin-top: 0;
+}
+
 /* Cards */
 .card {
   background: var(--bg-card);
