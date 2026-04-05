@@ -112,7 +112,7 @@ $pageScripts[] = 'js/modules/calendar.js';
     </div>
 
     <?php if (!empty($successMessage)): ?>
-        <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); color: var(--text-main);">
+        <div class="error-box app-feedback app-feedback-success" data-flash-message role="status" aria-live="polite">
             <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
         </div>
     <?php endif; ?>
@@ -170,10 +170,13 @@ $pageScripts[] = 'js/modules/calendar.js';
                                             data-entry-meta="<?php echo htmlspecialchars($entry['meta'], ENT_QUOTES, 'UTF-8'); ?>"
                                             data-entry-description="<?php echo htmlspecialchars((string) ($entry['description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
                                             data-entry-href="<?php echo htmlspecialchars((string) ($entry['href'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
-                                            <span class="calendar-event-mark"></span>
+                                            <span class="calendar-event-pill-head">
+                                                <span class="calendar-event-time"><?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                                <span class="badge <?php echo htmlspecialchars($entry['badge_class'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                            </span>
                                             <span class="calendar-event-copy">
                                                 <strong><?php echo htmlspecialchars($entry['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                                <span><?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                                <span><?php echo htmlspecialchars($entry['meta'], ENT_QUOTES, 'UTF-8'); ?></span>
                                             </span>
                                         </button>
                                     <?php endforeach; ?>

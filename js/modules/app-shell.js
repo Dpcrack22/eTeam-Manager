@@ -12,6 +12,7 @@
   var deleteConfirmModal = document.querySelector('[data-delete-confirm-modal]');
   var deleteConfirmButton = document.querySelector('[data-delete-confirm-accept]');
   var deleteTrigger = null;
+  var flashMessages = Array.prototype.slice.call(document.querySelectorAll('[data-flash-message]'));
 
   function setSidebarCollapsed(isCollapsed) {
     shell.classList.toggle('is-sidebar-collapsed', isCollapsed);
@@ -58,6 +59,20 @@
     });
   }
 
+  function dismissFlashMessage(message) {
+    if (!message || message.classList.contains('is-dismissed')) {
+      return;
+    }
+
+    message.classList.add('is-dismissed');
+
+    window.setTimeout(function () {
+      if (message.parentNode) {
+        message.parentNode.removeChild(message);
+      }
+    }, 280);
+  }
+
   try {
     var storedCollapsedState = localStorage.getItem(storageKey);
     if (storedCollapsedState === '1') {
@@ -72,6 +87,12 @@
       setSidebarCollapsed(!shell.classList.contains('is-sidebar-collapsed'));
     });
   }
+
+  flashMessages.forEach(function (message) {
+    window.setTimeout(function () {
+      dismissFlashMessage(message);
+    }, 4200);
+  });
 
   document.querySelectorAll('[data-open-team-switcher]').forEach(function (button) {
     button.addEventListener('click', function () {

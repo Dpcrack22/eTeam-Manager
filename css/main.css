@@ -2213,6 +2213,113 @@ textarea:focus {
   margin-top: var(--space-4);
 }
 
+.scrim-form-page .grid-2 {
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+  align-items: start;
+}
+
+.scrim-form-page .card:first-child,
+.scrim-form-page .card:last-child {
+  min-width: 0;
+}
+
+.scrim-form-page .card:first-child {
+  padding: var(--space-4);
+}
+
+.scrim-form-page .card:last-child {
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--bg-secondary) 80%, var(--bg-card));
+}
+
+.error-box.app-feedback {
+  width: 100%;
+  max-width: none;
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.45;
+  transition: opacity 0.28s ease, transform 0.28s ease, max-height 0.28s ease, margin 0.28s ease, padding 0.28s ease;
+}
+
+.error-box.app-feedback-success {
+  color: var(--text-main);
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.16), rgba(46, 204, 113, 0.08));
+  border-color: rgba(46, 204, 113, 0.35);
+  border-left-color: rgba(39, 174, 96, 0.92);
+}
+
+.error-box.app-feedback.is-dismissed {
+  opacity: 0;
+  transform: translateY(-6px);
+  max-height: 0;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.calendar-event-pill {
+  appearance: none;
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-left-width: 4px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-card) 86%, var(--bg-secondary));
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+.calendar-event-pill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.calendar-event-pill.is-scrim {
+  border-left-color: var(--color-primary);
+}
+
+.calendar-event-pill.is-event {
+  border-left-color: var(--info);
+}
+
+.calendar-event-pill .badge {
+  white-space: nowrap;
+}
+
+.calendar-event-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.calendar-event-copy strong {
+  color: var(--text-main);
+  font-size: var(--font-size-secondary);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.calendar-event-copy span {
+  color: var(--text-muted);
+  font-size: var(--font-size-small);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+  .scrim-form-page .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .organization-page {
   display: grid;
   gap: var(--space-4);

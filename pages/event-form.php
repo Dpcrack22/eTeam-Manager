@@ -264,7 +264,7 @@ $activeSection = 'calendar';
         </div>
     <?php else: ?>
         <?php if (!empty($successMessage)): ?>
-            <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); color: var(--text-main);">
+            <div class="error-box app-feedback app-feedback-success" data-flash-message role="status" aria-live="polite">
                 <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endif; ?>
