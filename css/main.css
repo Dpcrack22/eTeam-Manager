@@ -175,14 +175,32 @@ p {
 }
 
 .app.is-sidebar-collapsed {
-  grid-template-columns: 0 1fr;
+  grid-template-columns: 64px 1fr;
 }
 
 .app.is-sidebar-collapsed .sidebar {
-  width: 0;
-  padding: 0;
-  border-right: 0;
+  width: 64px;
+  padding: var(--space-3) 10px;
   overflow: hidden;
+}
+
+.app.is-sidebar-collapsed .sidebar-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-12px);
+}
+
+.app.is-sidebar-collapsed .sidebar-brand-title,
+.app.is-sidebar-collapsed .sidebar-brand-block > .small {
+  display: none;
+}
+
+.app.is-sidebar-collapsed .sidebar-brand-row {
+  justify-content: center;
+}
+
+.app.is-sidebar-collapsed .sidebar-collapse-button {
+  transform: rotate(180deg);
 }
 
 .app-shell {
@@ -214,17 +232,32 @@ p {
   color: var(--text-main);
 }
 
-.sidebar-brand-arrow {
+.sidebar-collapse-button {
+  appearance: none;
   width: 28px;
   height: 28px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--color-primary) 16%, var(--bg-secondary));
+  padding: 0;
   border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--border-subtle));
+  background: color-mix(in srgb, var(--color-primary) 16%, var(--bg-secondary));
   color: var(--text-main);
-  font-size: 12px;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.sidebar-collapse-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 22%, var(--bg-secondary));
+}
+
+.sidebar-collapse-icon {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(135deg);
 }
 
 .sidebar-panel {
@@ -279,7 +312,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-3);
   padding: 0;
 }
 
@@ -291,117 +324,10 @@ p {
   flex: 1;
 }
 
-.app-sidebar-toggle {
-  appearance: none;
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--bg-card) 82%, var(--bg-secondary));
-  color: var(--text-main);
-  cursor: pointer;
-  flex: 0 0 auto;
-}
-
-.app-sidebar-toggle-icon {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(135deg);
-  transition: transform 180ms ease;
-}
-
-.app.is-sidebar-collapsed .app-sidebar-toggle-icon {
-  transform: rotate(-45deg);
-}
-
-.app-brand-dropdown {
-  position: relative;
-  flex: 0 0 auto;
-}
-
-.app-brand-dropdown summary {
-  list-style: none;
-}
-
-.app-brand-dropdown summary::-webkit-details-marker {
-  display: none;
-}
-
-.app-brand-button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 40px;
-  padding: 6px 12px 6px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--bg-card) 80%, var(--bg-secondary));
-  cursor: pointer;
-}
-
-.app-brand-logo {
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
-
-.app-brand-copy {
+.app-topbar-context {
   display: grid;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
-}
-
-.app-brand-name {
-  font-size: var(--font-size-secondary);
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-main);
-  line-height: 1.1;
-}
-
-.app-brand-subtitle {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.1;
-}
-
-.app-brand-caret {
-  color: var(--text-muted);
-}
-
-.app-brand-menu {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  min-width: 230px;
-  padding: 8px;
-  border-radius: 18px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-card);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  display: grid;
-  gap: 6px;
-  z-index: 50;
-}
-
-.app-brand-menu-item {
-  display: flex;
-  align-items: center;
-  min-height: 42px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--bg-secondary) 84%, var(--bg-card));
-  color: var(--text-secondary);
-}
-
-.app-brand-menu-item:hover {
-  background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
-  color: var(--text-main);
 }
 
 .app-topbar-copy {
@@ -440,9 +366,29 @@ p {
 
 .app-topbar-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.app-user-dropdown {
+  position: relative;
+}
+
+.app-user-dropdown summary {
+  list-style: none;
+}
+
+.app-user-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.app-user-dropdown[open] .app-user-chip {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--border-subtle));
+}
+
+.app-user-dropdown > summary.app-user-chip {
+  cursor: pointer;
 }
 
 .app-user-chip {
@@ -501,6 +447,63 @@ p {
   color: var(--text-muted);
   line-height: 1.2;
   overflow-wrap: anywhere;
+}
+
+.app-user-caret {
+  color: var(--text-muted);
+  font-size: 11px;
+  transition: transform 180ms ease;
+}
+
+.app-user-dropdown[open] .app-user-caret {
+  transform: rotate(180deg);
+}
+
+.app-user-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 240px;
+  padding: 8px;
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 6px;
+  z-index: 60;
+}
+
+.app-user-menu-head {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2px;
+}
+
+.app-user-menu-head strong {
+  color: var(--text-main);
+}
+
+.app-user-menu-head span {
+  color: var(--text-muted);
+  font-size: var(--font-size-small);
+}
+
+.app-user-menu-item {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-secondary) 84%, var(--bg-card));
+  color: var(--text-secondary);
+}
+
+.app-user-menu-item:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
+  color: var(--text-main);
 }
 
 .app-state-chip {

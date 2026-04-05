@@ -7,6 +7,7 @@
 
   var storageKey = 'eteam-sidebar-collapsed';
   var toggleButton = document.querySelector('[data-sidebar-toggle]');
+  var userDropdown = document.querySelector('.app-user-dropdown');
   var teamSwitcherModal = document.querySelector('[data-team-switcher-modal]');
   var deleteConfirmModal = document.querySelector('[data-delete-confirm-modal]');
   var deleteConfirmButton = document.querySelector('[data-delete-confirm-accept]');
@@ -113,9 +114,19 @@
     });
   });
 
+  document.addEventListener('click', function (event) {
+    if (userDropdown && userDropdown.hasAttribute('open') && !userDropdown.contains(event.target)) {
+      userDropdown.removeAttribute('open');
+    }
+  });
+
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       closeAllModals();
+
+      if (userDropdown && userDropdown.hasAttribute('open')) {
+        userDropdown.removeAttribute('open');
+      }
     }
   });
 })();

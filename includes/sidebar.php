@@ -17,7 +17,9 @@ if (!isset($appNavItems)) {
     <div class="sidebar-brand-block">
         <div class="sidebar-brand-row">
             <div class="sidebar-brand-title">eTeam Manager</div>
-            <div class="sidebar-brand-arrow" aria-hidden="true">◀</div>
+            <button class="sidebar-collapse-button" type="button" data-sidebar-toggle aria-label="Mostrar o ocultar el menú lateral">
+                <span class="sidebar-collapse-icon" aria-hidden="true"></span>
+            </button>
         </div>
         <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Espacio de trabajo interno' : 'Vista publica del layout'; ?></p>
     </div>

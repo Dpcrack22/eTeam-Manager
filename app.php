@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/organization_functions.php';
 require_once __DIR__ . '/includes/team_functions.php';

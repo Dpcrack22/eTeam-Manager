@@ -57,7 +57,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $returnTo = 'app.php?view=teams';
     }
 
-    if (!$activeOrganizationId) {
+    if ($action === 'activate_team') {
+        $teamId = (int) ($_POST['team_id'] ?? 0);
+
+        if (!$activeOrganizationId) {
+            $errors[] = 'Primero necesitas un contexto activo';
+        } elseif ($teamId <= 0) {
+            $errors[] = 'Selecciona un equipo válido';
+        } else {
+            $result = setActiveTeamContext($conn, (int) $activeOrganizationId, $teamId);
+
+            if (!empty($result['success'])) {
+                header('Location: ' . $returnTo);
+                exit;
+            }
+
+            $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
+        }
+    } elseif (!$activeOrganizationId) {
         $errors[] = 'Primero necesitas un contexto activo';
     } elseif (!in_array((string) ($currentUser['role'] ?? ''), ['owner', 'admin', 'manager'], true)) {
         $errors[] = 'No tienes permisos para gestionar equipos';
@@ -105,19 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
             header('Location: ' . $returnTo);
             exit;
-        }
-    }
-
-    if ($action === 'activate_team') {
-        $teamId = (int) ($_POST['team_id'] ?? 0);
-        $result = setActiveTeamContext($conn, (int) $activeOrganizationId, $teamId);
-
-        if (!empty($result['success'])) {
-            $_SESSION['flash_success'] = 'Equipo activo actualizado';
-            header('Location: ' . $returnTo);
-            exit;
-        } else {
-            $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
         }
     }
 
