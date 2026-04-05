@@ -81,7 +81,7 @@ $appModules = [
 		'label' => 'Registro',
 		'title' => 'Registro',
 		'eyebrow' => 'Crear cuenta',
-		'description' => 'Registra una cuenta de demo en eTeam Manager',
+        'description' => 'Crea una cuenta para acceder a eTeam Manager',
 	],
 ];
 
@@ -97,9 +97,9 @@ $pageDescription = $pageDescription ?? $currentModule['description'];
 $pageScripts = $pageScripts ?? [];
 $appAuthState = $appAuthState ?? ($isAuthenticated ? 'authenticated' : 'guest');
 $appCurrentUser = $appCurrentUser ?? [
-    'name' => $_SESSION['user']['name'] ?? 'Demo User',
+    'name' => $_SESSION['user']['name'] ?? 'Usuario',
     'role' => $_SESSION['user']['role'] ?? 'Manager',
-    'organization' => $_SESSION['user']['organization'] ?? 'Parallax Esports',
+    'organization' => $_SESSION['user']['organization'] ?? 'Sin organización',
 ];
 
 if ($view === 'dashboard') {

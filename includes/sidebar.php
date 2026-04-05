@@ -17,7 +17,7 @@ if (!isset($appNavItems)) {
 <aside class="sidebar">
     <div class="sidebar-brand-block">
         <div class="sidebar-brand-title">eTeam Manager</div>
-        <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Base interna de la aplicacion' : 'Modo sandbox para revisar layout'; ?></p>
+        <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Espacio de trabajo interno' : 'Vista publica del layout'; ?></p>
     </div>
 
     <?php if ($appAuthState === 'authenticated'): ?>
@@ -43,14 +43,14 @@ if (!isset($appNavItems)) {
         </div>
     <?php else: ?>
         <div class="card sidebar-panel">
-            <div class="small">Estado visitante</div>
+            <div class="small">Acceso pendiente</div>
             <div class="landing-list" style="margin-top: 12px;">
-                <div class="landing-list-item">No hay sesion simulada activa.</div>
-                <div class="landing-list-item">Se muestra el layout para pruebas visuales.</div>
-                <div class="landing-list-item">La navegacion principal completa aparece dentro de la app.</div>
+                <div class="landing-list-item">La sesión no está iniciada.</div>
+                <div class="landing-list-item">La navegación completa se desbloquea tras autenticarte.</div>
+                <div class="landing-list-item">Este panel solo muestra la estructura pública.</div>
             </div>
             <div class="stack-sm" style="margin-top: 12px;">
-                <a class="btn btn-primary" href="index.php">Ir a login demo</a>
+                <a class="btn btn-primary" href="app.php?view=login">Ir al acceso</a>
             </div>
         </div>
     <?php endif; ?>
@@ -60,7 +60,7 @@ if (!isset($appNavItems)) {
         <div class="landing-list" style="margin-top: 12px;">
             <div class="landing-list-item">Includes compartidos para layout comun.</div>
             <div class="landing-list-item">Pages separadas por modulo.</div>
-            <div class="landing-list-item">Base lista para meter mocks y modulos JS.</div>
+            <div class="landing-list-item">Base lista para nuevos módulos y vistas internas.</div>
         </div>
     </div>
 </aside>

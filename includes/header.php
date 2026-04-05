@@ -1,7 +1,7 @@
 <?php
 $pageEyebrow = $pageEyebrow ?? 'App interna';
 $pageTitle = $pageTitle ?? 'Dashboard';
-$pageDescription = $pageDescription ?? 'Base inicial de la aplicacion.';
+$pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
 ?>
 <header class="topbar">
     <div class="container app-topbar-inner">
@@ -19,10 +19,9 @@ $pageDescription = $pageDescription ?? 'Base inicial de la aplicacion.';
         </div>
         <div class="app-topbar-actions">
             <div class="app-state-chip<?php echo $appAuthState === 'authenticated' ? ' is-authenticated' : ' is-guest'; ?>">
-                <?php echo $appAuthState === 'authenticated' ? 'Sesion demo activa' : 'Vista invitado'; ?>
+                <?php echo $appAuthState === 'authenticated' ? 'Sesion iniciada' : 'Vista publica'; ?>
             </div>
             <a class="btn btn-secondary" href="index.php">Volver a la landing</a>
-            <a class="btn btn-primary" href="ui-kit.html">UI Kit</a>
         </div>
     </div>
 </header>

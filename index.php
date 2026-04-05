@@ -16,7 +16,7 @@
         <div class="container landing-nav" style="padding: 0;">
             <a class="landing-brand" href="#inicio" aria-label="Ir al inicio">
                 <span class="landing-brand-title">eTeam Manager</span>
-                <span class="small" style="margin-left: 10px;">eSports ops platform · V1 académica</span>
+                <span class="small" style="margin-left: 10px;">Plataforma interna de gestión para eSports</span>
             </a>
 
             <nav aria-label="Navegación principal" class="landing-nav-right">
@@ -26,9 +26,9 @@
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="app.php?view=login">Login/Registro</a>
+                    <a class="landing-link" id="login-register" href="app.php?view=login">Acceso</a>
                 </div>
-                <a class="btn btn-primary landing-cta" href="app.php">Entrar a la app</a>
+                <a class="btn btn-primary landing-cta" href="app.php?view=login">Iniciar sesión</a>
             </nav>
         </div>
     </header>
@@ -44,8 +44,8 @@
 
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
-                            <a class="btn btn-secondary" href="app.php">Entrar a la app interna</a>
-                            <a class="btn btn-secondary" href="app.php?view=register">Abrir registro demo</a>
+                            <a class="btn btn-secondary" href="app.php?view=login">Iniciar sesión</a>
+                            <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
                         </div>
                     </div>
 
@@ -227,8 +227,8 @@
                         <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que organizacion, staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">
-                        <a class="btn btn-primary" href="app.php">Entrar a la app interna</a>
-                        <a class="btn btn-secondary" href="app.php?view=login">Abrir login demo</a>
+                        <a class="btn btn-primary" href="app.php?view=login">Iniciar sesión</a>
+                        <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
                     </div>
                 </div>
             </div>
@@ -247,19 +247,17 @@
                         <p style="margin-bottom: 0;"><a class="badge" href="mailto:contacto@parallax.gg">contacto@parallax.gg</a></p>
                     </div>
                     <div class="card">
-                        <h3 class="h3">Estado del proyecto</h3>
+                        <h3 class="h3">Estado del producto</h3>
                         <div style="display:flex; gap: 10px; flex-wrap: wrap;">
-                            <span class="badge">V1 académica</span>
+                            <span class="badge">Aplicación interna</span>
                             <span class="badge badge-info">Frontend modular</span>
-                            <span class="badge badge-warning">Mocks activos</span>
+                            <span class="badge badge-success">Base de datos conectada</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Auth modal removed: login/register are available at app.php?view=login and app.php?view=register -->
 
     <footer class="landing-footer">
         <div class="container landing-footer-inner">
@@ -272,13 +270,11 @@
                 <a class="landing-link" href="#flujo">Flujo</a>
                 <a class="landing-link" href="#roles">Roles</a>
                 <a class="landing-link" href="#contacto">Contacto</a>
-                <a class="landing-link" href="app.php">App interna</a>
+                <a class="landing-link" href="app.php?view=login">Acceso</a>
             </div>
             <div class="small">© 2026 Parallax Esports. Todos los derechos reservados.</div>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>

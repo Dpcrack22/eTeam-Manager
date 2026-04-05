@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 $pageTitle = $pageTitle ?? ($currentModule['title'] ?? 'Registro');
 $pageEyebrow = $pageEyebrow ?? ($currentModule['eyebrow'] ?? 'Crear cuenta');
-$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Registra una cuenta de demo en eTeam Manager');
+$pageDescription = $pageDescription ?? ($currentModule['description'] ?? 'Crea una cuenta para acceder a eTeam Manager');
 
 // ensure register page hides the sidebar when loaded directly
 $hideSidebar = $hideSidebar ?? true;

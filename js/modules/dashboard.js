@@ -7,18 +7,18 @@
 
   var fallbackData = {
     currentUser: {
-      name: "Demo User",
-      email: "demo@eteam.dev",
+      name: "Usuario",
+      email: "sin-correo@eteam.local",
       role: "Manager",
-      avatarInitials: "DU"
+      avatarInitials: "U"
     },
     activeOrganization: {
-      name: "Parallax Esports",
-      slug: "parallax"
+      name: "Sin organización",
+      slug: "sin-organizacion"
     },
     activeTeam: {
-      name: "Parallax V",
-      tag: "PV"
+      name: "Sin equipo",
+      tag: "--"
     },
     upcomingEvents: [
       {
