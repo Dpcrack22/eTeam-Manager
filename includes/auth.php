@@ -11,7 +11,7 @@ function login($email, $password)
 
     try {
         $statement = $conn->prepare(
-            'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, om.role AS organization_role, o.name AS organization_name FROM users u LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 LEFT JOIN organizations o ON o.id = om.organization_id WHERE u.email = :email LIMIT 1'
+            'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name FROM users u LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 LEFT JOIN organizations o ON o.id = om.organization_id WHERE u.email = :email ORDER BY om.joined_at DESC, o.id DESC LIMIT 1'
         );
         $statement->bindValue(':email', $email, PDO::PARAM_STR);
         $statement->execute();
@@ -52,6 +52,7 @@ function login($email, $password)
             'avatar_url' => $user['avatar_url'],
             'role' => $user['organization_role'] ?? 'Member',
             'organization' => $user['organization_name'] ?? 'Sin organización',
+            'organization_id' => isset($user['organization_id']) ? (int) $user['organization_id'] : null,
         ];
 
         return ['success' => true];

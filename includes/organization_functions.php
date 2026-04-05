@@ -1,0 +1,212 @@
+<?php
+require_once __DIR__ . '/db.php';
+
+function getUserOrganizations(PDO $conn, int $userId): array
+{
+    $statement = $conn->prepare(
+        'SELECT o.id, o.name, o.slug, o.description, o.logo_url, o.owner_id, om.role AS member_role, om.joined_at
+         FROM organization_members om
+         INNER JOIN organizations o ON o.id = om.organization_id
+         WHERE om.user_id = :user_id AND om.is_active = 1
+         ORDER BY om.joined_at DESC, o.id DESC'
+    );
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+function getOrganizationById(PDO $conn, int $organizationId, int $userId = 0): array|false
+{
+    $sql = 'SELECT o.id, o.name, o.slug, o.description, o.logo_url, o.owner_id, o.created_at, o.updated_at
+            FROM organizations o';
+
+    if ($userId > 0) {
+        $sql .= ' INNER JOIN organization_members om ON om.organization_id = o.id AND om.user_id = :user_id AND om.is_active = 1';
+    }
+
+    $sql .= ' WHERE o.id = :organization_id LIMIT 1';
+
+    $statement = $conn->prepare($sql);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+
+    if ($userId > 0) {
+        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    }
+
+    $statement->execute();
+
+    return $statement->fetch() ?: false;
+}
+
+function getOrganizationMembers(PDO $conn, int $organizationId): array
+{
+    $statement = $conn->prepare(
+        'SELECT u.id AS user_id, u.username, u.email, u.avatar_url, om.role, om.joined_at, om.is_active
+         FROM organization_members om
+         INNER JOIN users u ON u.id = om.user_id
+         WHERE om.organization_id = :organization_id
+         ORDER BY FIELD(om.role, "owner", "admin", "manager", "coach", "analyst", "player", "viewer"), u.username ASC'
+    );
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+function getOrganizationStats(PDO $conn, int $organizationId): array
+{
+    $memberCountStatement = $conn->prepare('SELECT COUNT(*) AS total FROM organization_members WHERE organization_id = :organization_id AND is_active = 1');
+    $memberCountStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $memberCountStatement->execute();
+
+    $teamCountStatement = $conn->prepare('SELECT COUNT(*) AS total FROM teams WHERE organization_id = :organization_id AND is_active = 1');
+    $teamCountStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $teamCountStatement->execute();
+
+    return [
+        'members' => (int) ($memberCountStatement->fetch()['total'] ?? 0),
+        'teams' => (int) ($teamCountStatement->fetch()['total'] ?? 0),
+    ];
+}
+
+function createOrganization(PDO $conn, int $ownerId, string $name, string $slug, string $description, ?string $logoUrl = null): int
+{
+    $statement = $conn->prepare(
+        'INSERT INTO organizations (name, slug, logo_url, description, owner_id, created_at, updated_at) VALUES (:name, :slug, :logo_url, :description, :owner_id, NOW(), NOW())'
+    );
+    $statement->bindValue(':name', $name, PDO::PARAM_STR);
+    $statement->bindValue(':slug', $slug, PDO::PARAM_STR);
+    $statement->bindValue(':logo_url', $logoUrl, PDO::PARAM_STR);
+    $statement->bindValue(':description', $description, PDO::PARAM_STR);
+    $statement->bindValue(':owner_id', $ownerId, PDO::PARAM_INT);
+    $statement->execute();
+
+    $organizationId = (int) $conn->lastInsertId();
+
+    $memberStatement = $conn->prepare(
+        'INSERT INTO organization_members (organization_id, user_id, role, joined_at, is_active) VALUES (:organization_id, :user_id, "owner", NOW(), 1)'
+    );
+    $memberStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $memberStatement->bindValue(':user_id', $ownerId, PDO::PARAM_INT);
+    $memberStatement->execute();
+
+    return $organizationId;
+}
+
+function updateOrganization(PDO $conn, int $organizationId, string $name, string $slug, string $description, ?string $logoUrl = null): bool
+{
+    if ($logoUrl !== null) {
+        $statement = $conn->prepare(
+            'UPDATE organizations SET name = :name, slug = :slug, description = :description, logo_url = :logo_url, updated_at = NOW() WHERE id = :organization_id'
+        );
+        $statement->bindValue(':logo_url', $logoUrl, PDO::PARAM_STR);
+    } else {
+        $statement = $conn->prepare(
+            'UPDATE organizations SET name = :name, slug = :slug, description = :description, updated_at = NOW() WHERE id = :organization_id'
+        );
+    }
+
+    $statement->bindValue(':name', $name, PDO::PARAM_STR);
+    $statement->bindValue(':slug', $slug, PDO::PARAM_STR);
+    $statement->bindValue(':description', $description, PDO::PARAM_STR);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+
+    return $statement->execute();
+}
+
+function updateOrganizationMemberRole(PDO $conn, int $organizationId, int $userId, string $role): bool
+{
+    $statement = $conn->prepare(
+        'UPDATE organization_members SET role = :role WHERE organization_id = :organization_id AND user_id = :user_id'
+    );
+    $statement->bindValue(':role', $role, PDO::PARAM_STR);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+
+    return $statement->execute();
+}
+
+function addOrUpdateOrganizationMemberByEmail(PDO $conn, int $organizationId, string $email, string $role): array
+{
+    $userStatement = $conn->prepare('SELECT id, username FROM users WHERE email = :email LIMIT 1');
+    $userStatement->bindValue(':email', $email, PDO::PARAM_STR);
+    $userStatement->execute();
+    $user = $userStatement->fetch();
+
+    if (!$user) {
+        return [
+            'success' => false,
+            'error' => 'No existe ningún usuario con ese email',
+        ];
+    }
+
+    $memberStatement = $conn->prepare('SELECT id FROM organization_members WHERE organization_id = :organization_id AND user_id = :user_id LIMIT 1');
+    $memberStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $memberStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
+    $memberStatement->execute();
+
+    if ($memberStatement->fetch()) {
+        updateOrganizationMemberRole($conn, $organizationId, (int) $user['id'], $role);
+    } else {
+        $insertStatement = $conn->prepare(
+            'INSERT INTO organization_members (organization_id, user_id, role, joined_at, is_active) VALUES (:organization_id, :user_id, :role, NOW(), 1)'
+        );
+        $insertStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $insertStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
+        $insertStatement->bindValue(':role', $role, PDO::PARAM_STR);
+        $insertStatement->execute();
+    }
+
+    return [
+        'success' => true,
+        'user_id' => (int) $user['id'],
+        'username' => $user['username'],
+    ];
+}
+
+function setActiveOrganizationContext(PDO $conn, int $userId, int $organizationId): array
+{
+    $statement = $conn->prepare(
+        'SELECT o.id, o.name, o.slug, om.role
+         FROM organization_members om
+         INNER JOIN organizations o ON o.id = om.organization_id
+         WHERE om.user_id = :user_id AND om.organization_id = :organization_id AND om.is_active = 1
+         LIMIT 1'
+    );
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->execute();
+    $organization = $statement->fetch();
+
+    if (!$organization) {
+        return ['success' => false, 'error' => 'No tienes acceso a esa organización'];
+    }
+
+    $_SESSION['active_organization_id'] = (int) $organization['id'];
+    $_SESSION['user']['organization_id'] = (int) $organization['id'];
+    $_SESSION['user']['organization'] = $organization['name'];
+    $_SESSION['user']['role'] = $organization['role'];
+
+    return ['success' => true, 'organization' => $organization];
+}
+
+function getActiveOrganizationId(PDO $conn, int $userId): ?int
+{
+    if (!empty($_SESSION['active_organization_id'])) {
+        return (int) $_SESSION['active_organization_id'];
+    }
+
+    if (!empty($_SESSION['user']['organization_id'])) {
+        return (int) $_SESSION['user']['organization_id'];
+    }
+
+    $statement = $conn->prepare(
+        'SELECT organization_id FROM organization_members WHERE user_id = :user_id AND is_active = 1 ORDER BY joined_at DESC, organization_id DESC LIMIT 1'
+    );
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    return $row ? (int) $row['organization_id'] : null;
+}

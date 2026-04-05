@@ -43,7 +43,7 @@ function validateRegister(string $name, string $email, string $password, string 
         $errors['organization'] = 'Selecciona una organización';
     }
 
-    $allowedRoles = ['Owner', 'Manager', 'Coach', 'Player', 'Viewer'];
+    $allowedRoles = ['owner', 'admin', 'manager', 'coach', 'analyst', 'player', 'viewer'];
     if ($rol === '' || !in_array($rol, $allowedRoles, true)) {
         $errors['rol'] = 'Selecciona un rol válido';
     }
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = (string) ($_POST['password'] ?? '');
-    $rol = trim($_POST['role'] ?? '');
+    $rol = strtolower(trim((string) ($_POST['role'] ?? '')));
     $organizationId = (string) ($_POST['organization_id'] ?? '');
 
     $errors = validateRegister($name, $email, $password, $rol, $organizationId);
@@ -133,11 +133,13 @@ if (empty($layoutIncluded)) {
             <label for="role">Rol</label>
             <select id="role" name="role">
                 <option value="">Selecciona un rol</option>
-                <option value="Owner" <?php echo $rol === 'Owner' ? 'selected' : ''; ?>>Owner</option>
-                <option value="Manager" <?php echo $rol === 'Manager' ? 'selected' : ''; ?>>Manager</option>
-                <option value="Coach" <?php echo $rol === 'Coach' ? 'selected' : ''; ?>>Coach</option>
-                <option value="Player" <?php echo $rol === 'Player' ? 'selected' : ''; ?>>Player</option>
-                <option value="Viewer" <?php echo $rol === 'Viewer' ? 'selected' : ''; ?>>Viewer</option>
+                <option value="owner" <?php echo $rol === 'owner' ? 'selected' : ''; ?>>Owner</option>
+                <option value="admin" <?php echo $rol === 'admin' ? 'selected' : ''; ?>>Admin</option>
+                <option value="manager" <?php echo $rol === 'manager' ? 'selected' : ''; ?>>Manager</option>
+                <option value="coach" <?php echo $rol === 'coach' ? 'selected' : ''; ?>>Coach</option>
+                <option value="analyst" <?php echo $rol === 'analyst' ? 'selected' : ''; ?>>Analyst</option>
+                <option value="player" <?php echo $rol === 'player' ? 'selected' : ''; ?>>Player</option>
+                <option value="viewer" <?php echo $rol === 'viewer' ? 'selected' : ''; ?>>Viewer</option>
             </select>
         </div>
 
