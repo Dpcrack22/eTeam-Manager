@@ -1098,6 +1098,179 @@ textarea:focus {
   border-radius: 0;
 }
 
+.scrims-page,
+.scrim-form-page,
+.scrim-detail-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.scrim-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.scrim-summary-card {
+  display: grid;
+  gap: 6px;
+}
+
+.scrim-summary-value {
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.scrim-toolbar {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.scrim-toolbar-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px auto;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.scrim-toolbar-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.scrim-table {
+  min-width: 980px;
+}
+
+.scrim-table-opponent {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-main);
+}
+
+.scrim-note-box {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-secondary) 78%, var(--bg-card));
+  color: var(--text-secondary);
+}
+
+.scrim-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.scrim-form-grid .field {
+  min-width: 0;
+}
+
+.scrim-form-map-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.scrim-form-map-row {
+  display: grid;
+  grid-template-columns: 90px minmax(180px, 1.5fr) repeat(2, minmax(120px, 0.7fr)) auto;
+  gap: var(--space-3);
+  align-items: end;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-secondary) 82%, var(--bg-card));
+}
+
+.scrim-form-map-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.scrim-detail-grid {
+  align-items: stretch;
+}
+
+.scrim-detail-summary {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.scrim-detail-score {
+  display: grid;
+  gap: 6px;
+}
+
+.scrim-detail-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.scrim-detail-meta-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-secondary) 82%, var(--bg-card));
+}
+
+.scrim-map-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.scrim-map-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-secondary) 82%, var(--bg-card));
+  cursor: pointer;
+}
+
+.scrim-map-card.is-active {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--border-subtle));
+  background: color-mix(in srgb, var(--bg-card) 74%, var(--color-primary) 6%);
+}
+
+.scrim-map-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--border-subtle));
+  font-weight: var(--font-weight-bold);
+}
+
+.scrim-map-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-main);
+}
+
+.scrim-map-score {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-main);
+}
+
+.scrim-form-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
 .organization-page {
   display: grid;
   gap: var(--space-4);
@@ -1407,6 +1580,18 @@ textarea:focus {
     align-items: flex-start;
   }
 
+  .scrim-summary-strip,
+  .scrim-detail-meta-grid,
+  .scrim-form-grid,
+  .scrim-toolbar-form {
+    grid-template-columns: 1fr;
+  }
+
+  .scrim-form-map-row,
+  .scrim-map-card {
+    grid-template-columns: 1fr;
+  }
+
   .organization-summary-strip,
   .organization-summary-strip--tight {
     grid-template-columns: 1fr;
@@ -1459,6 +1644,12 @@ textarea:focus {
 
   .landing-stat-strip {
     grid-template-columns: 1fr;
+  }
+
+  .scrim-toolbar-actions,
+  .scrim-form-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .btn {

@@ -21,6 +21,7 @@ if (in_array($view, $modulesToHide, true)) {
 }
 
 $isTeamDetailView = $view === 'team-detail';
+$isScrimDetailView = in_array($view, ['scrim-detail', 'scrim-form'], true);
 
 $appModules = [
     'dashboard' => [
@@ -50,6 +51,20 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Registro de enfrentamientos, resultados, mapas y detalle competitivo.',
         'page' => __DIR__ . '/../pages/scrims.php',
+    ],
+    'scrim-form' => [
+        'label' => 'Nuevo scrim',
+        'title' => 'Nuevo scrim',
+        'eyebrow' => 'Modulo',
+        'description' => 'Alta y edición visual de scrims con mapa, score y resultado.',
+        'page' => __DIR__ . '/../pages/scrim-form.php',
+    ],
+    'scrim-detail' => [
+        'label' => 'Detalle de scrim',
+        'title' => 'Detalle de scrim',
+        'eyebrow' => 'Modulo',
+        'description' => 'Resumen competitivo del enfrentamiento, con mapas, score y contexto.',
+        'page' => __DIR__ . '/../pages/scrim-detail.php',
     ],
     'calendar' => [
         'label' => 'Calendario',
@@ -99,7 +114,7 @@ if (!isset($appModules[$view])) {
 }
 
 $currentModule = $appModules[$view];
-$activeSection = $activeSection ?? ($isTeamDetailView ? 'teams' : $view);
+$activeSection = $activeSection ?? ($isTeamDetailView ? 'teams' : ($isScrimDetailView ? 'scrims' : $view));
 $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
@@ -145,7 +160,7 @@ if (!isset($appNavItems)) {
     $appNavItems = [];
 
     foreach ($appModules as $moduleKey => $module) {
-        if ($moduleKey === 'team-detail') {
+        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail'], true)) {
             continue;
         }
 
@@ -161,6 +176,12 @@ if ($isTeamDetailView) {
         ['label' => 'App', 'href' => 'app.php?view=dashboard'],
         ['label' => 'Equipos', 'href' => 'app.php?view=teams'],
         ['label' => $currentModule['label'], 'href' => 'app.php?view=team-detail'],
+    ];
+} elseif ($isScrimDetailView) {
+    $appBreadcrumbs = [
+        ['label' => 'App', 'href' => 'app.php?view=dashboard'],
+        ['label' => 'Scrims', 'href' => 'app.php?view=scrims'],
+        ['label' => $currentModule['label'], 'href' => 'app.php?view=' . $view],
     ];
 } else {
     $appBreadcrumbs = [
