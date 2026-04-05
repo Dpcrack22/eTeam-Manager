@@ -9,6 +9,8 @@ global $conn;
 $currentUser = $_SESSION['user'] ?? [];
 $userId = (int) ($currentUser['id'] ?? 0);
 $allowedRoles = ['owner', 'admin', 'manager', 'coach', 'analyst', 'player', 'viewer'];
+$roleManagementRoles = ['owner', 'admin'];
+$canManageOrganizationRoles = in_array((string) ($_SESSION['user']['role'] ?? ''), $roleManagementRoles, true);
 $roleLabels = [
     'owner' => 'Owner',
     'admin' => 'Admin',
@@ -187,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$currentMember) {
             $errors[] = 'No tienes acceso a esa organización';
-        } elseif (!in_array((string) $currentMember['member_role'], ['owner', 'admin', 'manager'], true)) {
+        } elseif (!in_array((string) $currentMember['member_role'], $roleManagementRoles, true)) {
             $errors[] = 'No tienes permisos para añadir miembros';
         } else {
             if ($memberEmail === '') {
@@ -225,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$currentMember) {
             $errors[] = 'No tienes acceso a esa organización';
-        } elseif (!in_array((string) $currentMember['member_role'], ['owner', 'admin', 'manager'], true)) {
+        } elseif (!in_array((string) $currentMember['member_role'], $roleManagementRoles, true)) {
             $errors[] = 'No tienes permisos para modificar roles';
         } elseif ($memberUserId === 0) {
             $errors[] = 'Miembro no válido';
@@ -287,18 +289,19 @@ $pageEyebrow = $pageEyebrow ?? 'Modulo';
 $pageDescription = $pageDescription ?? 'Gestion visual de organizaciones, miembros y roles internos.';
 ?>
 
-<div class="grid-2">
-    <div class="card">
+<div class="organization-page">
+    <div class="organization-intro card">
         <div class="dashboard-section-head">
             <div>
-                <div class="small">Contexto activo</div>
-                <h2 class="h3">Organizaciones vinculadas</h2>
+                <div class="small">Sprint 3</div>
+                <h2 class="h2">Organizaciones</h2>
+                <p>Contexto activo, alta de organización y gestión de miembros en una vista más clara.</p>
             </div>
             <span class="badge badge-info"><?php echo count($pageOrganizations); ?> disponibles</span>
         </div>
 
         <?php if (!empty($successMessage)): ?>
-            <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; color: var(--text-main);">
+            <div class="error-box organization-message organization-message-success">
                 <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endif; ?>
@@ -306,213 +309,250 @@ $pageDescription = $pageDescription ?? 'Gestion visual de organizaciones, miembr
         <?php if (!empty($errors)): ?>
             <div class="error-container">
                 <?php foreach ($errors as $error): ?>
-                    <div class="error-box">
+                    <div class="error-box organization-message">
                         <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
 
-        <?php if (!empty($pageOrganizations)): ?>
-            <div class="landing-list">
-                <?php foreach ($pageOrganizations as $organization): ?>
-                    <div class="dashboard-list-item">
-                        <div class="dashboard-list-top">
-                            <div>
-                                <div class="dashboard-list-title"><?php echo htmlspecialchars($organization['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                <div class="dashboard-list-meta"><?php echo htmlspecialchars($organization['slug'], ENT_QUOTES, 'UTF-8'); ?> · Tu rol: <?php echo htmlspecialchars($roleLabels[$organization['member_role']] ?? ucfirst((string) $organization['member_role']), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="organization-summary-strip">
+            <div class="dashboard-hero-chip">
+                <div class="small">Organización activa</div>
+                <div class="dashboard-hero-value"><?php echo htmlspecialchars($activeOrganization['name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?></div>
+                <div class="small"><?php echo htmlspecialchars($activeOrganization['slug'] ?? 'sin-organizacion', ENT_QUOTES, 'UTF-8'); ?></div>
+            </div>
+            <div class="dashboard-hero-chip">
+                <div class="small">Miembros</div>
+                <div class="dashboard-hero-value"><?php echo (int) $organizationStats['members']; ?></div>
+            </div>
+            <div class="dashboard-hero-chip">
+                <div class="small">Equipos</div>
+                <div class="dashboard-hero-value"><?php echo (int) $organizationStats['teams']; ?></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2 organization-grid" style="margin-top: 24px;">
+        <div class="card organization-panel">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Tus organizaciones</div>
+                    <h3 class="h3">Selecciona contexto</h3>
+                </div>
+            </div>
+
+            <?php if (!empty($pageOrganizations)): ?>
+                <div class="landing-list organization-list">
+                    <?php foreach ($pageOrganizations as $organization): ?>
+                        <div class="dashboard-list-item organization-list-item">
+                            <div class="dashboard-list-top organization-list-top">
+                                <div>
+                                    <div class="dashboard-list-title"><?php echo htmlspecialchars($organization['name'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <div class="dashboard-list-meta"><?php echo htmlspecialchars($organization['slug'], ENT_QUOTES, 'UTF-8'); ?> · Tu rol: <?php echo htmlspecialchars($roleLabels[$organization['member_role']] ?? ucfirst((string) $organization['member_role']), ENT_QUOTES, 'UTF-8'); ?></div>
+                                </div>
+                                <div class="stack-sm organization-badges">
+                                    <?php if ($organization['is_active']): ?>
+                                        <span class="badge badge-success">Activa</span>
+                                    <?php endif; ?>
+                                    <span class="badge badge-info"><?php echo (int) $organization['members_count']; ?> miembros</span>
+                                    <span class="badge"><?php echo (int) $organization['teams_count']; ?> equipos</span>
+                                </div>
                             </div>
-                            <div class="stack-sm">
-                                <?php if ($organization['is_active']): ?>
-                                    <span class="badge badge-success">Activa</span>
-                                <?php endif; ?>
-                                <span class="badge badge-info"><?php echo (int) $organization['members_count']; ?> miembros</span>
-                                <span class="badge"><?php echo (int) $organization['teams_count']; ?> equipos</span>
-                            </div>
+
+                            <p class="small"><?php echo htmlspecialchars($organization['description'], ENT_QUOTES, 'UTF-8'); ?></p>
+
+                            <form method="post" class="organization-action-form">
+                                <input type="hidden" name="action" value="activate_organization" />
+                                <input type="hidden" name="organization_id" value="<?php echo (int) $organization['id']; ?>" />
+                                <button class="btn <?php echo $organization['is_active'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
+                                    <?php echo $organization['is_active'] ? 'Contexto actual' : 'Usar esta organización'; ?>
+                                </button>
+                            </form>
                         </div>
-
-                        <p class="small"><?php echo htmlspecialchars($organization['description'], ENT_QUOTES, 'UTF-8'); ?></p>
-
-                        <form method="post" class="stack-sm">
-                            <input type="hidden" name="action" value="activate_organization" />
-                            <input type="hidden" name="organization_id" value="<?php echo (int) $organization['id']; ?>" />
-                            <button class="btn <?php echo $organization['is_active'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
-                                <?php echo $organization['is_active'] ? 'Contexto actual' : 'Usar esta organización'; ?>
-                            </button>
-                        </form>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <div class="dashboard-empty-state">
-                No tienes ninguna organización todavía. Crea la primera y quedará activa automáticamente.
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="card">
-        <div class="dashboard-section-head">
-            <div>
-                <div class="small">Nueva organización</div>
-                <h2 class="h3">Crear organización</h2>
-            </div>
-        </div>
-
-        <form class="form" method="post" novalidate>
-            <input type="hidden" name="action" value="create_organization" />
-
-            <div class="field">
-                <label for="new_org_name">Nombre</label>
-                <input id="new_org_name" name="name" type="text" placeholder="Parallax Esports" />
-            </div>
-
-            <div class="field">
-                <label for="new_org_slug">Slug</label>
-                <input id="new_org_slug" name="slug" type="text" placeholder="parallax-esports" />
-            </div>
-
-            <div class="field">
-                <label for="new_org_logo">Logo URL</label>
-                <input id="new_org_logo" name="logo_url" type="text" placeholder="https://..." />
-            </div>
-
-            <div class="field">
-                <label for="new_org_description">Descripción</label>
-                <textarea id="new_org_description" name="description" placeholder="Resumen de la organización..."></textarea>
-            </div>
-
-            <button class="btn btn-primary" type="submit">Crear organización</button>
-        </form>
-    </div>
-</div>
-
-<?php if ($activeOrganization): ?>
-    <div class="grid-2" style="margin-top: 24px;">
-        <div class="card">
-            <div class="dashboard-section-head">
-                <div>
-                    <div class="small">Resumen</div>
-                    <h2 class="h3"><?php echo htmlspecialchars($activeOrganization['name'], ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <?php endforeach; ?>
                 </div>
-                <span class="badge badge-info"><?php echo htmlspecialchars((string) ($activeMember['member_role'] ?? 'viewer'), ENT_QUOTES, 'UTF-8'); ?></span>
-            </div>
-
-            <form class="form" method="post" novalidate style="margin-bottom: 20px;">
-                <input type="hidden" name="action" value="update_organization" />
-                <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
-
-                <div class="field">
-                    <label for="active_org_name">Nombre</label>
-                    <input id="active_org_name" name="name" type="text" value="<?php echo htmlspecialchars($activeOrganization['name'], ENT_QUOTES, 'UTF-8'); ?>" />
-                </div>
-
-                <div class="field">
-                    <label for="active_org_slug">Slug</label>
-                    <input id="active_org_slug" name="slug" type="text" value="<?php echo htmlspecialchars($activeOrganization['slug'], ENT_QUOTES, 'UTF-8'); ?>" />
-                </div>
-
-                <div class="field">
-                    <label for="active_org_logo">Logo URL</label>
-                    <input id="active_org_logo" name="logo_url" type="text" value="<?php echo htmlspecialchars($activeOrganization['logo_url'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
-                </div>
-
-                <div class="field">
-                    <label for="active_org_description">Descripción</label>
-                    <textarea id="active_org_description" name="description"><?php echo htmlspecialchars($activeOrganization['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
-                </div>
-
-                <button class="btn btn-secondary" type="submit">Guardar cambios</button>
-            </form>
-
-            <div class="grid-2">
-                <div class="dashboard-hero-chip">
-                    <div class="small">Miembros activos</div>
-                    <div class="dashboard-hero-value"><?php echo (int) $organizationStats['members']; ?></div>
-                </div>
-                <div class="dashboard-hero-chip">
-                    <div class="small">Equipos activos</div>
-                    <div class="dashboard-hero-value"><?php echo (int) $organizationStats['teams']; ?></div>
-                </div>
-            </div>
-
-            <div class="landing-list" style="margin-top: 16px;">
-                <div class="landing-list-item">El contexto activo ya se comparte con el dashboard y la barra lateral.</div>
-                <div class="landing-list-item">Puedes mover miembros entre roles sin salir del módulo.</div>
-                <div class="landing-list-item">La organización activa se persiste en sesión.</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="dashboard-section-head">
-                <div>
-                    <div class="small">Acciones</div>
-                    <h2 class="h3">Miembros y roles</h2>
-                </div>
-            </div>
-
-            <form class="form" method="post" novalidate style="margin-bottom: 24px;">
-                <input type="hidden" name="action" value="add_member" />
-                <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
-
-                <div class="field">
-                    <label for="member_email">Email del miembro</label>
-                    <input id="member_email" name="email" type="email" placeholder="member@team.gg" />
-                </div>
-
-                <div class="field">
-                    <label for="member_role">Rol</label>
-                    <select id="member_role" name="role">
-                        <?php foreach ($roleLabels as $roleValue => $roleLabel): ?>
-                            <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8'); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <button class="btn btn-primary" type="submit">Añadir o actualizar miembro</button>
-            </form>
-
-            <?php if (!empty($organizationMembers)): ?>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($organizationMembers as $member): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($member['username'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($member['email'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($roleLabels[$member['role']] ?? ucfirst((string) $member['role']), ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <span class="badge <?php echo (int) $member['is_active'] === 1 ? 'badge-success' : 'badge-warning'; ?>">
-                                        <?php echo (int) $member['is_active'] === 1 ? 'Activo' : 'Inactivo'; ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <form method="post" class="stack-sm">
-                                        <input type="hidden" name="action" value="update_member_role" />
-                                        <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
-                                        <input type="hidden" name="member_user_id" value="<?php echo (int) $member['user_id']; ?>" />
-                                        <select name="role">
-                                            <?php foreach ($roleLabels as $roleValue => $roleLabel): ?>
-                                                <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $member['role'] === $roleValue ? 'selected' : ''; ?>><?php echo htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8'); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button class="btn btn-secondary" type="submit">Guardar rol</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
             <?php else: ?>
-                <div class="dashboard-empty-state">Todavía no hay miembros cargados para esta organización.</div>
+                <div class="dashboard-empty-state">
+                    No tienes ninguna organización todavía. Crea la primera y quedará activa automáticamente.
+                </div>
             <?php endif; ?>
         </div>
+
+        <div class="card organization-panel">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Nueva organización</div>
+                    <h3 class="h3">Crear organización</h3>
+                </div>
+            </div>
+
+            <form class="form organization-form" method="post" novalidate>
+                <input type="hidden" name="action" value="create_organization" />
+
+                <div class="field">
+                    <label for="new_org_name">Nombre</label>
+                    <input id="new_org_name" name="name" type="text" placeholder="Parallax Esports" />
+                </div>
+
+                <div class="field">
+                    <label for="new_org_slug">Slug</label>
+                    <input id="new_org_slug" name="slug" type="text" placeholder="parallax-esports" />
+                </div>
+
+                <div class="field">
+                    <label for="new_org_logo">Logo URL</label>
+                    <input id="new_org_logo" name="logo_url" type="text" placeholder="https://..." />
+                </div>
+
+                <div class="field">
+                    <label for="new_org_description">Descripción</label>
+                    <textarea id="new_org_description" name="description" placeholder="Resumen de la organización..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Crear organización</button>
+            </form>
+        </div>
     </div>
-<?php endif; ?>
+
+    <?php if ($activeOrganization): ?>
+        <div class="grid-2 organization-grid" style="margin-top: 24px;">
+            <div class="card organization-panel">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Contexto activo</div>
+                        <h3 class="h3"><?php echo htmlspecialchars($activeOrganization['name'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                    </div>
+                    <span class="badge badge-info"><?php echo htmlspecialchars((string) ($activeMember['member_role'] ?? 'viewer'), ENT_QUOTES, 'UTF-8'); ?></span>
+                </div>
+
+                <div class="organization-summary-copy">
+                    <p><?php echo htmlspecialchars($activeOrganization['description'] ?: 'Sin descripción', ENT_QUOTES, 'UTF-8'); ?></p>
+                </div>
+
+                <form class="form organization-form" method="post" novalidate>
+                    <input type="hidden" name="action" value="update_organization" />
+                    <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
+
+                    <div class="field">
+                        <label for="active_org_name">Nombre</label>
+                        <input id="active_org_name" name="name" type="text" value="<?php echo htmlspecialchars($activeOrganization['name'], ENT_QUOTES, 'UTF-8'); ?>" />
+                    </div>
+
+                    <div class="field">
+                        <label for="active_org_slug">Slug</label>
+                        <input id="active_org_slug" name="slug" type="text" value="<?php echo htmlspecialchars($activeOrganization['slug'], ENT_QUOTES, 'UTF-8'); ?>" />
+                    </div>
+
+                    <div class="field">
+                        <label for="active_org_logo">Logo URL</label>
+                        <input id="active_org_logo" name="logo_url" type="text" value="<?php echo htmlspecialchars($activeOrganization['logo_url'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    </div>
+
+                    <div class="field">
+                        <label for="active_org_description">Descripción</label>
+                        <textarea id="active_org_description" name="description"><?php echo htmlspecialchars($activeOrganization['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    </div>
+
+                    <button class="btn btn-secondary" type="submit">Guardar cambios</button>
+                </form>
+
+                <div class="organization-summary-strip organization-summary-strip--tight">
+                    <div class="dashboard-hero-chip">
+                        <div class="small">Miembros activos</div>
+                        <div class="dashboard-hero-value"><?php echo (int) $organizationStats['members']; ?></div>
+                    </div>
+                    <div class="dashboard-hero-chip">
+                        <div class="small">Equipos activos</div>
+                        <div class="dashboard-hero-value"><?php echo (int) $organizationStats['teams']; ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card organization-panel">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Miembros</div>
+                        <h3 class="h3">Roles y acceso</h3>
+                    </div>
+                </div>
+
+                <?php if ($canManageOrganizationRoles): ?>
+                    <form class="form organization-form" method="post" novalidate style="margin-bottom: 24px;">
+                        <input type="hidden" name="action" value="add_member" />
+                        <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
+
+                        <div class="field">
+                            <label for="member_email">Email del miembro</label>
+                            <input id="member_email" name="email" type="email" placeholder="member@team.gg" />
+                        </div>
+
+                        <div class="field">
+                            <label for="member_role">Rol</label>
+                            <select id="member_role" name="role">
+                                <?php foreach ($roleLabels as $roleValue => $roleLabel): ?>
+                                    <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Añadir o actualizar miembro</button>
+                    </form>
+                <?php else: ?>
+                    <div class="dashboard-empty-state organization-note">
+                        Solo owner y admin pueden cambiar roles o añadir miembros en esta sección.
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($organizationMembers)): ?>
+                    <div class="table-wrap">
+                        <table class="table organization-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($organizationMembers as $member): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($member['username'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($member['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($roleLabels[$member['role']] ?? ucfirst((string) $member['role']), ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td>
+                                            <span class="badge <?php echo (int) $member['is_active'] === 1 ? 'badge-success' : 'badge-warning'; ?>">
+                                                <?php echo (int) $member['is_active'] === 1 ? 'Activo' : 'Inactivo'; ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <?php if ($canManageOrganizationRoles): ?>
+                                                <form method="post" class="organization-member-actions">
+                                                    <input type="hidden" name="action" value="update_member_role" />
+                                                    <input type="hidden" name="organization_id" value="<?php echo (int) $activeOrganization['id']; ?>" />
+                                                    <input type="hidden" name="member_user_id" value="<?php echo (int) $member['user_id']; ?>" />
+                                                    <select name="role">
+                                                        <?php foreach ($roleLabels as $roleValue => $roleLabel): ?>
+                                                            <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $member['role'] === $roleValue ? 'selected' : ''; ?>><?php echo htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8'); ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                    <button class="btn btn-secondary" type="submit">Guardar rol</button>
+                                                </form>
+                                            <?php else: ?>
+                                                <span class="small">Solo lectura</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <div class="dashboard-empty-state">Todavía no hay miembros cargados para esta organización.</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>

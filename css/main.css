@@ -968,6 +968,88 @@ textarea:focus {
   border-bottom: none;
 }
 
+.table-wrap {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  background: var(--bg-card);
+}
+
+.table-wrap .table {
+  border: 0;
+  border-radius: 0;
+}
+
+.organization-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.organization-panel {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.organization-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.organization-summary-strip--tight {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.organization-summary-copy p {
+  margin-bottom: 0;
+}
+
+.organization-list {
+  gap: var(--space-4);
+}
+
+.organization-list-item {
+  gap: var(--space-3);
+}
+
+.organization-list-top {
+  align-items: flex-start;
+}
+
+.organization-badges {
+  align-items: flex-end;
+}
+
+.organization-action-form {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.organization-form {
+  gap: var(--space-3);
+}
+
+.organization-member-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+  min-width: 320px;
+}
+
+.organization-note {
+  margin-bottom: 24px;
+}
+
+.organization-table {
+  min-width: 820px;
+}
+
+.organization-table td:last-child {
+  width: 1%;
+}
+
 /* Badges / estados */
 .badge {
   display: inline-flex;
@@ -1206,6 +1288,20 @@ textarea:focus {
   .dashboard-profile-summary {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .organization-summary-strip,
+  .organization-summary-strip--tight {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-member-actions {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+
+  .organization-table {
+    min-width: 700px;
   }
 
   .landing-cta-card {
