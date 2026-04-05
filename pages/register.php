@@ -5,17 +5,15 @@ require_once __DIR__ . '/../includes/register_functions.php';
 $name = '';
 $email = '';
 $password = '';
-$rol = '';
-$organizationId = '';
+$passwordConfirm = '';
 $errors = [];
-$organizations = getAllOrganizations($conn);
 
 if (isLogged()) {
     echo '<script>window.location.href="app.php?view=dashboard";</script>';
     exit;
 }
 
-function validateRegister(string $name, string $email, string $password, string $rol, string $organizationId): array
+function validateRegister(string $name, string $email, string $password, string $passwordConfirm): array
 {
     $errors = [];
 
@@ -39,13 +37,10 @@ function validateRegister(string $name, string $email, string $password, string 
         $errors['password'] = 'La contraseña debe tener al menos 8 caracteres';
     }
 
-    if ($organizationId === '') {
-        $errors['organization'] = 'Selecciona una organización';
-    }
-
-    $allowedRoles = ['owner', 'admin', 'manager', 'coach', 'analyst', 'player', 'viewer'];
-    if ($rol === '' || !in_array($rol, $allowedRoles, true)) {
-        $errors['rol'] = 'Selecciona un rol válido';
+    if ($passwordConfirm === '') {
+        $errors['password_confirm'] = 'Repite la contraseña';
+    } elseif ($passwordConfirm !== $password) {
+        $errors['password_confirm'] = 'Las contraseñas no coinciden';
     }
 
     return $errors;
@@ -55,10 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = (string) ($_POST['password'] ?? '');
-    $rol = strtolower(trim((string) ($_POST['role'] ?? '')));
-    $organizationId = (string) ($_POST['organization_id'] ?? '');
+    $passwordConfirm = (string) ($_POST['password_confirm'] ?? '');
 
-    $errors = validateRegister($name, $email, $password, $rol, $organizationId);
+    $errors = validateRegister($name, $email, $password, $passwordConfirm);
 
     if (empty($errors)) {
         $statement = $conn->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
@@ -66,11 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($statement->fetch()) {
             $errors['email'] = 'Este correo ya está registrado';
-        } elseif (!validateOrganization($conn, (int) $organizationId)) {
-            $errors['organization'] = 'La organización seleccionada no existe';
         } else {
             $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
-            addUserToOrganization($conn, $userId, (int) $organizationId, $rol);
 
             echo '<script>window.location.href="app.php?view=login";</script>';
             exit;
@@ -117,35 +108,18 @@ if (empty($layoutIncluded)) {
             <input id="password" name="password" type="password" placeholder="••••••••" />
         </div>
 
-        <div class="field <?php echo isset($errors['organization']) ? 'form-group-error' : ''; ?>">
-            <label for="organization">Organización</label>
-            <select id="organization" name="organization_id">
-                <option value="">Selecciona una organización</option>
-                <?php foreach ($organizations as $organization): ?>
-                    <option value="<?php echo (int) $organization['id']; ?>" <?php echo (string) $organizationId === (string) $organization['id'] ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($organization['name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="field <?php echo isset($errors['rol']) ? 'form-group-error' : ''; ?>">
-            <label for="role">Rol</label>
-            <select id="role" name="role">
-                <option value="">Selecciona un rol</option>
-                <option value="owner" <?php echo $rol === 'owner' ? 'selected' : ''; ?>>Owner</option>
-                <option value="admin" <?php echo $rol === 'admin' ? 'selected' : ''; ?>>Admin</option>
-                <option value="manager" <?php echo $rol === 'manager' ? 'selected' : ''; ?>>Manager</option>
-                <option value="coach" <?php echo $rol === 'coach' ? 'selected' : ''; ?>>Coach</option>
-                <option value="analyst" <?php echo $rol === 'analyst' ? 'selected' : ''; ?>>Analyst</option>
-                <option value="player" <?php echo $rol === 'player' ? 'selected' : ''; ?>>Player</option>
-                <option value="viewer" <?php echo $rol === 'viewer' ? 'selected' : ''; ?>>Viewer</option>
-            </select>
+        <div class="field <?php echo isset($errors['password_confirm']) ? 'form-group-error' : ''; ?>">
+            <label for="password_confirm">Repetir contraseña</label>
+            <input id="password_confirm" name="password_confirm" type="password" placeholder="••••••••" />
         </div>
 
         <div class="field">
             <label for="avatar_file">Avatar</label>
             <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
+        </div>
+
+        <div class="help">
+            Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.
         </div>
 
         <div style="display:flex; gap:12px; flex-wrap:wrap;">

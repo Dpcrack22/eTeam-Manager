@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/organization_functions.php';
+require_once __DIR__ . '/../includes/team_functions.php';
 
 requireAuth();
 
@@ -73,25 +74,23 @@ $pendingTasks = [];
 $recentScrims = [];
 
 if ($activeOrganization['id'] !== null) {
-    $teamStatement = $conn->prepare(
-        'SELECT t.id, t.name, t.tag
-         FROM team_members tm
-         INNER JOIN teams t ON t.id = tm.team_id
-         WHERE tm.user_id = :user_id AND tm.is_active = 1 AND t.organization_id = :organization_id
-         ORDER BY tm.joined_at DESC, t.id DESC
-         LIMIT 1'
-    );
-    $teamStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
-    $teamStatement->bindValue(':organization_id', (int) $activeOrganization['id'], PDO::PARAM_INT);
-    $teamStatement->execute();
-    $teamRow = $teamStatement->fetch();
+    $organizationTeams = getOrganizationTeams($conn, (int) $activeOrganization['id']);
+    $activeTeamId = getActiveTeamId($conn, (int) $activeOrganization['id']);
 
-    if ($teamRow) {
-        $activeTeam = [
-            'id' => (int) $teamRow['id'],
-            'name' => $teamRow['name'],
-            'tag' => $teamRow['tag'] ?: '--',
-        ];
+    if ($activeTeamId === null && !empty($organizationTeams)) {
+        $activeTeamId = (int) $organizationTeams[0]['id'];
+        setActiveTeamContext($conn, (int) $activeOrganization['id'], $activeTeamId);
+    }
+
+    foreach ($organizationTeams as $teamRow) {
+        if ($activeTeamId !== null && (int) $teamRow['id'] === (int) $activeTeamId) {
+            $activeTeam = [
+                'id' => (int) $teamRow['id'],
+                'name' => $teamRow['name'],
+                'tag' => $teamRow['tag'] ?: '--',
+            ];
+            break;
+        }
     }
 
     $eventsSql = 'SELECT title, event_type, DATE_FORMAT(start_datetime, "%d %b · %H:%i") AS date_label, location FROM events WHERE organization_id = :organization_id';
