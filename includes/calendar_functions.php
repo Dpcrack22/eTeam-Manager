@@ -78,3 +78,106 @@ function getTeamScrimEvents(PDO $conn, int $organizationId, ?int $teamId = null,
         ];
     }, $statement->fetchAll());
 }
+
+function getCalendarMonthEntries(PDO $conn, int $organizationId, ?int $teamId, DateTimeImmutable $monthStart, DateTimeImmutable $monthEnd): array
+{
+    $monthStartSql = $monthStart->format('Y-m-d 00:00:00');
+    $monthEndSql = $monthEnd->format('Y-m-d 23:59:59');
+    $entries = [];
+
+    $eventsSql = 'SELECT id, title, description, event_type, start_datetime, end_datetime, location, team_id
+                  FROM events
+                  WHERE organization_id = :organization_id
+                    AND start_datetime >= :month_start
+                    AND start_datetime <= :month_end';
+    $eventBindings = [
+        ':organization_id' => [$organizationId, PDO::PARAM_INT],
+        ':month_start' => [$monthStartSql, PDO::PARAM_STR],
+        ':month_end' => [$monthEndSql, PDO::PARAM_STR],
+    ];
+
+    if ($teamId !== null) {
+        $eventsSql .= ' AND (team_id = :team_id OR team_id IS NULL)';
+        $eventBindings[':team_id'] = [$teamId, PDO::PARAM_INT];
+    }
+
+    $eventsSql .= ' ORDER BY start_datetime ASC, id ASC';
+
+    $eventStatement = $conn->prepare($eventsSql);
+    foreach ($eventBindings as $parameter => [$value, $type]) {
+        $eventStatement->bindValue($parameter, $value, $type);
+    }
+    $eventStatement->execute();
+
+    foreach ($eventStatement->fetchAll() as $event) {
+        $startDate = new DateTimeImmutable((string) $event['start_datetime']);
+
+        $entries[] = [
+            'kind' => 'event',
+            'id' => (int) $event['id'],
+            'date_key' => $startDate->format('Y-m-d'),
+            'time_label' => $startDate->format('H:i'),
+            'title' => $event['title'],
+            'meta' => $event['location'] ?: 'Sin ubicación',
+            'badge_label' => ucfirst((string) $event['event_type']),
+            'badge_class' => 'badge-info',
+            'href' => null,
+            'description' => $event['description'],
+        ];
+    }
+
+    $scrimSql = 'SELECT m.id, m.opponent_name, m.opponent_tag, m.match_date, m.result, m.score_for, m.score_against, gm.name AS game_mode_name
+                 FROM matches m
+                 INNER JOIN game_modes gm ON gm.id = m.game_mode_id
+                 INNER JOIN teams t ON t.id = m.team_id
+                 WHERE t.organization_id = :organization_id
+                   AND m.match_type = "scrim"
+                   AND m.match_date >= :month_start
+                   AND m.match_date <= :month_end';
+    $scrimBindings = [
+        ':organization_id' => [$organizationId, PDO::PARAM_INT],
+        ':month_start' => [$monthStartSql, PDO::PARAM_STR],
+        ':month_end' => [$monthEndSql, PDO::PARAM_STR],
+    ];
+
+    if ($teamId !== null) {
+        $scrimSql .= ' AND m.team_id = :team_id';
+        $scrimBindings[':team_id'] = [$teamId, PDO::PARAM_INT];
+    }
+
+    $scrimSql .= ' ORDER BY m.match_date ASC, m.id ASC';
+
+    $scrimStatement = $conn->prepare($scrimSql);
+    foreach ($scrimBindings as $parameter => [$value, $type]) {
+        $scrimStatement->bindValue($parameter, $value, $type);
+    }
+    $scrimStatement->execute();
+
+    foreach ($scrimStatement->fetchAll() as $scrim) {
+        $matchDate = new DateTimeImmutable((string) $scrim['match_date']);
+        $result = (string) $scrim['result'];
+
+        $entries[] = [
+            'kind' => 'scrim',
+            'id' => (int) $scrim['id'],
+            'date_key' => $matchDate->format('Y-m-d'),
+            'time_label' => $matchDate->format('H:i'),
+            'title' => 'vs ' . $scrim['opponent_name'],
+            'meta' => $scrim['game_mode_name'] . ' · ' . ((int) ($scrim['score_for'] ?? 0)) . ' - ' . ((int) ($scrim['score_against'] ?? 0)),
+            'badge_label' => scrimResultLabel($result),
+            'badge_class' => scrimResultBadgeClass($result),
+            'href' => 'app.php?view=scrim-detail&scrim_id=' . (int) $scrim['id'],
+            'description' => null,
+        ];
+    }
+
+    usort($entries, static function (array $left, array $right): int {
+        if ($left['date_key'] === $right['date_key']) {
+            return strcmp($left['time_label'], $right['time_label']);
+        }
+
+        return strcmp($left['date_key'], $right['date_key']);
+    });
+
+    return $entries;
+}

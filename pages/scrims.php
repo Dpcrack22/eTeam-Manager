@@ -158,7 +158,7 @@ $statusOptions = getScrimStatusOptions();
                         No hay scrims para el filtro actual. Prueba con otro estado o crea el primero desde el formulario.
                     </div>
                 <?php else: ?>
-                    <div class="table-wrap">
+                    <div class="table-wrap scrim-table-wrap">
                         <table class="table scrim-table">
                             <thead>
                                 <tr>
@@ -184,7 +184,7 @@ $statusOptions = getScrimStatusOptions();
                                         <td><?php echo htmlspecialchars($scrim['score_label'], ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo (int) $scrim['maps_count']; ?></td>
                                         <td>
-                                            <div class="stack-sm">
+                                            <div class="scrim-row-actions">
                                                 <a class="btn btn-secondary" href="app.php?view=scrim-detail&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Ver</a>
                                                 <a class="btn btn-primary" href="app.php?view=scrim-form&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Editar</a>
                                             </div>
