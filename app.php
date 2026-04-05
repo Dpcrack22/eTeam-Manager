@@ -14,6 +14,12 @@ if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     exit;
 }
 
+$modulesToHide = ['organizations'];
+if (in_array($view, $modulesToHide, true)) {
+    header('Location: app.php?view=teams');
+    exit;
+}
+
 $isTeamDetailView = $view === 'team-detail';
 
 $appModules = [
@@ -23,13 +29,6 @@ $appModules = [
         'eyebrow' => 'App interna',
         'description' => 'Resumen operativo del contexto actual, la agenda inmediata, las tareas abiertas y el seguimiento competitivo del roster.',
         'page' => __DIR__ . '/../pages/dashboard.php',
-    ],
-    'organizations' => [
-        'label' => 'Organizaciones',
-        'title' => 'Organizaciones',
-        'eyebrow' => 'Modulo',
-        'description' => 'Gestion visual de organizaciones, miembros y roles internos.',
-        'page' => __DIR__ . '/../pages/organizations.php',
     ],
     'teams' => [
         'label' => 'Equipos',
@@ -109,7 +108,7 @@ $appAuthState = $appAuthState ?? ($isAuthenticated ? 'authenticated' : 'guest');
 $appCurrentUser = $appCurrentUser ?? [
     'name' => $_SESSION['user']['name'] ?? 'Usuario',
     'role' => $_SESSION['user']['role'] ?? 'Manager',
-    'organization' => $_SESSION['user']['organization'] ?? 'Sin organización',
+    'team' => $_SESSION['user']['team'] ?? 'Sin equipo',
 ];
 
 if ($view === 'dashboard') {

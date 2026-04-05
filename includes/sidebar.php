@@ -4,7 +4,6 @@ $activeSection = $activeSection ?? 'dashboard';
 if (!isset($appNavItems)) {
     $appNavItems = [
         'dashboard' => ['label' => 'Dashboard', 'href' => 'app.php?view=dashboard'],
-        'organizations' => ['label' => 'Organizaciones', 'href' => 'app.php?view=organizations'],
         'teams' => ['label' => 'Equipos', 'href' => 'app.php?view=teams'],
         'scrims' => ['label' => 'Scrims', 'href' => 'app.php?view=scrims'],
         'calendar' => ['label' => 'Calendario', 'href' => 'app.php?view=calendar'],
@@ -35,7 +34,7 @@ if (!isset($appNavItems)) {
         <div class="card sidebar-panel sidebar-user-card">
             <div class="small">Sesion actual</div>
             <div class="sidebar-user-name"><?php echo htmlspecialchars($appCurrentUser['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="small"><?php echo htmlspecialchars($appCurrentUser['role'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($appCurrentUser['organization'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="small"><?php echo htmlspecialchars($appCurrentUser['role'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($appCurrentUser['team'], ENT_QUOTES, 'UTF-8'); ?></div>
             <div class="stack-sm" style="margin-top: 12px;">
                 <a class="btn btn-secondary" href="app.php?view=settings">Mi cuenta</a>
                 <a class="btn btn-primary" href="includes/logout.php">Salir</a>

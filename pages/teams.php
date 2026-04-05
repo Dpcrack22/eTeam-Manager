@@ -13,8 +13,8 @@ $activeOrganizationId = getActiveOrganizationId($conn, $userId);
 $activeOrganization = $activeOrganizationId ? getOrganizationById($conn, $activeOrganizationId, $userId) : false;
 if (!$activeOrganization) {
     $activeOrganization = [
-        'name' => 'Sin organización',
-        'slug' => 'sin-organizacion',
+        'name' => 'Sin equipo',
+        'slug' => 'sin-equipo',
     ];
 }
 $games = getGames($conn);
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
 
     if (!$activeOrganizationId) {
-        $errors[] = 'Primero necesitas una organización activa';
+        $errors[] = 'Primero necesitas un contexto activo';
     } elseif (!in_array((string) ($currentUser['role'] ?? ''), ['owner', 'admin', 'manager'], true)) {
         $errors[] = 'No tienes permisos para gestionar equipos';
     } elseif ($action === 'create_team') {
@@ -116,14 +116,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card">
         <?php if (!$activeOrganizationId): ?>
             <div class="dashboard-empty-state" style="margin-bottom: 16px;">
-                Todavía no tienes una organización activa. Primero necesitas entrar a una organización para poder gestionar equipos.
+                        Todavía no tienes un contexto activo. Primero necesitas acceder a un equipo para poder gestionarlo.
             </div>
         <?php endif; ?>
 
         <div class="dashboard-section-head">
             <div>
                 <div class="small">Equipo actual</div>
-                <h2 class="h3"><?php echo htmlspecialchars($activeOrganization['name'] ?: 'Sin organización', ENT_QUOTES, 'UTF-8'); ?></h2>
+                        <h2 class="h3"><?php echo htmlspecialchars($activeTeam['name'] ?? 'Sin equipo', ENT_QUOTES, 'UTF-8'); ?></h2>
             </div>
             <?php if ($activeTeam): ?>
                 <span class="badge badge-success">Activo: <?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?></span>
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <div class="dashboard-empty-state">Todavía no hay equipos en esta organización.</div>
+            <div class="dashboard-empty-state">Todavía no hay equipos en este contexto.</div>
         <?php endif; ?>
     </div>
 

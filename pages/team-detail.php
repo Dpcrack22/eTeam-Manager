@@ -25,8 +25,8 @@ $activeOrganization = $activeOrganizationId ? getOrganizationById($conn, $active
 if (!$activeOrganization) {
     $activeOrganization = [
         'id' => null,
-        'name' => 'Sin organización',
-        'slug' => 'sin-organizacion',
+        'name' => 'Sin equipo',
+        'slug' => 'sin-equipo',
         'description' => '',
     ];
 }
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postedTeamId = (int) ($_POST['team_id'] ?? $selectedTeamId);
 
     if (!$activeOrganizationId) {
-        $errors[] = 'Primero necesitas una organización activa';
+        $errors[] = 'Primero necesitas un contexto activo';
     } elseif (!$canManageTeams) {
         $errors[] = 'No tienes permisos para gestionar este equipo';
     } elseif ($postedTeamId <= 0) {
@@ -213,14 +213,14 @@ foreach ($teamMembers as $member) {
     <div>
         <div class="small">Sprint 4</div>
         <h2 class="h2">Detalle de equipo</h2>
-        <p>Gestiona el roster interno, los roles competitivos y la información base de cada equipo dentro de la organización activa.</p>
+        <p>Gestiona el roster interno, los roles competitivos y la información base de cada equipo dentro del contexto activo.</p>
     </div>
     <a class="btn btn-secondary" href="app.php?view=teams">Volver a equipos</a>
 </div>
 
 <?php if (!$activeOrganizationId): ?>
     <div class="card">
-        <div class="dashboard-empty-state">Todavía no tienes una organización activa. Necesitas una organización para abrir el detalle de equipos.</div>
+        <div class="dashboard-empty-state">Todavía no tienes un contexto activo. Necesitas un equipo para abrir el detalle.</div>
     </div>
 <?php elseif (!$selectedTeam): ?>
     <div class="card">
@@ -329,7 +329,7 @@ foreach ($teamMembers as $member) {
             <div class="dashboard-section-head">
                 <div>
                     <div class="small">Navegación</div>
-                    <h3 class="h3">Otros equipos de la organización</h3>
+                    <h3 class="h3">Otros equipos disponibles</h3>
                 </div>
                 <span class="badge badge-info"><?php echo count($teams); ?> totales</span>
             </div>
@@ -355,7 +355,7 @@ foreach ($teamMembers as $member) {
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <div class="dashboard-empty-state">Todavía no hay equipos creados en esta organización.</div>
+                <div class="dashboard-empty-state">Todavía no hay equipos creados en este contexto.</div>
             <?php endif; ?>
         </div>
     </div>

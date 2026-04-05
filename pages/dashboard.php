@@ -47,9 +47,9 @@ $currentUserRole = $_SESSION['user']['role'] ?? $currentUserRole;
 
 $activeOrganization = [
     'id' => null,
-    'name' => $currentUser['organization'] ?? 'Sin organización',
-    'slug' => 'sin-organizacion',
-    'description' => 'Sin contexto de organización activo.',
+    'name' => $currentUser['team'] ?? 'Sin equipo',
+    'slug' => 'sin-equipo',
+    'description' => 'Sin contexto de equipo activo.',
 ];
 
 foreach ($userOrganizations as $userOrganization) {
@@ -58,7 +58,7 @@ foreach ($userOrganizations as $userOrganization) {
             'id' => (int) $userOrganization['id'],
             'name' => $userOrganization['name'],
             'slug' => $userOrganization['slug'],
-            'description' => $userOrganization['description'] ?: 'Organización activa cargada desde la base de datos.',
+            'description' => $userOrganization['description'] ?: 'Contexto activo cargado desde la base de datos.',
         ];
         break;
     }
@@ -178,8 +178,8 @@ $dashboardData = [
     <div class="dashboard-hero card">
         <div>
             <div class="small">Resumen operativo</div>
-            <h2 class="h2">Bienvenido al panel de control</h2>
-            <p>Este dashboard concentra el contexto principal de trabajo del usuario: organización activa, equipo activo, próximos eventos, tareas pendientes y scrims recientes.</p>
+            <h2 class="h2">Bienvenido al panel de equipos</h2>
+            <p>Este dashboard concentra el contexto principal de trabajo del usuario: equipo activo, próximos eventos, tareas pendientes y scrims recientes.</p>
             <div class="stack-sm">
                 <span class="badge">Sprint 2</span>
                 <span class="badge badge-info">Dashboard conectado</span>
@@ -188,12 +188,12 @@ $dashboardData = [
         </div>
         <div class="dashboard-hero-meta">
             <div class="dashboard-hero-chip">
-                <div class="small">Organizacion activa</div>
-                <div class="dashboard-hero-value" data-dashboard-org-name><?php echo htmlspecialchars($activeOrganization['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-            </div>
-            <div class="dashboard-hero-chip">
                 <div class="small">Equipo activo</div>
                 <div class="dashboard-hero-value" data-dashboard-team-name><?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?></div>
+            </div>
+            <div class="dashboard-hero-chip">
+                <div class="small">Tag competitivo</div>
+                <div class="dashboard-hero-value"><?php echo htmlspecialchars($activeTeam['tag'], ENT_QUOTES, 'UTF-8'); ?></div>
             </div>
         </div>
     </div>
@@ -240,7 +240,7 @@ $dashboardData = [
                     <div class="h4" data-dashboard-user-name><?php echo htmlspecialchars($currentUserName, ENT_QUOTES, 'UTF-8'); ?></div>
                     <p class="dashboard-inline-copy" data-dashboard-user-email><?php echo htmlspecialchars($currentUserEmail, ENT_QUOTES, 'UTF-8'); ?></p>
                     <div class="stack-sm">
-                        <span class="badge" data-dashboard-org-slug><?php echo htmlspecialchars($activeOrganization['slug'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <span class="badge">Roster activo</span>
                         <span class="badge badge-info" data-dashboard-team-tag><?php echo htmlspecialchars($activeTeam['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
                     </div>
                 </div>
@@ -256,10 +256,10 @@ $dashboardData = [
             </div>
 
             <div class="dashboard-quick-actions">
-                <a class="dashboard-action-tile" href="app.php?view=organizations">
-                    <span class="small">Contexto</span>
-                    <strong>Organizaciones</strong>
-                    <span>Revisar organización activa y preparar el siguiente sprint.</span>
+                <a class="dashboard-action-tile" href="app.php?view=team-detail">
+                    <span class="small">Roster</span>
+                    <strong>Detalle de equipo</strong>
+                    <span>Revisar el roster, los miembros y los roles del equipo activo.</span>
                 </a>
                 <a class="dashboard-action-tile" href="app.php?view=teams">
                     <span class="small">Roster</span>
