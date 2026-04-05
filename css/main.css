@@ -327,12 +327,14 @@ p {
   font-weight: var(--font-weight-semibold);
   color: var(--text-main);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .app-user-role {
   font-size: var(--font-size-small);
   color: var(--text-muted);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .app-state-chip {
@@ -362,6 +364,15 @@ p {
 .grid-3 {
   display: grid;
   gap: var(--space-4);
+}
+
+.grid-2 > *,
+.grid-3 > *,
+.dashboard-kpis > *,
+.dashboard-quick-actions > *,
+.dashboard-main-grid > *,
+.dashboard-content-grid > * {
+  min-width: 0;
 }
 
 .grid-2 {
@@ -415,6 +426,18 @@ p {
   color: var(--text-main);
 }
 
+.dashboard-context-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.dashboard-context-actions {
+  align-items: flex-start;
+}
+
 .dashboard-kpis {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -436,6 +459,7 @@ p {
 .dashboard-kpi-copy,
 .dashboard-inline-copy {
   margin-bottom: 0;
+  overflow-wrap: anywhere;
 }
 
 .dashboard-main-grid,
@@ -449,12 +473,14 @@ p {
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
+  flex-wrap: wrap;
 }
 
 .dashboard-profile-summary {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .dashboard-avatar {
@@ -527,17 +553,20 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .dashboard-list-title {
   color: var(--text-main);
   font-size: var(--font-size-secondary);
   font-weight: var(--font-weight-semibold);
+  overflow-wrap: anywhere;
 }
 
 .dashboard-list-meta {
   color: var(--text-muted);
   font-size: var(--font-size-small);
+  overflow-wrap: anywhere;
 }
 
 .dashboard-empty-state {
@@ -576,6 +605,16 @@ p {
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
   color: var(--text-main);
+  overflow-wrap: anywhere;
+}
+
+.dashboard-kpi,
+.dashboard-panel,
+.dashboard-action-tile,
+.dashboard-context-banner,
+.sidebar-panel,
+.card {
+  min-width: 0;
 }
 
 /* Cards */

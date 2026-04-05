@@ -198,6 +198,24 @@ $dashboardData = [
         </div>
     </div>
 
+    <?php if ($activeTeam['id'] !== null): ?>
+        <div class="card dashboard-context-banner">
+            <div>
+                <div class="small">Equipo seleccionado</div>
+                <h3 class="h3"><?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <p class="dashboard-inline-copy">Todo lo que ves debajo corresponde a este equipo. Si cambias el equipo en la vista de equipos, el dashboard leerá ese nuevo contexto.</p>
+            </div>
+            <div class="stack-sm dashboard-context-actions">
+                <span class="badge badge-success">Activo</span>
+                <a class="btn btn-secondary" href="app.php?view=teams">Cambiar equipo</a>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="card dashboard-empty-state">
+            Todavía no hay un equipo activo. Ve a Equipos para crear o activar uno y el dashboard mostrará su información aquí.
+        </div>
+    <?php endif; ?>
+
     <div class="dashboard-kpis">
         <article class="card dashboard-kpi">
             <div class="small">Mi rol actual</div>
