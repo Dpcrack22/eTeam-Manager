@@ -625,10 +625,6 @@ p {
   padding: var(--space-4);
 }
 
-.card+.card {
-  margin-top: var(--space-4);
-}
-
 /* Landing (Home) */
 .landing-header {
   position: fixed;
