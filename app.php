@@ -24,6 +24,7 @@ if (in_array($view, $modulesToHide, true)) {
 
 $isTeamDetailView = $view === 'team-detail';
 $isScrimDetailView = in_array($view, ['scrim-detail', 'scrim-form'], true);
+$isCalendarChildView = $view === 'event-form';
 
 $appModules = [
     'dashboard' => [
@@ -67,6 +68,13 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Resumen competitivo del enfrentamiento, con mapas, score y contexto.',
         'page' => __DIR__ . '/../pages/scrim-detail.php',
+    ],
+    'event-form' => [
+        'label' => 'Evento',
+        'title' => 'Evento',
+        'eyebrow' => 'Modulo',
+        'description' => 'Alta y edición visual de eventos del calendario con participación.',
+        'page' => __DIR__ . '/../pages/event-form.php',
     ],
     'calendar' => [
         'label' => 'Calendario',
@@ -113,10 +121,11 @@ $appModules = [
 if (!isset($appModules[$view])) {
     $view = 'dashboard';
     $isTeamDetailView = false;
+    $isCalendarChildView = false;
 }
 
 $currentModule = $appModules[$view];
-$activeSection = $activeSection ?? ($isTeamDetailView ? 'teams' : ($isScrimDetailView ? 'scrims' : $view));
+$activeSection = $activeSection ?? ($isTeamDetailView ? 'teams' : ($isScrimDetailView ? 'scrims' : ($isCalendarChildView ? 'calendar' : $view)));
 $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
@@ -181,7 +190,7 @@ if (!isset($appNavItems)) {
     $appNavItems = [];
 
     foreach ($appModules as $moduleKey => $module) {
-        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail'], true)) {
+        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form'], true)) {
             continue;
         }
 
@@ -197,6 +206,12 @@ if ($isTeamDetailView) {
         ['label' => 'App', 'href' => 'app.php?view=dashboard'],
         ['label' => 'Equipos', 'href' => 'app.php?view=teams'],
         ['label' => $currentModule['label'], 'href' => 'app.php?view=team-detail'],
+    ];
+} elseif ($isCalendarChildView) {
+    $appBreadcrumbs = [
+        ['label' => 'App', 'href' => 'app.php?view=dashboard'],
+        ['label' => 'Calendario', 'href' => 'app.php?view=calendar'],
+        ['label' => $currentModule['label'], 'href' => 'app.php?view=event-form'],
     ];
 } elseif ($isScrimDetailView) {
     $appBreadcrumbs = [

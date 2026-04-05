@@ -1,6 +1,237 @@
 <?php
 require_once __DIR__ . '/db.php';
 
+function getCalendarEventTypeOptions(): array
+{
+    return [
+        ['key' => 'scrim', 'label' => 'Scrim'],
+        ['key' => 'practice', 'label' => 'Práctica'],
+        ['key' => 'tournament', 'label' => 'Torneo'],
+        ['key' => 'meeting', 'label' => 'Reunión'],
+        ['key' => 'review', 'label' => 'Review'],
+    ];
+}
+
+function getCalendarEventTypeLabel(string $eventType): string
+{
+    foreach (getCalendarEventTypeOptions() as $option) {
+        if ($option['key'] === $eventType) {
+            return $option['label'];
+        }
+    }
+
+    return ucfirst($eventType);
+}
+
+function getCalendarParticipantStatusOptions(): array
+{
+    return [
+        ['key' => 'none', 'label' => 'Sin asignar'],
+        ['key' => 'invited', 'label' => 'Invitado'],
+        ['key' => 'accepted', 'label' => 'Aceptado'],
+        ['key' => 'declined', 'label' => 'Rechazado'],
+    ];
+}
+
+function getCalendarEventById(PDO $conn, int $eventId, int $organizationId): array|false
+{
+    $statement = $conn->prepare(
+        'SELECT e.id, e.organization_id, e.team_id, e.title, e.description, e.event_type, e.start_datetime, e.end_datetime,
+                e.location, e.created_by, e.created_at, t.name AS team_name, t.tag AS team_tag
+         FROM events e
+         LEFT JOIN teams t ON t.id = e.team_id
+         WHERE e.id = :event_id AND e.organization_id = :organization_id
+         LIMIT 1'
+    );
+    $statement->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->execute();
+
+    $event = $statement->fetch();
+
+    if (!$event) {
+        return false;
+    }
+
+    $startDate = new DateTimeImmutable((string) $event['start_datetime']);
+    $endDate = new DateTimeImmutable((string) $event['end_datetime']);
+
+    return [
+        'id' => (int) $event['id'],
+        'organization_id' => (int) $event['organization_id'],
+        'team_id' => $event['team_id'] !== null ? (int) $event['team_id'] : null,
+        'team_name' => $event['team_name'],
+        'team_tag' => $event['team_tag'],
+        'title' => $event['title'],
+        'description' => $event['description'],
+        'event_type' => $event['event_type'],
+        'event_type_label' => getCalendarEventTypeLabel((string) $event['event_type']),
+        'start_datetime' => $startDate->format('Y-m-d\TH:i'),
+        'end_datetime' => $endDate->format('Y-m-d\TH:i'),
+        'start_label' => $startDate->format('d M Y · H:i'),
+        'end_label' => $endDate->format('d M Y · H:i'),
+        'location' => $event['location'],
+        'created_by' => (int) $event['created_by'],
+        'created_at' => $event['created_at'],
+    ];
+}
+
+function getCalendarEventParticipants(PDO $conn, int $eventId): array
+{
+    $statement = $conn->prepare(
+        'SELECT ep.user_id, ep.status, u.username, u.email, u.avatar_url
+         FROM event_participants ep
+         INNER JOIN users u ON u.id = ep.user_id
+         WHERE ep.event_id = :event_id
+         ORDER BY FIELD(ep.status, "accepted", "invited", "declined"), u.username ASC'
+    );
+    $statement->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
+function normalizeCalendarParticipantRows(array $participantRows): array
+{
+    $allowedStatuses = ['invited', 'accepted', 'declined'];
+    $normalizedRows = [];
+
+    foreach ($participantRows as $userId => $status) {
+        $userId = (int) $userId;
+        $status = is_array($status) ? (string) ($status['status'] ?? '') : (string) $status;
+        $status = strtolower(trim($status));
+
+        if ($userId <= 0 || !in_array($status, $allowedStatuses, true)) {
+            continue;
+        }
+
+        $normalizedRows[] = [
+            'user_id' => $userId,
+            'status' => $status,
+        ];
+    }
+
+    return $normalizedRows;
+}
+
+function syncCalendarEventParticipants(PDO $conn, int $eventId, array $participantRows): void
+{
+    $deleteStatement = $conn->prepare('DELETE FROM event_participants WHERE event_id = :event_id');
+    $deleteStatement->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+    $deleteStatement->execute();
+
+    $insertStatement = $conn->prepare(
+        'INSERT INTO event_participants (event_id, user_id, status)
+         VALUES (:event_id, :user_id, :status)'
+    );
+
+    foreach (normalizeCalendarParticipantRows($participantRows) as $participantRow) {
+        $insertStatement->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+        $insertStatement->bindValue(':user_id', $participantRow['user_id'], PDO::PARAM_INT);
+        $insertStatement->bindValue(':status', $participantRow['status'], PDO::PARAM_STR);
+        $insertStatement->execute();
+    }
+}
+
+function createCalendarEvent(PDO $conn, int $organizationId, ?int $teamId, string $title, ?string $description, string $eventType, string $startDatetime, string $endDatetime, ?string $location, int $createdBy, array $participantRows = []): int
+{
+    $conn->beginTransaction();
+
+    try {
+        $statement = $conn->prepare(
+            'INSERT INTO events (organization_id, team_id, title, description, event_type, start_datetime, end_datetime, location, created_by, created_at)
+             VALUES (:organization_id, :team_id, :title, :description, :event_type, :start_datetime, :end_datetime, :location, :created_by, NOW())'
+        );
+        $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $statement->bindValue(':team_id', $teamId, $teamId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $statement->bindValue(':title', $title, PDO::PARAM_STR);
+        $statement->bindValue(':description', $description, $description === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $statement->bindValue(':event_type', $eventType, PDO::PARAM_STR);
+        $statement->bindValue(':start_datetime', $startDatetime, PDO::PARAM_STR);
+        $statement->bindValue(':end_datetime', $endDatetime, PDO::PARAM_STR);
+        $statement->bindValue(':location', $location, $location === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $statement->bindValue(':created_by', $createdBy, PDO::PARAM_INT);
+        $statement->execute();
+
+        $eventId = (int) $conn->lastInsertId();
+        syncCalendarEventParticipants($conn, $eventId, $participantRows);
+
+        $conn->commit();
+
+        return $eventId;
+    } catch (Throwable $exception) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        throw $exception;
+    }
+}
+
+function updateCalendarEvent(PDO $conn, int $eventId, int $organizationId, ?int $teamId, string $title, ?string $description, string $eventType, string $startDatetime, string $endDatetime, ?string $location, array $participantRows = []): bool
+{
+    $conn->beginTransaction();
+
+    try {
+        $statement = $conn->prepare(
+            'UPDATE events
+             SET team_id = :team_id, title = :title, description = :description, event_type = :event_type,
+                 start_datetime = :start_datetime, end_datetime = :end_datetime, location = :location
+             WHERE id = :event_id AND organization_id = :organization_id'
+        );
+        $statement->bindValue(':team_id', $teamId, $teamId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $statement->bindValue(':title', $title, PDO::PARAM_STR);
+        $statement->bindValue(':description', $description, $description === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $statement->bindValue(':event_type', $eventType, PDO::PARAM_STR);
+        $statement->bindValue(':start_datetime', $startDatetime, PDO::PARAM_STR);
+        $statement->bindValue(':end_datetime', $endDatetime, PDO::PARAM_STR);
+        $statement->bindValue(':location', $location, $location === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $statement->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+        $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $statement->execute();
+
+        syncCalendarEventParticipants($conn, $eventId, $participantRows);
+
+        $conn->commit();
+
+        return true;
+    } catch (Throwable $exception) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        throw $exception;
+    }
+}
+
+function deleteCalendarEvent(PDO $conn, int $eventId, int $organizationId): bool
+{
+    $conn->beginTransaction();
+
+    try {
+        $deleteParticipants = $conn->prepare('DELETE FROM event_participants WHERE event_id = :event_id');
+        $deleteParticipants->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+        $deleteParticipants->execute();
+
+        $deleteEvent = $conn->prepare('DELETE FROM events WHERE id = :event_id AND organization_id = :organization_id');
+        $deleteEvent->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+        $deleteEvent->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $deleteEvent->execute();
+
+        $deleted = $deleteEvent->rowCount() > 0;
+
+        $conn->commit();
+
+        return $deleted;
+    } catch (Throwable $exception) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        throw $exception;
+    }
+}
+
 function getTeamCalendarEvents(PDO $conn, int $organizationId, ?int $teamId = null, int $limit = 5): array
 {
     $sql = 'SELECT id, title, description, event_type, start_datetime, end_datetime, location, team_id
@@ -36,6 +267,8 @@ function getTeamCalendarEvents(PDO $conn, int $organizationId, ?int $teamId = nu
             'end_label' => $endDate->format('H:i'),
             'location' => $event['location'] ?: 'Sin ubicación',
             'team_id' => $event['team_id'] !== null ? (int) $event['team_id'] : null,
+            'event_type_label' => getCalendarEventTypeLabel((string) $event['event_type']),
+            'href' => 'app.php?view=event-form&event_id=' . (int) $event['id'],
         ];
     }, $statement->fetchAll());
 }
@@ -119,9 +352,9 @@ function getCalendarMonthEntries(PDO $conn, int $organizationId, ?int $teamId, D
             'time_label' => $startDate->format('H:i'),
             'title' => $event['title'],
             'meta' => $event['location'] ?: 'Sin ubicación',
-            'badge_label' => ucfirst((string) $event['event_type']),
+            'badge_label' => getCalendarEventTypeLabel((string) $event['event_type']),
             'badge_class' => 'badge-info',
-            'href' => null,
+            'href' => 'app.php?view=event-form&event_id=' . (int) $event['id'],
             'description' => $event['description'],
         ];
     }

@@ -60,6 +60,13 @@ $nextMonth = $monthStart->modify('+1 month')->format('Y-m');
 $weekdayLabels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 $calendarDays = [];
 
+if (!empty($_SESSION['flash_success'])) {
+    $successMessage = (string) $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
+} else {
+    $successMessage = '';
+}
+
 for ($cursor = $gridStart; $cursor <= $gridEnd; $cursor = $cursor->modify('+1 day')) {
     $calendarDays[] = [
         'date' => $cursor,
@@ -104,6 +111,12 @@ $pageScripts[] = 'js/modules/calendar.js';
         </div>
     </div>
 
+    <?php if (!empty($successMessage)): ?>
+        <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); color: var(--text-main);">
+            <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
+        </div>
+    <?php endif; ?>
+
     <?php if ($activeTeamId === null): ?>
         <div class="card dashboard-empty-state">
             No hay un equipo activo. En Equipos puedes marcar uno y aquí aparecerán sus eventos y scrims.
@@ -118,6 +131,7 @@ $pageScripts[] = 'js/modules/calendar.js';
                 <a class="btn btn-secondary" href="app.php?view=calendar&amp;month=<?php echo htmlspecialchars($previousMonth, ENT_QUOTES, 'UTF-8'); ?>">Mes anterior</a>
                 <a class="btn btn-secondary" href="app.php?view=calendar">Hoy</a>
                 <a class="btn btn-secondary" href="app.php?view=calendar&amp;month=<?php echo htmlspecialchars($nextMonth, ENT_QUOTES, 'UTF-8'); ?>">Mes siguiente</a>
+                <a class="btn btn-primary" href="app.php?view=event-form">Nuevo evento</a>
             </div>
         </div>
 
@@ -191,9 +205,12 @@ $pageScripts[] = 'js/modules/calendar.js';
                                 <div class="dashboard-list-item">
                                     <div class="dashboard-list-top">
                                         <span class="dashboard-list-title"><?php echo htmlspecialchars($event['title'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                        <span class="badge badge-info"><?php echo htmlspecialchars($event['event_type'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <span class="badge badge-info"><?php echo htmlspecialchars($event['event_type_label'], ENT_QUOTES, 'UTF-8'); ?></span>
                                     </div>
                                     <div class="dashboard-list-meta"><?php echo htmlspecialchars($event['start_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($event['location'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <div class="stack-sm" style="margin-top: 10px;">
+                                        <a class="btn btn-secondary" href="<?php echo htmlspecialchars($event['href'], ENT_QUOTES, 'UTF-8'); ?>">Editar</a>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>

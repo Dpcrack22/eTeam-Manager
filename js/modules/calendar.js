@@ -63,7 +63,7 @@
       if (href) {
         detailLink.hidden = false;
         detailLink.href = href;
-        detailLink.textContent = kind === "scrim" ? "Abrir scrim" : "Ir al registro relacionado";
+        detailLink.textContent = kind === "scrim" ? "Abrir scrim" : "Editar evento";
       } else {
         detailLink.hidden = true;
       }
