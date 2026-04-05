@@ -276,6 +276,63 @@ p {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.app-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-card) 72%, var(--bg-secondary));
+}
+
+.app-user-chip:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--border-subtle));
+}
+
+.app-user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--border-subtle));
+  color: var(--text-main);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  flex: 0 0 auto;
+}
+
+.app-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-user-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.app-user-name {
+  font-size: var(--font-size-secondary);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.app-user-role {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  line-height: 1.2;
 }
 
 .app-state-chip {
@@ -510,12 +567,12 @@ p {
   color: var(--text-main);
 }
 
-.sidebar-user-card {
+.sidebar-context-card {
   display: grid;
-  gap: 8px;
+  gap: var(--space-3);
 }
 
-.sidebar-user-name {
+.sidebar-context-title {
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
   color: var(--text-main);

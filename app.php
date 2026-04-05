@@ -109,7 +109,33 @@ $appCurrentUser = $appCurrentUser ?? [
     'name' => $_SESSION['user']['name'] ?? 'Usuario',
     'role' => $_SESSION['user']['role'] ?? 'Manager',
     'team' => $_SESSION['user']['team'] ?? 'Sin equipo',
+    'avatar_url' => $_SESSION['user']['avatar_url'] ?? null,
 ];
+
+if (empty($appCurrentUser['initials'])) {
+    $userNameForInitials = trim((string) $appCurrentUser['name']);
+    $appCurrentUser['initials'] = 'EM';
+
+    if ($userNameForInitials !== '') {
+        $nameParts = preg_split('/\s+/', $userNameForInitials) ?: [];
+        $initials = '';
+
+        foreach ($nameParts as $namePart) {
+            if ($namePart === '') {
+                continue;
+            }
+
+            $initials .= strtoupper(substr($namePart, 0, 1));
+            if (strlen($initials) >= 2) {
+                break;
+            }
+        }
+
+        if ($initials !== '') {
+            $appCurrentUser['initials'] = $initials;
+        }
+    }
+}
 
 if ($view === 'dashboard') {
     $pageScripts[] = 'js/modules/dashboard.js';

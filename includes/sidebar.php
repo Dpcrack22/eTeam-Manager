@@ -31,13 +31,13 @@ if (!isset($appNavItems)) {
             </nav>
         </div>
 
-        <div class="card sidebar-panel sidebar-user-card">
-            <div class="small">Sesion actual</div>
-            <div class="sidebar-user-name"><?php echo htmlspecialchars($appCurrentUser['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="small"><?php echo htmlspecialchars($appCurrentUser['role'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($appCurrentUser['team'], ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="card sidebar-panel sidebar-context-card">
+            <div class="small">Contexto activo</div>
+            <div class="sidebar-context-title"><?php echo htmlspecialchars($appCurrentUser['team'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="small">El dashboard, los scrims y el calendario leen este equipo como referencia.</div>
             <div class="stack-sm" style="margin-top: 12px;">
-                <a class="btn btn-secondary" href="app.php?view=settings">Mi cuenta</a>
-                <a class="btn btn-primary" href="includes/logout.php">Salir</a>
+                <a class="btn btn-secondary" href="app.php?view=team-detail">Abrir detalle</a>
+                <a class="btn btn-primary" href="app.php?view=teams">Cambiar equipo</a>
             </div>
         </div>
     <?php else: ?>
