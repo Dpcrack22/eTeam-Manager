@@ -90,7 +90,7 @@ $pageScripts[] = 'js/modules/calendar.js';
 <section class="calendar-page">
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Integración Sprint 5</div>
+            <div class="small">Agenda conectada</div>
             <h2 class="h2">Calendario y scrims</h2>
             <p>Esta vista cruza los eventos del equipo con los scrims registrados para que la agenda y el seguimiento competitivo hablen el mismo idioma.</p>
             <div class="stack-sm">

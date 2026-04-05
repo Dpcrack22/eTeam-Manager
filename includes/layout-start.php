@@ -1,7 +1,7 @@
 <?php require __DIR__ . '/head.php'; ?>
 <?php $appClass = empty($hideSidebar) ? 'app' : 'app app--no-sidebar'; ?>
 <div class="app-shell">
-    <div class="<?php echo $appClass; ?>">
+    <div class="<?php echo $appClass; ?>" data-app-shell>
         <?php if (empty($hideSidebar)): ?>
             <?php require __DIR__ . '/sidebar.php'; ?>
         <?php endif; ?>

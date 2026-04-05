@@ -51,7 +51,7 @@ $activeSection = 'scrims';
 <section class="scrim-detail-page" data-scrim-detail-root>
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Sprint 5</div>
+            <div class="small">Detalle competitivo</div>
             <h2 class="h2">Detalle competitivo</h2>
             <p>Esta vista aterriza el contexto del enfrentamiento para revisar score, modo, mapas y lectura táctica del scrim.</p>
         </div>

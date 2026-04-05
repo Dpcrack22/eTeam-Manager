@@ -242,7 +242,7 @@ $activeSection = 'calendar';
 <section class="calendar-page event-form-page">
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Sprint 6</div>
+            <div class="small">Gestión de calendario</div>
             <h2 class="h2"><?php echo $event ? 'Editar evento' : 'Nuevo evento'; ?></h2>
             <p>El calendario ya no solo se consulta. Desde aquí puedes registrar eventos, asignarlos a un equipo y marcar quién participa.</p>
         </div>
@@ -391,7 +391,7 @@ $activeSection = 'calendar';
             <div class="card">
                 <div class="dashboard-section-head">
                     <div>
-                        <div class="small">Sprint 6</div>
+                        <div class="small">Base preparada</div>
                         <h3 class="h3">Qué queda preparado</h3>
                     </div>
                 </div>

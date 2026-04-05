@@ -103,87 +103,131 @@ if ($avatarInitials === '') {
 }
 ?>
 
-<div class="grid-2">
-    <div class="card">
-        <h2 class="h3">Perfil de usuario</h2>
-        <p>Desde aquí puedes actualizar el nombre visible y el avatar del usuario que ha iniciado sesión.</p>
-        <div class="landing-list">
-            <div class="landing-list-item">Nombre de usuario actualizado desde la base de datos.</div>
-            <div class="landing-list-item">Avatar opcional con subida local.</div>
-            <div class="landing-list-item">Datos de cuenta enlazados con la sesión activa.</div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2 class="h3">Contexto activo</h2>
-        <div class="landing-list">
-            <div class="landing-list-item"><?php echo htmlspecialchars($profileUser['organization_name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="landing-list-item"><?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?></div>
-            <div class="landing-list-item"><?php echo htmlspecialchars($profileUser['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
-        </div>
-    </div>
-</div>
-
-<div class="card" style="max-width: 720px; margin: 24px auto;">
-    <?php if ($successMessage !== ''): ?>
-        <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px;">
-            <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($errors)): ?>
-        <div class="error-container">
-            <?php foreach ($errors as $error): ?>
-                <div class="error-box">
-                    <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <form class="form" method="post" enctype="multipart/form-data" novalidate>
-        <div class="field">
-            <label>Avatar actual</label>
-            <div style="display:flex; align-items:center; gap: 16px; flex-wrap: wrap;">
-                <?php if ($displayAvatar): ?>
-                    <img src="<?php echo htmlspecialchars($displayAvatar, ENT_QUOTES, 'UTF-8'); ?>" alt="Avatar" style="width:96px; height:96px; border-radius:50%; object-fit:cover; border: 1px solid var(--border-subtle);" />
-                <?php else: ?>
-                    <div class="dashboard-avatar" style="width:96px; height:96px; font-size: 1.4rem;"><?php echo htmlspecialchars($avatarInitials, ENT_QUOTES, 'UTF-8'); ?></div>
-                <?php endif; ?>
-                <div class="small">Usa una imagen cuadrada para una presentación más limpia en la app.</div>
+<section class="profile-page">
+    <div class="card profile-hero">
+        <div class="profile-hero-copy">
+            <div class="small">Perfil y ajustes</div>
+            <h2 class="profile-hero-title">Tu perfil dentro de la organización</h2>
+            <p>Actualiza el nombre visible y el avatar del usuario que ha iniciado sesión sin salir del contexto operativo de la app.</p>
+            <div class="stack-sm">
+                <span class="badge badge-info"><?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?></span>
+                <span class="badge badge-success"><?php echo htmlspecialchars($profileUser['organization_name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?></span>
+                <span class="badge">Acceso seguro</span>
             </div>
         </div>
 
-        <div class="field <?php echo isset($errors['username']) ? 'form-group-error' : ''; ?>">
-            <label for="username">Nombre de usuario</label>
-            <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($profileUser['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+        <div class="profile-hero-avatar" aria-hidden="true">
+            <?php if ($displayAvatar): ?>
+                <img class="profile-avatar-preview" src="<?php echo htmlspecialchars($displayAvatar, ENT_QUOTES, 'UTF-8'); ?>" alt="" />
+            <?php else: ?>
+                <?php echo htmlspecialchars($avatarInitials, ENT_QUOTES, 'UTF-8'); ?>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="profile-layout">
+        <div class="card">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Resumen de cuenta</div>
+                    <h3 class="h3">Contexto activo</h3>
+                </div>
+            </div>
+
+            <div class="profile-summary-grid">
+                <div class="profile-summary-item">
+                    <div class="profile-summary-label">Usuario</div>
+                    <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['username'] ?? 'Usuario', ENT_QUOTES, 'UTF-8'); ?></div>
+                </div>
+                <div class="profile-summary-item">
+                    <div class="profile-summary-label">Email</div>
+                    <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+                </div>
+                <div class="profile-summary-item">
+                    <div class="profile-summary-label">Organización</div>
+                    <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['organization_name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?></div>
+                </div>
+                <div class="profile-summary-item">
+                    <div class="profile-summary-label">Rol</div>
+                    <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?></div>
+                </div>
+            </div>
+
+            <div class="landing-list" style="margin-top: 16px;">
+                <div class="landing-list-item">El nombre se actualiza en la sesión y en la base de datos.</div>
+                <div class="landing-list-item">El avatar se sube localmente y se reutiliza en toda la app.</div>
+                <div class="landing-list-item">El perfil mantiene el contexto operativo del usuario.</div>
+            </div>
         </div>
 
-        <div class="field">
-            <label>Email</label>
-            <input type="text" value="<?php echo htmlspecialchars($profileUser['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" disabled />
-        </div>
+        <div class="card profile-form-card">
+            <?php if ($successMessage !== ''): ?>
+                <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px;">
+                    <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            <?php endif; ?>
 
-        <div class="field">
-            <label>Organización</label>
-            <input type="text" value="<?php echo htmlspecialchars($profileUser['organization_name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?>" disabled />
-        </div>
+            <?php if (!empty($errors)): ?>
+                <div class="error-container">
+                    <?php foreach ($errors as $error): ?>
+                        <div class="error-box">
+                            <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
-        <div class="field">
-            <label>Rol</label>
-            <input type="text" value="<?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?>" disabled />
-        </div>
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Edición visual</div>
+                    <h3 class="h3">Actualizar perfil</h3>
+                </div>
+            </div>
 
-        <div class="field <?php echo isset($errors['avatar']) ? 'form-group-error' : ''; ?>">
-            <label for="avatar_file">Cambiar avatar</label>
-            <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
-        </div>
+            <form class="form" method="post" enctype="multipart/form-data" novalidate>
+                <div class="profile-avatar-row">
+                    <?php if ($displayAvatar): ?>
+                        <img class="profile-avatar-preview" src="<?php echo htmlspecialchars($displayAvatar, ENT_QUOTES, 'UTF-8'); ?>" alt="Avatar actual" />
+                    <?php else: ?>
+                        <div class="profile-hero-avatar"><?php echo htmlspecialchars($avatarInitials, ENT_QUOTES, 'UTF-8'); ?></div>
+                    <?php endif; ?>
+                    <div class="small">Usa una imagen cuadrada para mantener una presentación limpia en la app.</div>
+                </div>
 
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <button class="btn btn-primary" type="submit">Guardar cambios</button>
-            <a class="btn btn-secondary" href="app.php?view=dashboard">Volver al dashboard</a>
+                <div class="profile-form-grid">
+                    <div class="field <?php echo isset($errors['username']) ? 'form-group-error' : ''; ?>">
+                        <label for="username">Nombre de usuario</label>
+                        <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($profileUser['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    </div>
+
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="text" value="<?php echo htmlspecialchars($profileUser['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" disabled />
+                    </div>
+
+                    <div class="field">
+                        <label>Organización</label>
+                        <input type="text" value="<?php echo htmlspecialchars($profileUser['organization_name'] ?? 'Sin organización', ENT_QUOTES, 'UTF-8'); ?>" disabled />
+                    </div>
+
+                    <div class="field">
+                        <label>Rol</label>
+                        <input type="text" value="<?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?>" disabled />
+                    </div>
+
+                    <div class="field <?php echo isset($errors['avatar']) ? 'form-group-error' : ''; ?>">
+                        <label for="avatar_file">Cambiar avatar</label>
+                        <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                    <a class="btn btn-secondary" href="app.php?view=dashboard">Volver al dashboard</a>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+    </div>
+</section>
 
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; } ?>

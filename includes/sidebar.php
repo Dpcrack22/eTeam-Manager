@@ -15,7 +15,10 @@ if (!isset($appNavItems)) {
 ?>
 <aside class="sidebar">
     <div class="sidebar-brand-block">
-        <div class="sidebar-brand-title">eTeam Manager</div>
+        <div class="sidebar-brand-row">
+            <div class="sidebar-brand-title">eTeam Manager</div>
+            <div class="sidebar-brand-arrow" aria-hidden="true">◀</div>
+        </div>
         <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Espacio de trabajo interno' : 'Vista publica del layout'; ?></p>
     </div>
 
@@ -37,7 +40,7 @@ if (!isset($appNavItems)) {
             <div class="small">El dashboard, los scrims y el calendario leen este equipo como referencia.</div>
             <div class="stack-sm" style="margin-top: 12px;">
                 <a class="btn btn-secondary" href="app.php?view=team-detail">Abrir detalle</a>
-                <a class="btn btn-primary" href="app.php?view=teams">Cambiar equipo</a>
+                <button class="btn btn-primary" type="button" data-open-team-switcher>Cambiar equipo</button>
             </div>
         </div>
     <?php else: ?>

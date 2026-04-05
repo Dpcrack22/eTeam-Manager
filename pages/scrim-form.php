@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'delete_scrim') {
         if ($scrimId > 0) {
             deleteScrim($conn, $scrimId, (int) $activeTeam['id']);
+            $_SESSION['flash_success'] = 'Scrim eliminado correctamente';
             header('Location: app.php?view=scrims');
             exit;
         }
@@ -137,7 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $scoreAgainst,
                     $normalizedMaps
                 );
-                header('Location: app.php?view=scrim-detail&scrim_id=' . $scrimId);
+                $_SESSION['flash_success'] = 'Scrim actualizado correctamente';
+                header('Location: app.php?view=scrims');
                 exit;
             }
 
@@ -155,7 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $normalizedMaps
             );
 
-            header('Location: app.php?view=scrim-detail&scrim_id=' . $createdScrimId);
+            $_SESSION['flash_success'] = 'Scrim creado correctamente';
+            header('Location: app.php?view=scrims');
             exit;
         }
 
@@ -205,7 +208,7 @@ $activeSection = 'scrims';
 <section class="scrim-form-page" data-scrim-form-root>
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Sprint 5</div>
+            <div class="small">Gestión competitiva</div>
             <h2 class="h2"><?php echo $scrim ? 'Editar scrim' : 'Nuevo scrim'; ?></h2>
             <p>El formulario prepara el dato base para el historial competitivo. Desde aquí se guarda rival, fecha, resultado, score y mapas.</p>
         </div>
@@ -337,7 +340,7 @@ $activeSection = 'scrims';
                         <button class="btn btn-primary" type="submit"><?php echo $scrim ? 'Guardar cambios' : 'Crear scrim'; ?></button>
                         <a class="btn btn-secondary" href="app.php?view=scrims">Volver al listado</a>
                         <?php if ($scrim): ?>
-                            <button class="btn btn-secondary" type="submit" name="scrim_action" value="delete_scrim" onclick="return confirm('¿Eliminar este scrim?');">Eliminar</button>
+                            <button class="btn btn-secondary" type="submit" name="scrim_action" value="delete_scrim" data-delete-scrim-trigger>Eliminar</button>
                         <?php endif; ?>
                     </div>
                 </form>

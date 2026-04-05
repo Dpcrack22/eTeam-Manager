@@ -211,7 +211,7 @@ foreach ($teamMembers as $member) {
 
 <div class="dashboard-section-head" style="margin-bottom: 20px;">
     <div>
-        <div class="small">Sprint 4</div>
+        <div class="small">Detalle de roster</div>
         <h2 class="h2">Detalle de equipo</h2>
         <p>Gestiona el roster interno, los roles competitivos y la información base de cada equipo dentro del contexto activo.</p>
     </div>

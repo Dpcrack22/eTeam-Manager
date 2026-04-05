@@ -5,6 +5,12 @@ require_once __DIR__ . '/includes/team_functions.php';
 
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
 $isAuthenticated = isLogged();
+$appCurrentRequestUri = (string) ($_SERVER['REQUEST_URI'] ?? ('app.php?view=' . $view));
+$appCurrentRequestUri = preg_replace('/^.*?(app\.php\?.*)$/', '$1', $appCurrentRequestUri) ?: ('app.php?view=' . $view);
+
+if (!str_starts_with($appCurrentRequestUri, 'app.php?view=')) {
+    $appCurrentRequestUri = 'app.php?view=' . $view;
+}
 
 if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
     header('Location: app.php?view=login');
@@ -130,6 +136,7 @@ $pageTitle = $pageTitle ?? $currentModule['title'];
 $pageEyebrow = $pageEyebrow ?? $currentModule['eyebrow'];
 $pageDescription = $pageDescription ?? $currentModule['description'];
 $pageScripts = $pageScripts ?? [];
+$pageScripts[] = 'js/modules/app-shell.js';
 $appAuthState = $appAuthState ?? ($isAuthenticated ? 'authenticated' : 'guest');
 $appCurrentUser = $appCurrentUser ?? [
     'name' => $_SESSION['user']['name'] ?? 'Usuario',
@@ -180,6 +187,13 @@ if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
             }
         }
     }
+}
+
+$appActiveTeamId = $appCurrentUser['team_id'] ?? null;
+$appSidebarTeams = [];
+
+if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null) {
+    $appSidebarTeams = getOrganizationTeams($conn, (int) $appShellOrganizationId);
 }
 
 if ($view === 'dashboard') {

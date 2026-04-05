@@ -61,12 +61,18 @@ $pageEyebrow = 'Modulo';
 $pageDescription = 'Listado competitivo del roster activo con filtros por estado, acceso al detalle y entrada al formulario de alta o edición.';
 $activeSection = 'scrims';
 $statusOptions = getScrimStatusOptions();
+$successMessage = '';
+
+if (!empty($_SESSION['flash_success'])) {
+    $successMessage = (string) $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
+}
 ?>
 
 <section class="scrims-page" data-scrims-root>
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Sprint 5</div>
+            <div class="small">Historial competitivo</div>
             <h2 class="h2">Scrims y detalle competitivo</h2>
             <p>Este módulo reúne historial, próximos scrims y acceso al detalle por mapas para seguir el rendimiento del equipo activo.</p>
             <div class="stack-sm">
@@ -86,6 +92,12 @@ $statusOptions = getScrimStatusOptions();
             </div>
         </div>
     </div>
+
+    <?php if (!empty($successMessage)): ?>
+        <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); color: var(--text-main);">
+            <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
+        </div>
+    <?php endif; ?>
 
     <?php if ($activeTeamId === null): ?>
         <div class="card dashboard-empty-state">

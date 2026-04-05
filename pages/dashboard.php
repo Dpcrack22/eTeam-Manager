@@ -190,7 +190,7 @@ $dashboardData = [
             <h2 class="h2">Bienvenido al panel de equipos</h2>
             <p>Este dashboard concentra el contexto principal de trabajo del usuario: equipo activo, próximos eventos, tareas pendientes y scrims recientes.</p>
             <div class="stack-sm">
-                <span class="badge">Sprint 2</span>
+                <span class="badge">Resumen vivo</span>
                 <span class="badge badge-info">Dashboard conectado</span>
                 <span class="badge badge-success">Datos de BD</span>
             </div>

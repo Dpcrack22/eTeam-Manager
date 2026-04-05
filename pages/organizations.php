@@ -293,7 +293,7 @@ $pageDescription = $pageDescription ?? 'Gestion visual de organizaciones, miembr
     <div class="organization-intro card">
         <div class="dashboard-section-head">
             <div>
-                <div class="small">Sprint 3</div>
+                <div class="small">Contexto de cuenta</div>
                 <h2 class="h2">Organizaciones</h2>
                 <p>Contexto activo, alta de organización y gestión de miembros en una vista más clara.</p>
             </div>

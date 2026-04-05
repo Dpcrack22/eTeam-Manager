@@ -51,6 +51,11 @@ if ($activeOrganizationId) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
+    $returnTo = trim((string) ($_POST['return_to'] ?? 'app.php?view=teams'));
+
+    if (!str_starts_with($returnTo, 'app.php?view=')) {
+        $returnTo = 'app.php?view=teams';
+    }
 
     if (!$activeOrganizationId) {
         $errors[] = 'Primero necesitas un contexto activo';
@@ -98,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             setActiveTeamContext($conn, $activeOrganizationId, $newTeamId);
             $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
-            header('Location: app.php?view=teams');
+            header('Location: ' . $returnTo);
             exit;
         }
     }
@@ -109,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($result['success'])) {
             $_SESSION['flash_success'] = 'Equipo activo actualizado';
-            header('Location: app.php?view=teams');
+            header('Location: ' . $returnTo);
             exit;
         } else {
             $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
