@@ -1430,6 +1430,10 @@ textarea:focus {
 
 .login-remember-row input {
   margin-top: 2px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border-radius: 5px;
   accent-color: var(--color-primary);
 }
 
@@ -2279,6 +2283,10 @@ textarea:focus {
   display: grid;
   place-items: center;
   padding: var(--space-4);
+}
+
+.calendar-overlay[hidden] {
+  display: none !important;
 }
 
 .calendar-overlay-backdrop {
