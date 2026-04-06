@@ -71,6 +71,7 @@ for ($cursor = $gridStart; $cursor <= $gridEnd; $cursor = $cursor->modify('+1 da
     $calendarDays[] = [
         'date' => $cursor,
         'key' => $cursor->format('Y-m-d'),
+        'label' => $cursor->format('d/m/Y'),
         'day' => $cursor->format('j'),
         'is_current_month' => $cursor->format('m') === $monthStart->format('m') && $cursor->format('Y') === $monthStart->format('Y'),
         'is_today' => $cursor->format('Y-m-d') === (new DateTimeImmutable('today'))->format('Y-m-d'),
@@ -159,90 +160,20 @@ $pageScripts[] = 'js/modules/calendar.js';
                                 <?php if (empty($day['entries'])): ?>
                                     <div class="calendar-empty-day">Sin eventos</div>
                                 <?php else: ?>
-                                    <?php foreach (array_slice($day['entries'], 0, 3) as $entry): ?>
-                                        <?php $entryClass = $entry['kind'] === 'scrim' ? 'is-scrim' : 'is-event'; ?>
-                                        <button class="calendar-event-pill <?php echo $entryClass; ?>" type="button"
-                                            data-calendar-entry="true"
-                                            data-entry-kind="<?php echo htmlspecialchars($entry['kind'], ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-title="<?php echo htmlspecialchars($entry['title'], ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-time="<?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-badge="<?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-meta="<?php echo htmlspecialchars($entry['meta'], ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-description="<?php echo htmlspecialchars((string) ($entry['description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-entry-href="<?php echo htmlspecialchars((string) ($entry['href'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
-                                            <span class="calendar-event-pill-head">
-                                                <span class="calendar-event-time"><?php echo htmlspecialchars($entry['time_label'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                                <span class="badge <?php echo htmlspecialchars($entry['badge_class'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($entry['badge_label'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                            </span>
-                                            <span class="calendar-event-copy">
-                                                <strong><?php echo htmlspecialchars($entry['title'], ENT_QUOTES, 'UTF-8'); ?></strong>
-                                                <span><?php echo htmlspecialchars($entry['meta'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                            </span>
-                                        </button>
-                                    <?php endforeach; ?>
-                                    <?php if (count($day['entries']) > 3): ?>
-                                        <div class="calendar-more">+<?php echo count($day['entries']) - 3; ?> más</div>
-                                    <?php endif; ?>
+                                    <button class="calendar-day-trigger" type="button"
+                                        data-calendar-day-trigger
+                                        data-day-key="<?php echo htmlspecialchars($day['key'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-day-label="<?php echo htmlspecialchars($day['label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-day-entries="<?php echo htmlspecialchars(json_encode($day['entries'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT), ENT_QUOTES, 'UTF-8'); ?>">
+                                        <span><?php echo count($day['entries']); ?> evento<?php echo count($day['entries']) === 1 ? '' : 's'; ?></span>
+                                        <small>Ver detalle</small>
+                                    </button>
                                 <?php endif; ?>
                             </div>
                         </article>
                     <?php endforeach; ?>
                 </div>
             </div>
-
-            <div class="calendar-aside">
-                <div class="card app-module-card">
-                    <div class="dashboard-section-head">
-                        <div>
-                            <div class="small">Agenda</div>
-                            <h3 class="h3">Próximos eventos</h3>
-                        </div>
-                        <a class="btn btn-secondary" href="app.php?view=scrims">Abrir scrims</a>
-                    </div>
-
-                    <?php if (empty($calendarEvents)): ?>
-                        <div class="dashboard-empty-state">Todavía no hay eventos cargados para este equipo.</div>
-                    <?php else: ?>
-                        <div class="dashboard-list">
-                            <?php foreach ($calendarEvents as $event): ?>
-                                <div class="dashboard-list-item">
-                                    <div class="dashboard-list-top">
-                                        <span class="dashboard-list-title"><?php echo htmlspecialchars($event['title'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                        <span class="badge badge-info"><?php echo htmlspecialchars($event['event_type_label'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    </div>
-                                    <div class="dashboard-list-meta"><?php echo htmlspecialchars($event['start_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($event['location'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <div class="stack-sm" style="margin-top: 10px;">
-                                        <a class="btn btn-secondary" href="<?php echo htmlspecialchars($event['href'], ENT_QUOTES, 'UTF-8'); ?>">Editar</a>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <div class="card calendar-detail-card" data-calendar-detail-card>
-                    <div class="dashboard-section-head">
-                        <div>
-                            <div class="small">Detalle mock</div>
-                            <h3 class="h3">Evento seleccionado</h3>
-                        </div>
-                    </div>
-
-                    <div class="calendar-detail-empty" data-calendar-detail-empty>
-                        Haz clic en cualquier evento del calendario para ver un resumen rápido aquí.
-                    </div>
-
-                    <div class="calendar-detail-content" data-calendar-detail-content hidden>
-                        <div class="calendar-detail-title" data-calendar-detail-title></div>
-                        <div class="calendar-detail-meta" data-calendar-detail-meta></div>
-                        <div class="calendar-detail-badges">
-                            <span class="badge badge-info" data-calendar-detail-kind></span>
-                            <span class="badge" data-calendar-detail-time></span>
-                        </div>
-                        <div class="scrim-note-box calendar-detail-note" data-calendar-detail-description></div>
-                        <a class="btn btn-primary" data-calendar-detail-link href="#" hidden>Ver relacionado</a>
-                    </div>
-                </div>
 
                 <div class="card app-module-card">
                     <div class="dashboard-section-head">
@@ -282,6 +213,27 @@ $pageScripts[] = 'js/modules/calendar.js';
                         <div class="landing-list-item">Puedes abrir un scrim desde el calendario sin salir del contexto del equipo.</div>
                         <div class="landing-list-item">Si después quieres, aquí ya cabe una edición visual del evento.</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calendar-overlay" data-calendar-day-overlay hidden>
+            <div class="calendar-overlay-backdrop" data-calendar-day-overlay-close></div>
+            <div class="calendar-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="calendar-overlay-title">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Día seleccionado</div>
+                        <h3 class="h3" id="calendar-overlay-title" data-calendar-overlay-title>Calendario</h3>
+                    </div>
+                    <button class="btn btn-secondary" type="button" data-calendar-day-overlay-close>Cerrar</button>
+                </div>
+
+                <div class="calendar-overlay-meta" data-calendar-overlay-meta></div>
+                <div class="calendar-overlay-list" data-calendar-overlay-list></div>
+
+                <div class="calendar-overlay-actions">
+                    <a class="btn btn-primary" data-calendar-overlay-add href="app.php?view=event-form">Añadir evento este día</a>
+                    <a class="btn btn-secondary" href="app.php?view=event-form">Abrir formulario</a>
                 </div>
             </div>
         </div>

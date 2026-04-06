@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $email = '';
 $password = '';
+$rememberMe = false;
 $errors = [];
 
 if (isLogged()) {
@@ -36,10 +37,11 @@ function validateLogin(string $email, string $password): array
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = (string) ($_POST['password'] ?? '');
+    $rememberMe = !empty($_POST['remember_me']);
     $errors = validateLogin($email, $password);
 
     if (empty($errors)) {
-        $result = login($email, $password);
+        $result = login($email, $password, $rememberMe);
 
         if (!empty($result['success'])) {
             echo '<script>window.location.href="app.php?view=dashboard";</script>';
@@ -83,6 +85,14 @@ if (empty($layoutIncluded)) {
             <label for="password">Contraseña</label>
             <input id="password" name="password" type="password" placeholder="••••••••" />
         </div>
+
+        <label class="login-remember-row">
+            <input type="checkbox" name="remember_me" value="1" <?php echo $rememberMe ? 'checked' : ''; ?> />
+            <span>
+                <strong>Recordarme</strong>
+                <small>Mantiene la sesión activa en este navegador durante más tiempo.</small>
+            </span>
+        </label>
 
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
             <button class="btn btn-primary" type="submit">Entrar</button>

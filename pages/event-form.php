@@ -79,9 +79,19 @@ if (!empty($eventParticipants)) {
     }
 }
 
-$tomorrow = new DateTimeImmutable('tomorrow 18:00');
-$defaultStart = $tomorrow->format('Y-m-d\TH:i');
-$defaultEnd = $tomorrow->modify('+1 hour')->format('Y-m-d\TH:i');
+$requestedDate = trim((string) ($_GET['date'] ?? ''));
+$defaultAnchor = null;
+
+if ($requestedDate !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $requestedDate)) {
+    $defaultAnchor = DateTimeImmutable::createFromFormat('Y-m-d H:i', $requestedDate . ' 18:00') ?: null;
+}
+
+if (!$defaultAnchor) {
+    $defaultAnchor = new DateTimeImmutable('tomorrow 18:00');
+}
+
+$defaultStart = $defaultAnchor->format('Y-m-d\TH:i');
+$defaultEnd = $defaultAnchor->modify('+1 hour')->format('Y-m-d\TH:i');
 
 $formState = [
     'title' => $event['title'] ?? '',
