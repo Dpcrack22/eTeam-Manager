@@ -175,6 +175,7 @@ $pageScripts[] = 'js/modules/calendar.js';
                 </div>
             </div>
 
+            <div class="calendar-aside">
                 <div class="card app-module-card">
                     <div class="dashboard-section-head">
                         <div>

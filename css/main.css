@@ -1900,7 +1900,7 @@ textarea:focus {
 
 .calendar-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1.75fr) minmax(340px, 0.95fr);
   gap: var(--space-4);
   align-items: start;
 }
@@ -1934,13 +1934,13 @@ textarea:focus {
 }
 
 .calendar-day {
-  min-height: 170px;
-  padding: 10px;
+  min-height: 220px;
+  padding: 12px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   background: color-mix(in srgb, var(--bg-secondary) 86%, var(--bg-card));
   display: grid;
-  gap: 8px;
+  gap: 10px;
   align-content: start;
 }
 
@@ -2204,8 +2204,8 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
   border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--border-subtle));
@@ -2216,7 +2216,7 @@ textarea:focus {
 
 .calendar-day-events {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .calendar-event-pill {
@@ -2244,11 +2244,11 @@ textarea:focus {
 }
 
 .calendar-event-copy {
-  display: grid;
+  padding: 8px 10px;
   gap: 2px;
   min-width: 0;
 }
-
+  gap: 10px;
 .calendar-event-copy strong {
   color: var(--text-main);
   font-size: var(--font-size-secondary);
@@ -2256,15 +2256,17 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
-.calendar-event-copy span {
-  color: var(--text-muted);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
   font-size: var(--font-size-small);
   overflow-wrap: anywhere;
 }
 
-.calendar-empty-day,
+  font-size: 11px;
 .calendar-more {
   font-size: var(--font-size-small);
+  white-space: nowrap;
   color: var(--text-muted);
 }
 
@@ -2299,7 +2301,7 @@ textarea:focus {
 .calendar-overlay-panel {
   position: relative;
   z-index: 1;
-  width: min(980px, 100%);
+  width: min(1040px, 100%);
   max-height: min(88vh, 920px);
   overflow: auto;
   display: grid;
@@ -2353,6 +2355,16 @@ textarea:focus {
 .calendar-overlay-item-description {
   margin: 0;
   color: var(--text-muted);
+}
+
+@media (max-width: 1280px) {
+  .calendar-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .calendar-day {
+    min-height: 200px;
+  }
 }
 
 .calendar-overlay-actions {
