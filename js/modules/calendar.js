@@ -9,18 +9,9 @@
   var overlayTitle = document.querySelector('[data-calendar-overlay-title]');
   var overlayMeta = document.querySelector('[data-calendar-overlay-meta]');
   var overlayList = document.querySelector('[data-calendar-overlay-list]');
-  var overlayAdd = document.querySelector('[data-calendar-overlay-add]');
+  var overlayAddEvent = document.querySelector('[data-calendar-overlay-add-event]');
+  var overlayAddScrim = document.querySelector('[data-calendar-overlay-add-scrim]');
   var overlayCloseButtons = Array.prototype.slice.call(document.querySelectorAll('[data-calendar-day-overlay-close]'));
-  var activeTrigger = null;
-
-  function escapeHtml(value) {
-    return String(value || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
 
   function openOverlay() {
     if (!overlay) {
@@ -39,7 +30,6 @@
 
     overlay.hidden = true;
     overlay.classList.remove('is-open');
-    activeTrigger = null;
 
     if (!document.querySelector('.app-modal.is-open:not([hidden])') && !document.querySelector('.calendar-overlay.is-open:not([hidden])')) {
       document.body.classList.remove('is-modal-open');
@@ -139,11 +129,14 @@
       }
     }
 
-    if (overlayAdd) {
-      overlayAdd.href = 'app.php?view=event-form&date=' + encodeURIComponent(dayKey);
+    if (overlayAddEvent) {
+      overlayAddEvent.href = 'app.php?view=event-form&date=' + encodeURIComponent(dayKey);
     }
 
-    activeTrigger = trigger;
+    if (overlayAddScrim) {
+      overlayAddScrim.href = 'app.php?view=scrim-form&date=' + encodeURIComponent(dayKey);
+    }
+
     openOverlay();
   }
 

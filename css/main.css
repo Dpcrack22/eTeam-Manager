@@ -2244,11 +2244,11 @@ textarea:focus {
 }
 
 .calendar-event-copy {
-  padding: 8px 10px;
+  display: grid;
   gap: 2px;
   min-width: 0;
 }
-  gap: 10px;
+
 .calendar-event-copy strong {
   color: var(--text-main);
   font-size: var(--font-size-secondary);
@@ -2256,17 +2256,15 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-bold);
-  white-space: nowrap;
+.calendar-event-copy span {
+  color: var(--text-muted);
   font-size: var(--font-size-small);
   overflow-wrap: anywhere;
 }
 
-  font-size: 11px;
+.calendar-empty-day,
 .calendar-more {
   font-size: var(--font-size-small);
-  white-space: nowrap;
   color: var(--text-muted);
 }
 
@@ -2301,8 +2299,8 @@ textarea:focus {
 .calendar-overlay-panel {
   position: relative;
   z-index: 1;
-  width: min(1040px, 100%);
-  max-height: min(88vh, 920px);
+  width: min(820px, 100%);
+  max-height: min(82vh, 860px);
   overflow: auto;
   display: grid;
   gap: var(--space-4);
@@ -2457,22 +2455,16 @@ textarea:focus {
 
 .calendar-event-pill.is-event {
   border-left-color: var(--info);
-}
-
-.calendar-event-pill .badge {
-  white-space: nowrap;
-}
-
 .calendar-event-copy {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
 .calendar-event-copy strong {
   color: var(--text-main);
   font-size: var(--font-size-secondary);
-  line-height: 1.25;
+  line-height: 1.2;
   overflow-wrap: anywhere;
 }
 
@@ -2482,10 +2474,14 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 1100px) {
-  .scrim-form-page .grid-2 {
-    grid-template-columns: 1fr;
-  }
+.calendar-empty-day,
+.calendar-more {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+}
+
+.calendar-more {
+  padding-left: 4px;
 }
 
 .organization-page {
@@ -3072,6 +3068,29 @@ textarea:focus {
   .landing-feature-card {
     animation: none;
   }
+}
+
+.calendar-page .calendar-layout {
+  grid-template-columns: minmax(0, 1.75fr) minmax(340px, 0.95fr);
+}
+
+.calendar-page .calendar-day {
+  min-height: 220px;
+  padding: 12px;
+  gap: 10px;
+}
+
+.calendar-page .calendar-day-events {
+  gap: 10px;
+}
+
+.calendar-page .calendar-overlay-panel {
+  width: min(820px, 100%);
+  max-height: min(82vh, 860px);
+}
+
+.calendar-page .calendar-overlay-actions {
+  justify-content: flex-start;
 }
 
 

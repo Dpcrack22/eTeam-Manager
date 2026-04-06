@@ -233,8 +233,8 @@ $pageScripts[] = 'js/modules/calendar.js';
                 <div class="calendar-overlay-list" data-calendar-overlay-list></div>
 
                 <div class="calendar-overlay-actions">
-                    <a class="btn btn-primary" data-calendar-overlay-add href="app.php?view=event-form">Añadir evento este día</a>
-                    <a class="btn btn-secondary" href="app.php?view=event-form">Abrir formulario</a>
+                    <a class="btn btn-primary" data-calendar-overlay-add-event href="app.php?view=event-form">Añadir evento este día</a>
+                    <a class="btn btn-secondary" data-calendar-overlay-add-scrim href="app.php?view=scrim-form">Añadir scrim este día</a>
                 </div>
             </div>
         </div>

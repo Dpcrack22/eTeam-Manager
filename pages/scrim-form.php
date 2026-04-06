@@ -23,6 +23,12 @@ if (!$activeOrganization) {
 $activeTeamId = $activeOrganizationId ? getActiveTeamId($conn, (int) $activeOrganizationId) : null;
 $activeTeam = $activeTeamId ? getTeamById($conn, (int) $activeTeamId, (int) $activeOrganizationId) : false;
 $errors = [];
+$requestedDate = trim((string) ($_GET['date'] ?? ''));
+$requestedMatchDate = null;
+
+if ($requestedDate !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $requestedDate)) {
+    $requestedMatchDate = DateTimeImmutable::createFromFormat('Y-m-d H:i', $requestedDate . ' 18:00') ?: null;
+}
 
 if (!$activeTeam) {
     $activeTeam = false;
@@ -46,7 +52,7 @@ $gameMaps = $teamGameId > 0 ? getGameMapsForGame($conn, $teamGameId) : [];
 $formState = [
     'opponent_name' => $scrim['opponent_name'] ?? '',
     'opponent_tag' => $scrim['opponent_tag'] ?? '',
-    'match_date' => $scrim['match_date'] ?? '',
+    'match_date' => $scrim['match_date'] ?? ($requestedMatchDate ? $requestedMatchDate->format('Y-m-d\TH:i') : ''),
     'game_mode_id' => $scrim['game_mode_id'] ?? ($gameModes[0]['id'] ?? ''),
     'result' => $scrim['result'] ?? 'pending',
     'score_for' => $scrim['score_for'] ?? '',
