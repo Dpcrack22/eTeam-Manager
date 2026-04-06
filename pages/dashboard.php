@@ -99,7 +99,7 @@ if (isset($_SESSION['user']['email'])) {
                 </div>
                 <div>
                     <div class="h4" data-dashboard-user-name><?php echo htmlspecialchars($appCurrentUser["name"]); ?></div>
-                    <p class="dashboard-inline-copy" data-dashboard-user-email><?php echo htmlspecialchars($appCurrentUser["email"]); ?></p>
+                    <p class="dashboard-inline-copy" data-dashboard-user-email><?php echo htmlspecialchars($appCurrentUser["email"] ?? 'Dirección de correo no disponible'); ?></p>
                     <div class="stack-sm">
                         <span class="badge" data-dashboard-org-slug> <?php echo htmlspecialchars($appCurrentUser["team"]); ?></span>
                         <span class="badge badge-info" data-dashboard-team-tag>PV</span>
