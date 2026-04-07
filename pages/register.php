@@ -81,58 +81,60 @@ if (empty($layoutIncluded)) {
     $shouldCloseLayout = true;
 }
 ?>
-<?php if (!empty($errors)): ?>
-    <div class="error-container">
-        <?php foreach ($errors as $error): ?>
-            <div class="error-box">
-                <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
+<div class="auth-page">
+    <?php if (!empty($errors)): ?>
+        <div class="error-container">
+            <?php foreach ($errors as $error): ?>
+                <div class="error-box">
+                    <?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="auth-card card auth-card--wide">
+        <div class="auth-card-head">
+            <div class="small">Crear cuenta</div>
+            <h2 class="h3">Registro de usuario</h2>
+            <p>Crea tu acceso y después el equipo te asignará organización y rol por invitación.</p>
+        </div>
+
+        <form class="form auth-form" method="post" enctype="multipart/form-data" novalidate>
+            <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
+                <label for="name">Nombre</label>
+                <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
             </div>
-        <?php endforeach; ?>
+
+            <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
+            </div>
+
+            <div class="field <?php echo isset($errors['password']) ? 'form-group-error' : ''; ?>">
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" placeholder="••••••••" />
+            </div>
+
+            <div class="field <?php echo isset($errors['password_confirm']) ? 'form-group-error' : ''; ?>">
+                <label for="password_confirm">Repetir contraseña</label>
+                <input id="password_confirm" name="password_confirm" type="password" placeholder="••••••••" />
+            </div>
+
+            <div class="field">
+                <label for="avatar_file">Avatar</label>
+                <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
+            </div>
+
+            <div class="help">
+                Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.
+            </div>
+
+            <div class="auth-actions">
+                <button class="btn btn-primary" type="submit">Crear cuenta</button>
+                <a class="btn btn-secondary" href="app.php?view=login">Ya tengo cuenta</a>
+            </div>
+        </form>
     </div>
-<?php endif; ?>
-
-<div class="auth-card card auth-card--wide">
-    <div class="auth-card-head">
-        <div class="small">Crear cuenta</div>
-        <h2 class="h3">Registro de usuario</h2>
-        <p>Crea tu acceso y después el equipo te asignará organización y rol por invitación.</p>
-    </div>
-
-    <form class="form auth-form" method="post" enctype="multipart/form-data" novalidate>
-        <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
-            <label for="name">Nombre</label>
-            <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
-        </div>
-
-        <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
-        </div>
-
-        <div class="field <?php echo isset($errors['password']) ? 'form-group-error' : ''; ?>">
-            <label for="password">Contraseña</label>
-            <input id="password" name="password" type="password" placeholder="••••••••" />
-        </div>
-
-        <div class="field <?php echo isset($errors['password_confirm']) ? 'form-group-error' : ''; ?>">
-            <label for="password_confirm">Repetir contraseña</label>
-            <input id="password_confirm" name="password_confirm" type="password" placeholder="••••••••" />
-        </div>
-
-        <div class="field">
-            <label for="avatar_file">Avatar</label>
-            <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
-        </div>
-
-        <div class="help">
-            Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.
-        </div>
-
-        <div class="auth-actions">
-            <button class="btn btn-primary" type="submit">Crear cuenta</button>
-            <a class="btn btn-secondary" href="app.php?view=login">Ya tengo cuenta</a>
-        </div>
-    </form>
 </div>
 <?php if ($shouldCloseLayout) { require __DIR__ . '/../includes/layout-end.php'; }
 

@@ -221,7 +221,7 @@ if ($avatarInitials === '') {
                     </div>
                 </div>
 
-                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <div class="profile-form-actions">
                     <button class="btn btn-primary" type="submit">Guardar cambios</button>
                     <a class="btn btn-secondary" href="app.php?view=dashboard">Volver al dashboard</a>
                 </div>

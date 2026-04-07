@@ -53,9 +53,6 @@ if (!isset($appNavItems)) {
                 <div class="landing-list-item">La navegación completa se desbloquea tras autenticarte.</div>
                 <div class="landing-list-item">Este panel solo muestra la estructura pública.</div>
             </div>
-            <div class="stack-sm" style="margin-top: 12px;">
-                <a class="btn btn-primary" href="app.php?view=login">Ir al acceso</a>
-            </div>
         </div>
     <?php endif; ?>
 
