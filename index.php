@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>eTeam Manager — Gestion interna para equipos de eSports</title>
+    <meta name="description" content="eTeam Manager es una plataforma interna para organizar equipos de eSports, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta name="keywords" content="eSports, gestion de equipos, scrims, calendario, kanban, notas, roster, eTeam Manager">
+    <meta name="author" content="Parallax Esports">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#FF4655">
+    <meta property="og:site_name" content="eTeam Manager">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta property="og:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta property="og:image" content="assets/mini-logo.svg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta name="twitter:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta name="twitter:image" content="assets/mini-logo.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/mini-logo.svg">
+    <link rel="apple-touch-icon" href="assets/mini-logo.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

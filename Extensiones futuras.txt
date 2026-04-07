@@ -1,0 +1,47 @@
+eTeam Manager — Extensiones futuras
+
+Fecha: 7 de abril de 2026
+
+Este documento recoge ideas de crecimiento para ampliar la app después del cierre funcional actual.
+
+1. Kanban avanzado
+- Drag and drop real entre columnas.
+- Subtareas y checklist dentro de cada tarjeta.
+- Etiquetas por prioridad, área o responsable.
+- Historial de cambios por tarea.
+
+2. Calendario más completo
+- Vista semanal y agenda compacta.
+- Recordatorios y notificaciones.
+- Repetición de eventos.
+- Integración con scrims y disponibilidad del roster.
+
+3. Scrims y analítica
+- Estadísticas por rival, mapa y resultado.
+- Comparativa de rendimiento entre periodos.
+- Exportación de reportes.
+- Notas post-scrim ligadas al enfrentamiento.
+
+4. Colaboración
+- Comentarios en tareas y notas.
+- Menciones de usuario.
+- Actividad reciente del equipo.
+- Notificaciones internas por cambios importantes.
+
+5. Organización y permisos
+- Roles más granulares por módulo.
+- Invitaciones con enlace temporal.
+- Auditoría de accesos y acciones.
+- Soporte para múltiples organizaciones con cambio rápido.
+
+6. Experiencia de usuario
+- Búsqueda global por equipo, scrim, nota o tarea.
+- Favoritos o accesos rápidos.
+- Mejor sistema de filtros persistentes.
+- Vista de inicio personalizable.
+
+7. Integraciones externas
+- APIs de calendarios externos.
+- Integración con Discord.
+- Importación/exportación de datos.
+- Webhooks para automatizaciones.
