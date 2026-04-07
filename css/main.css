@@ -1452,6 +1452,43 @@ textarea:focus {
   font-size: var(--font-size-small);
 }
 
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+  margin: 24px auto 0;
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.auth-card--wide {
+  max-width: 640px;
+}
+
+.auth-card-head {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-card-head p {
+  margin-bottom: 0;
+}
+
+.auth-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.auth-actions .btn {
+  width: auto;
+}
+
 /* Tables (scrims, listados, etc.) */
 .table {
   width: 100%;
@@ -3049,6 +3086,15 @@ textarea:focus {
 
   .calendar-nav .btn {
     width: auto;
+  }
+
+  .auth-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .auth-actions .btn {
+    width: 100%;
   }
 
   .btn {

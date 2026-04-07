@@ -1,279 +1,159 @@
 eTeam Manager — Progreso del proyecto
 
-Fecha de actualización: 11 de marzo de 2026
-
-======================================================================
-
-OBJETIVO DE ESTE DOCUMENTO
-
-Este documento sirve para llevar control real del estado del proyecto.
-La idea es tener en un solo sitio:
-
-- lo que ya está hecho
-- lo que está empezado
-- lo que falta por hacer
-- en qué conviene centrarse ahora
+Fecha de actualización: 7 de abril de 2026
 
 ======================================================================
 
 ESTADO GENERAL ACTUAL
 
-Situación actual del proyecto:
+El proyecto ya no está en una fase solo estructural. A día de hoy la app interna
+está operativa con autenticación real, sesión persistente, contexto activo de
+organización/equipo y navegación compartida.
 
-- La landing principal ya existe y explica la aplicación.
-- La parte interna de la app ya está separada de la landing.
-- Ya existe una base reutilizable con includes para la app interna.
-- Ya existe navegación interna base.
-- Ya existe un acceso demo desde la landing y desde el login simulado.
-- El proyecto sigue en fase frontend + mocks.
-- Todavía no hay backend real ni base de datos conectada.
-- El Sprint 2 todavía no está empezado como desarrollo real de módulo.
+Resumen corto:
 
-Resumen rápido:
+- La landing principal está diferenciada de la app interna.
+- Existe un layout compartido reutilizable.
+- La autenticación funciona con sesión y recordarme.
+- El dashboard ya trabaja con datos reales de la BD.
+- Equipos, scrims y calendario están conectados al contexto activo.
+- El Kanban de tareas ya existe como módulo funcional.
+- Las notas estratégicas ya tienen CRUD y tags.
+- La pantalla de ajustes/perfil ya está operativa.
 
-- Actividad 1 del Sprint 1: hecha.
-- Actividad 2 del Sprint 1: hecha.
-- Actividad 3 del Sprint 1: tocada parcialmente a nivel visual.
-- Actividad 4 del Sprint 1: empezada a nivel demo visual.
-- Actividad 5 del Sprint 1: pendiente como implementación más clara.
+Conclusión de estado:
 
-======================================================================
-
-COSAS HECHAS
-
-1) Landing principal rehecha
-
-Hecho:
-- index.php ya funciona como página principal pública.
-- La home explica mejor qué hace la aplicación.
-- Se han quitado partes innecesarias de planificación interna.
-- La landing ahora enseña funciones, flujo, roles y acceso a la app interna.
-- La barra superior ya no desaparece al hacer scroll.
-
-Resultado:
-- La web principal ya presenta el proyecto de forma mucho más clara.
-
-----------------------------------------------------------------------
-
-2) Base visual global existente
-
-Hecho:
-- main.css ya tiene sistema visual base.
-- Colores, tipografía, botones, inputs, badges, cards y tablas ya están definidos.
-- Ya hay estructura base para landing, sidebar, topbar y layout interno.
-- Se añadieron pequeñas mejoras visuales y animaciones en la sección de funciones.
-
-Resultado:
-- La UI tiene una base consistente para seguir construyendo módulos.
-
-----------------------------------------------------------------------
-
-3) Flujo demo de acceso
-
-Hecho:
-- El modal de login y registro ya existe en la landing.
-- main.js ya controla apertura, cierre y cambio entre login y registro.
-- El login demo redirige a la parte interna de la app.
-
-Resultado:
-- Ya existe un flujo visual básico para "entrar" en la app.
-
-----------------------------------------------------------------------
-
-4) Parte interna separada de la landing
-
-Hecho:
-- Ya existe app.php como entrada a la app interna.
-- La landing y la parte interna ya no son lo mismo.
-- La estructura del proyecto ya empieza a parecer una app real y no solo una demo suelta.
-
-Resultado:
-- Actividad 1 del Sprint 1 queda cerrada.
-
-----------------------------------------------------------------------
-
-5) Includes reutilizables creados y refactorizados
-
-Hecho:
-- includes/app-config.php
-- includes/head.php
-- includes/header.php
-- includes/sidebar.php
-- includes/footer.php
-- includes/layout-start.php
-- includes/layout-end.php
-- includes/app-head.php
-- includes/app-sidebar.php
-- includes/app-topbar.php
-- includes/app-layout-start.php
-- includes/app-layout-end.php
-
-Resultado:
-- Ya hay una base reutilizable para montar páginas internas sin repetir código y alineada con la estructura recomendada del proyecto.
-
-----------------------------------------------------------------------
-
-6) Navegación interna y páginas base creadas
-
-Hecho:
-- app.php ya carga el módulo correspondiente usando configuración central.
-- pages/dashboard.php ya existe como vista base.
-- pages/organizations.php ya existe como base del módulo de organizaciones.
-- pages/teams.php ya existe como base del módulo de equipos.
-- pages/scrims.php ya existe como base del módulo de scrims.
-- pages/calendar.php ya existe como base del módulo de calendario.
-- pages/boards.php ya existe como base del módulo kanban.
-- pages/notes.php ya existe como base del módulo de notas.
-- pages/settings.php ya existe como base del módulo de ajustes.
-- El sidebar ya permite cambiar entre dashboard, organizaciones, equipos, scrims, calendario, tableros, notas y ajustes.
-- El header ya muestra breadcrumbs y estado visual del contexto.
-- El sidebar ya diferencia visualmente entre estado autenticado y estado invitado.
-
-Resultado:
-- Actividad 2 del Sprint 1 queda cerrada a nivel de layout compartido y navegación principal.
-
-----------------------------------------------------------------------
-
-7) Sandbox para probar includes
-
-Hecho:
-- Se creó test-includes.php.
-- Permite probar sidebar, topbar y layout sin tocar los archivos reales.
-- Permite cambiar sección activa, título, eyebrow y descripción.
-- Permite probar también el estado visual authenticated o guest.
-
-Resultado:
-- Ahora se puede experimentar sin romper la app interna principal.
+- Sprint 1 a Sprint 6 pueden darse por cerrados a nivel funcional.
+- Sprint 7 y Sprint 8 ya tienen implementación real en el repositorio.
+- Lo que queda ahora es pulido, verificación y documentación final.
 
 ======================================================================
 
-COSAS EMPEZADAS PERO NO CERRADAS
+LO QUE YA ESTÁ CERRADO
 
-1) Actividad 3 — Identidad visual global
+1) Base de la aplicación
 
-Ya está hecho:
-- la base visual está bastante adelantada
-- ya existen componentes reutilizables
-- ya hay estilo consistente en landing y app interna
+Hecho:
+- `index.php` actúa como landing pública.
+- `app.php` carga las vistas internas por módulo.
+- `includes/head.php`, `includes/layout-start.php` y `includes/layout-end.php` sostienen la estructura común.
 
-Falta para cerrarla mejor:
-- revisar responsive con más calma
-- limpiar estilos repetidos o provisionales
-- mejorar consistencia entre landing y páginas internas
+Resultado:
+- La app pública y la app interna ya están separadas.
 
 ----------------------------------------------------------------------
 
-2) Actividad 4 — Login y registro visual
+2) Autenticación y acceso
 
-Ya está hecho:
-- modal visual de login y registro
-- cambio entre tabs
-- validación básica de campos vacíos
-- redirección demo a la app interna
+Hecho:
+- Login y registro existen.
+- La sesión se restaura con remember-me.
+- El acceso a la app interna está protegido.
 
-Falta:
-- separar auth en un archivo propio si conviene
-- mejorar mensajes de error
-- decidir si se mantendrá modal o también habrá páginas login/register independientes
+Resultado:
+- El flujo de entrada y salida ya es real y persistente.
+
+----------------------------------------------------------------------
+
+3) Dashboard
+
+Hecho:
+- El dashboard muestra equipo activo, eventos, tareas y scrims.
+- Lee el contexto activo desde la base de datos.
+
+Resultado:
+- La pantalla principal ya aporta información útil de verdad.
+
+----------------------------------------------------------------------
+
+4) Equipos y contexto
+
+Hecho:
+- Existe listado de equipos.
+- Se puede activar un equipo y ese contexto se propaga al resto de módulos.
+- El detalle de equipo y la gestión de miembros están integrados.
+
+Resultado:
+- La app trabaja con un contexto operativo claro.
+
+----------------------------------------------------------------------
+
+5) Scrims y calendario
+
+Hecho:
+- Scrims tiene listado, detalle y formulario.
+- El calendario tiene vista mensual y overlay por día.
+- Desde el calendario se puede abrir evento o scrim con la fecha seleccionada.
+
+Resultado:
+- La parte competitiva ya está conectada entre módulos.
+
+----------------------------------------------------------------------
+
+6) Sprint 7 — Kanban
+
+Hecho:
+- Existe tablero por equipo.
+- Existen columnas de trabajo.
+- Se pueden crear, editar, mover y eliminar tareas.
+- Las tareas guardan prioridad, fecha límite y asignado.
+
+Resultado:
+- El Kanban ya funciona como módulo real, no como pantalla vacía.
+
+----------------------------------------------------------------------
+
+7) Sprint 8 — Notas y ajustes
+
+Hecho:
+- Las notas estratégicas ya tienen listado, filtros, creación, edición y borrado.
+- Los tags se guardan y se reutilizan.
+- La página de ajustes/perfil ya permite modificar datos básicos de usuario.
+
+Resultado:
+- La capa de contenido táctico y ajustes ya está cubierta.
 
 ======================================================================
 
-COSAS QUE FALTAN
+LO QUE FALTA
 
-SPRINT 1
+Lo que queda ya no es de base funcional, sino de cierre y calidad:
 
-Pendiente inmediato:
+- Revisión responsive fina en boards, notes, teams y calendar.
+- Prueba manual de los flujos CRUD nuevos.
+- Limpieza de pequeñas inconsistencias visuales.
+- Documentación final del estado real del repo.
+- Decidir si perfil y ajustes siguen juntos o se separan más adelante.
 
-- revisar si la Actividad 3 necesita limpieza o se da por válida
-- terminar mejor la Actividad 4
-- hacer la Actividad 5 de sesión simulada y protección más clara
+Opcionales a futuro:
 
-Falta concreta del Sprint 1:
-
-- guardar sesión simulada en localStorage o sessionStorage
-- bloquear acceso visual si no hay sesión
-- definir logout demo
-- decidir si se mantiene la estructura doble entre includes antiguos app-* y los nuevos includes genéricos
-
-----------------------------------------------------------------------
-
-SPRINT 2 EN ADELANTE
-
-Todavía no hecho:
-
-- Actividad 1 del Sprint 2: dashboard inicial real con información útil tras login
-- dashboard real con datos mock
-- perfil de usuario
-- mocks centralizados de user, organizations, teams, events y tasks
-- módulo de organizaciones
-- módulo de equipos
-- módulo de scrims
-- módulo de calendario
-- módulo kanban
-- módulo de notas
-- pantalla de ajustes real
+- Drag and drop real en Kanban.
+- Búsqueda y filtros más avanzados.
+- Notificaciones más completas.
+- Integraciones externas con APIs de juego.
 
 ======================================================================
 
 EN QUÉ CENTRARSE AHORA
 
-Lo más útil ahora mismo no es abrir más frentes. Lo más útil es cerrar bien el Sprint 1.
-
 Prioridad recomendada:
 
-1) Cerrar Actividad 5
-- sesión simulada
-- control de acceso básico
-- logout demo
+1) Validar Sprint 7 y 8
+- comprobar que boards y notes funcionan en navegador
+- revisar altas, ediciones, borrados y movimientos
 
-2) Revisar si la Actividad 3 se da por cerrada
-- pulido visual final
-- responsive y consistencia entre pantallas
+2) Pulido final
+- corregir desbordes visuales
+- revisar comportamiento móvil
+- cerrar detalles de CSS o layout
 
-3) Dejar preparado el Sprint 2
-- crear archivo de mocks
-- preparar dashboard real
-- preparar perfil
-
-======================================================================
-
-PROPUESTA DE SIGUIENTE PASO
-
-Si seguimos trabajando ahora, lo más lógico es esto:
-
-1. Hacer Actividad 5 del Sprint 1
-   - sesión simulada
-   - logout
-   - acceso protegido básico
-
-2. Revisar si la Actividad 3 se da por terminada
-   - limpieza visual final
-   - revisión responsive básica
-
-3. Dejar base del Sprint 2
-   - crear archivo de mocks
-   - construir primer dashboard real con datos simulados
+3) Documentación de cierre
+- dejar claro qué está hecho de verdad y qué queda como ampliación futura
 
 ======================================================================
 
 RESUMEN CORTO
 
-Qué hay hecho de verdad:
-
-- landing principal rehecha
-- base visual bastante sólida
-- login demo funcional
-- app interna separada
-- includes reutilizables creados
-- navegación interna principal cerrada
-- páginas base reales por módulo creadas
-- sandbox de pruebas creado
-
-Qué falta realmente:
-
-- sesión simulada y control de acceso
-- módulos reales con contenido mock
-
-Conclusión:
-
-Sí habéis avanzado. El Sprint 1 ya tiene cerradas la Actividad 1 y la Actividad 2, y gran parte de la 3 y la 4 están encaminadas. Ahora el siguiente avance importante no es seguir tocando layout, sino cerrar sesión simulada y empezar a convertir la base en módulos con datos mock.
+- El proyecto ya está más allá del Sprint 6.
+- Sprint 7 y Sprint 8 ya están aterrizados en código.
+- El siguiente paso natural es validar, pulir y documentar antes de seguir ampliando.

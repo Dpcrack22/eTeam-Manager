@@ -91,8 +91,14 @@ if (empty($layoutIncluded)) {
     </div>
 <?php endif; ?>
 
-<div class="card" style="max-width: 640px; margin: 24px auto;">
-    <form class="form" method="post" enctype="multipart/form-data" novalidate>
+<div class="auth-card card auth-card--wide">
+    <div class="auth-card-head">
+        <div class="small">Crear cuenta</div>
+        <h2 class="h3">Registro de usuario</h2>
+        <p>Crea tu acceso y después el equipo te asignará organización y rol por invitación.</p>
+    </div>
+
+    <form class="form auth-form" method="post" enctype="multipart/form-data" novalidate>
         <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
             <label for="name">Nombre</label>
             <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
@@ -122,7 +128,7 @@ if (empty($layoutIncluded)) {
             Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.
         </div>
 
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="auth-actions">
             <button class="btn btn-primary" type="submit">Crear cuenta</button>
             <a class="btn btn-secondary" href="app.php?view=login">Ya tengo cuenta</a>
         </div>

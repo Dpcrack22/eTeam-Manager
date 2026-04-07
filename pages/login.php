@@ -74,8 +74,14 @@ if (empty($layoutIncluded)) {
     </div>
 <?php endif; ?>
 
-<div class="card" style="max-width: 520px; margin: 24px auto;">
-    <form class="form" method="post" novalidate>
+<div class="auth-card card">
+    <div class="auth-card-head">
+        <div class="small">Acceso seguro</div>
+        <h2 class="h3">Entrar en eTeam Manager</h2>
+        <p>Usa tu email y contraseña para entrar al espacio interno del equipo.</p>
+    </div>
+
+    <form class="form auth-form" method="post" novalidate>
         <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
             <label for="email">Email</label>
             <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
@@ -94,7 +100,7 @@ if (empty($layoutIncluded)) {
             </span>
         </label>
 
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="auth-actions">
             <button class="btn btn-primary" type="submit">Entrar</button>
             <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
         </div>
