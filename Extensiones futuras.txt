@@ -4,44 +4,111 @@ Fecha: 7 de abril de 2026
 
 Este documento recoge ideas de crecimiento para ampliar la app después del cierre funcional actual.
 
-1. Kanban avanzado
-- Drag and drop real entre columnas.
-- Subtareas y checklist dentro de cada tarjeta.
-- Etiquetas por prioridad, área o responsable.
-- Historial de cambios por tarea.
+La prioridad no es sumar funciones por cantidad, sino elegir mejoras que realmente ahorren tiempo, centralicen información útil y ayuden al trabajo diario de equipos y staff. La parte táctica puede inspirarse en herramientas como ValoPlant, pero el objetivo debe ser tenerlo todo en un mismo sitio y no depender de varias apps a la vez.
 
-2. Calendario más completo
-- Vista semanal y agenda compacta.
-- Recordatorios y notificaciones.
-- Repetición de eventos.
-- Integración con scrims y disponibilidad del roster.
+PRIORIDAD ALTA
 
-3. Scrims y analítica
-- Estadísticas por rival, mapa y resultado.
-- Comparativa de rendimiento entre periodos.
-- Exportación de reportes.
-- Notas post-scrim ligadas al enfrentamiento.
+1. Módulo táctico y de preparación
+   - Guardar lineups, estrategias y notas por mapa o situación.
+   - Añadir un planner visual sencillo para marcar posiciones, utilidades y ejecuciones.
+   - Es uno de los módulos más valiosos porque centraliza la preparación competitiva dentro de eTeam Manager.
 
-4. Colaboración
-- Comentarios en tareas y notas.
-- Menciones de usuario.
-- Actividad reciente del equipo.
-- Notificaciones internas por cambios importantes.
+2. Revisión de scrims y análisis
+   - Vincular cada scrim con notas post-partido, clips y conclusiones.
+   - Registrar qué funcionó, qué falló y qué se quiere probar después.
+   - Así la app sirve también para aprender y corregir, no solo para apuntar resultados.
 
-5. Organización y permisos
-- Roles más granulares por módulo.
-- Invitaciones con enlace temporal.
-- Auditoría de accesos y acciones.
-- Soporte para múltiples organizaciones con cambio rápido.
+3. Módulo de analíticas
+   - Mostrar estadísticas de scrims, mapas, rivales, asistencia y progreso general.
+   - Incluir tendencias por periodo y métricas que ayuden a tomar decisiones.
+   - Esta mejora convierte datos internos en información realmente útil para staff y jugadores.
 
-6. Experiencia de usuario
-- Búsqueda global por equipo, scrim, nota o tarea.
-- Favoritos o accesos rápidos.
-- Mejor sistema de filtros persistentes.
-- Vista de inicio personalizable.
+4. Bot de Discord
+   - Enviar avisos de scrims, eventos, tareas y cambios importantes a un canal de Discord.
+   - Permitir comandos básicos para consultar próximos eventos, disponibilidad o estado de tareas.
+   - Es muy útil porque integra la comunicación donde ya trabaja la mayoría de equipos.
 
-7. Integraciones externas
-- APIs de calendarios externos.
-- Integración con Discord.
-- Importación/exportación de datos.
-- Webhooks para automatizaciones.
+5. Calendario con disponibilidad
+   - Permitir marcar disponibilidad de jugadores y staff.
+   - Ayudar a encontrar huecos para scrims, reuniones y entrenamientos.
+   - Reduce bastante la coordinación manual y evita pérdidas de tiempo.
+
+6. Recordatorios y automatizaciones
+   - Avisar sobre eventos próximos, tareas vencidas o scrims sin confirmar.
+   - Crear pequeñas automatizaciones, como generar tareas previas a un evento o checklists automáticas.
+   - Esta capa ahorra trabajo repetitivo y hace la app más proactiva.
+
+7. Centro de conocimiento del equipo
+   - Guardar playbooks, normas internas, procesos del staff, decisiones importantes y documentación de uso interno.
+   - Relacionar esa información con el equipo, la organización o la temporada correspondiente.
+   - Esto evita que el conocimiento se pierda cuando cambia una persona del staff o entra un jugador nuevo.
+
+PRIORIDAD MEDIA
+
+8. Búsqueda global y filtros
+   - Buscar desde un solo punto en equipos, eventos, scrims, tareas, notas y lineups.
+   - Aplicar filtros por fecha, estado, prioridad, usuario o mapa.
+   - Es una mejora muy práctica cuando la información empieza a crecer.
+
+9. Permisos y control de acceso
+   - Definir mejor qué puede hacer cada rol dentro de la organización.
+   - Limitar acciones como editar scrims, mover tareas o cambiar miembros.
+   - Esto aporta orden real y evita que todos tengan el mismo nivel de control.
+
+10. Historial de actividad
+   - Registrar cambios importantes para saber quién hizo qué y cuándo.
+   - Ayuda a revisar decisiones y reduce confusiones en equipos con varios responsables.
+
+11. Exportación y copias de seguridad
+   - Exportar datos en CSV, JSON o PDF según el módulo.
+   - Importar información básica si hay que migrar o duplicar contenido.
+   - Es útil para respaldo, documentación y cambios futuros de herramienta.
+
+12. Gestión de objetivos y progreso
+   - Definir objetivos semanales o mensuales para organización, equipo o jugadores.
+   - Medir cumplimiento de tareas, asistencia, scrims completados y evolución de rendimiento.
+   - Sirve para que la app no sea solo un panel de gestión, sino también una herramienta de seguimiento.
+
+13. Integraciones externas útiles
+   - Conectar con Google Calendar, Drive o herramientas externas si aportan valor real.
+   - Sincronizar eventos, avisos o archivos sin duplicar trabajo manual.
+   - Encaja bien como capa de apoyo, pero no debería ser la base del producto.
+
+14. Google Analytics y seguimiento de uso
+   - Integrar Google Analytics para medir visitas, páginas más usadas y comportamiento básico dentro de la app o la landing.
+   - Registrar eventos clave como inicio de sesión, clics importantes, apertura de módulos y conversiones.
+   - Esto ayuda al programador y al equipo a entender qué partes se usan de verdad y qué pantalla necesita mejora.
+
+15. SEO básico y medición de posicionamiento
+   - Mejorar títulos, descripciones, Open Graph y estructura semántica de la web pública.
+   - Añadir seguimiento con Google Search Console para revisar indexación, clics y rendimiento en buscadores.
+   - Es útil para que el proyecto no solo funcione bien, sino que también sea encontrable y presente una imagen más profesional.
+
+16. Google Ads y campañas de captación
+   - Preparar una base para conectar campañas de Google Ads si el proyecto quiere captar visitas, testers o usuarios reales.
+   - Medir conversiones de formularios, registros o clics hacia la app interna.
+   - No es una prioridad funcional del producto, pero sí una mejora interesante si se quiere dar visibilidad al proyecto.
+
+PRIORIDAD BAJA
+
+17. Modo PWA y experiencia móvil
+   - Convertir eTeam Manager en una Progressive Web App instalable.
+   - Optimizar las pantallas más usadas desde el móvil.
+   - Es interesante, pero puede esperar si antes se completan los módulos principales.
+
+18. Multilenguaje
+   - Preparar la plataforma para varios idiomas, empezando por español e inglés.
+   - Centralizar textos, etiquetas y mensajes para traducir sin rehacer toda la interfaz.
+   - Tiene valor a futuro, pero no es urgente para la base funcional actual.
+
+19. Personalización visual por organización
+   - Permitir que cada organización tenga colores, logos y pequeños elementos visuales propios.
+   - Dar identidad a cada proyecto dentro de la misma plataforma.
+   - Es una mejora buena, pero más estética que crítica.
+
+20. Onboarding guiado para nuevos usuarios
+   - Crear un recorrido inicial para explicar cómo se configura la app y por dónde empezar.
+   - Incluir pasos como crear organización, equipo, primer scrim, primer evento y primeras notas tácticas.
+   - Reduce la curva de aprendizaje, aunque puede dejarse para una fase posterior.
+
+

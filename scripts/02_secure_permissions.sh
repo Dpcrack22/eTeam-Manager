@@ -37,7 +37,7 @@ WEB_GROUP=${WEB_GROUP:-"www-data"}
 
 # Space-separated list of relative dirs that should be writable by Apache if they exist
 # (Project currently doesn't need writable dirs, but this keeps it future-proof.)
-WRITABLE_DIRS=${WRITABLE_DIRS:-"public/uploads storage var cache"}
+WRITABLE_DIRS=${WRITABLE_DIRS:-"uploads uploads/avatars public/uploads storage var cache"}
 
 APACHE_HARDENING_CONF="/etc/apache2/conf-available/${APP_NAME}-hardening.conf"
 
@@ -75,12 +75,15 @@ main() {
 
   # Mark specific runtime-writable folders if they exist
   for rel in ${WRITABLE_DIRS}; do
-    if [[ -d "${DEPLOY_DIR}/${rel}" ]]; then
-      log "Making ${rel} writable by Apache (www-data) ..."
-      chown -R www-data:"${WEB_GROUP}" "${DEPLOY_DIR}/${rel}"
-      find "${DEPLOY_DIR}/${rel}" -type d -exec chmod 770 {} +
-      find "${DEPLOY_DIR}/${rel}" -type f -exec chmod 660 {} +
+    if [[ ! -d "${DEPLOY_DIR}/${rel}" ]]; then
+      log "Creating writable directory ${rel}..."
+      mkdir -p "${DEPLOY_DIR}/${rel}"
     fi
+
+    log "Making ${rel} writable by Apache (www-data) ..."
+    chown -R www-data:"${WEB_GROUP}" "${DEPLOY_DIR}/${rel}"
+    find "${DEPLOY_DIR}/${rel}" -type d -exec chmod 2775 {} +
+    find "${DEPLOY_DIR}/${rel}" -type f -exec chmod 664 {} +
   done
 
   log "Writing Apache hardening conf: ${APACHE_HARDENING_CONF}..."

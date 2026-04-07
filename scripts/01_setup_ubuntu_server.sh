@@ -41,6 +41,7 @@ MYSQL_DB_NAME=${MYSQL_DB_NAME:-"eteam_manager"}
 MYSQL_APP_USER=${MYSQL_APP_USER:-"eteam_app"}
 MYSQL_APP_HOST=${MYSQL_APP_HOST:-"localhost"}
 MYSQL_APP_PASSWORD=${MYSQL_APP_PASSWORD:-""}
+MYSQL_APP_PRIVILEGES=${MYSQL_APP_PRIVILEGES:-"SELECT,INSERT,UPDATE,DELETE,CREATE,ALTER,INDEX,DROP,REFERENCES,TRIGGER"}
 
 IMPORT_DB_SCHEMA=${IMPORT_DB_SCHEMA:-1}
 CREATE_DB_USER=${CREATE_DB_USER:-1}
@@ -89,6 +90,12 @@ main() {
     --exclude ".github" \
     --exclude "node_modules" \
     "${SOURCE_DIR}/" "${DEPLOY_DIR}/"
+
+  log "Preparing runtime upload directories..."
+  mkdir -p "${DEPLOY_DIR}/uploads/avatars"
+  chown -R www-data:www-data "${DEPLOY_DIR}/uploads"
+  find "${DEPLOY_DIR}/uploads" -type d -exec chmod 2775 {} +
+  find "${DEPLOY_DIR}/uploads" -type f -exec chmod 664 {} +
 
   log "Creating Apache vhost at ${VHOST_FILE}..."
   cat >"${VHOST_FILE}" <<EOF
@@ -146,8 +153,11 @@ EOF
         exit 1
       fi
 
-      log "Importing schema from database/01_create_database.sql (idempotent)..."
-      mysql < "${DEPLOY_DIR}/database/01_create_database.sql"
+      log "Creating database ${MYSQL_DB_NAME} if needed..."
+      mysql -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DB_NAME}\` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;"
+
+      log "Importing schema into ${MYSQL_DB_NAME} from database/01_create_database.sql (idempotent)..."
+      mysql "${MYSQL_DB_NAME}" < "${DEPLOY_DIR}/database/01_create_database.sql"
     fi
 
     if [[ "${CREATE_DB_USER}" -eq 1 ]]; then
@@ -160,10 +170,10 @@ EOF
       # Escape single quotes for SQL string literals
       MYSQL_APP_PASSWORD_SQL=$(printf "%s" "${MYSQL_APP_PASSWORD}" | sed "s/'/\\\\'/g")
 
-      log "Creating/updating DB user ${MYSQL_APP_USER}@${MYSQL_APP_HOST} with least privilege..."
+      log "Creating/updating DB user ${MYSQL_APP_USER}@${MYSQL_APP_HOST} with configured privileges..."
       mysql -e "CREATE USER IF NOT EXISTS '${MYSQL_APP_USER}'@'${MYSQL_APP_HOST}' IDENTIFIED BY '${MYSQL_APP_PASSWORD_SQL}';" || true
       mysql -e "ALTER USER '${MYSQL_APP_USER}'@'${MYSQL_APP_HOST}' IDENTIFIED BY '${MYSQL_APP_PASSWORD_SQL}';" || true
-      mysql -e "GRANT SELECT, INSERT, UPDATE, DELETE ON \\`${MYSQL_DB_NAME}\\`.* TO '${MYSQL_APP_USER}'@'${MYSQL_APP_HOST}';"
+      mysql -e "GRANT ${MYSQL_APP_PRIVILEGES} ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_APP_USER}'@'${MYSQL_APP_HOST}';"
       mysql -e "FLUSH PRIVILEGES;"
     fi
 
