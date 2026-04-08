@@ -1,0 +1,159 @@
+eTeam Manager — Progreso del proyecto
+
+Fecha de actualización: 7 de abril de 2026
+
+======================================================================
+
+ESTADO GENERAL ACTUAL
+
+El proyecto ya no está en una fase solo estructural. A día de hoy la app interna
+está operativa con autenticación real, sesión persistente, contexto activo de
+organización/equipo y navegación compartida.
+
+Resumen corto:
+
+- La landing principal está diferenciada de la app interna.
+- Existe un layout compartido reutilizable.
+- La autenticación funciona con sesión y recordarme.
+- El dashboard ya trabaja con datos reales de la BD.
+- Equipos, scrims y calendario están conectados al contexto activo.
+- El Kanban de tareas ya existe como módulo funcional.
+- Las notas estratégicas ya tienen CRUD y tags.
+- La pantalla de ajustes/perfil ya está operativa.
+
+Conclusión de estado:
+
+- Sprint 1 a Sprint 6 pueden darse por cerrados a nivel funcional.
+- Sprint 7 y Sprint 8 ya tienen implementación real en el repositorio.
+- Lo que queda ahora es pulido, verificación y documentación final.
+
+======================================================================
+
+LO QUE YA ESTÁ CERRADO
+
+1) Base de la aplicación
+
+Hecho:
+- `index.php` actúa como landing pública.
+- `app.php` carga las vistas internas por módulo.
+- `includes/head.php`, `includes/layout-start.php` y `includes/layout-end.php` sostienen la estructura común.
+
+Resultado:
+- La app pública y la app interna ya están separadas.
+
+----------------------------------------------------------------------
+
+2) Autenticación y acceso
+
+Hecho:
+- Login y registro existen.
+- La sesión se restaura con remember-me.
+- El acceso a la app interna está protegido.
+
+Resultado:
+- El flujo de entrada y salida ya es real y persistente.
+
+----------------------------------------------------------------------
+
+3) Dashboard
+
+Hecho:
+- El dashboard muestra equipo activo, eventos, tareas y scrims.
+- Lee el contexto activo desde la base de datos.
+
+Resultado:
+- La pantalla principal ya aporta información útil de verdad.
+
+----------------------------------------------------------------------
+
+4) Equipos y contexto
+
+Hecho:
+- Existe listado de equipos.
+- Se puede activar un equipo y ese contexto se propaga al resto de módulos.
+- El detalle de equipo y la gestión de miembros están integrados.
+
+Resultado:
+- La app trabaja con un contexto operativo claro.
+
+----------------------------------------------------------------------
+
+5) Scrims y calendario
+
+Hecho:
+- Scrims tiene listado, detalle y formulario.
+- El calendario tiene vista mensual y overlay por día.
+- Desde el calendario se puede abrir evento o scrim con la fecha seleccionada.
+
+Resultado:
+- La parte competitiva ya está conectada entre módulos.
+
+----------------------------------------------------------------------
+
+6) Sprint 7 — Kanban
+
+Hecho:
+- Existe tablero por equipo.
+- Existen columnas de trabajo.
+- Se pueden crear, editar, mover y eliminar tareas.
+- Las tareas guardan prioridad, fecha límite y asignado.
+
+Resultado:
+- El Kanban ya funciona como módulo real, no como pantalla vacía.
+
+----------------------------------------------------------------------
+
+7) Sprint 8 — Notas y ajustes
+
+Hecho:
+- Las notas estratégicas ya tienen listado, filtros, creación, edición y borrado.
+- Los tags se guardan y se reutilizan.
+- La página de ajustes/perfil ya permite modificar datos básicos de usuario.
+
+Resultado:
+- La capa de contenido táctico y ajustes ya está cubierta.
+
+======================================================================
+
+LO QUE FALTA
+
+Lo que queda ya no es de base funcional, sino de cierre y calidad:
+
+- Revisión responsive fina en boards, notes, teams y calendar.
+- Prueba manual de los flujos CRUD nuevos.
+- Limpieza de pequeñas inconsistencias visuales.
+- Documentación final del estado real del repo.
+- Decidir si perfil y ajustes siguen juntos o se separan más adelante.
+
+Opcionales a futuro:
+
+- Drag and drop real en Kanban.
+- Búsqueda y filtros más avanzados.
+- Notificaciones más completas.
+- Integraciones externas con APIs de juego.
+
+======================================================================
+
+EN QUÉ CENTRARSE AHORA
+
+Prioridad recomendada:
+
+1) Validar Sprint 7 y 8
+- comprobar que boards y notes funcionan en navegador
+- revisar altas, ediciones, borrados y movimientos
+
+2) Pulido final
+- corregir desbordes visuales
+- revisar comportamiento móvil
+- cerrar detalles de CSS o layout
+
+3) Documentación de cierre
+- dejar claro qué está hecho de verdad y qué queda como ampliación futura
+
+======================================================================
+
+RESUMEN CORTO
+
+- El proyecto ya está más allá del Sprint 6.
+- Sprint 7 y Sprint 8 ya están aterrizados en código.
+- El siguiente paso natural es validar, pulir y documentar antes de seguir ampliando.

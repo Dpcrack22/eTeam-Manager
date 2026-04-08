@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>eTeam Manager — Gestion interna para equipos de eSports</title>
+    <meta name="description" content="eTeam Manager es una plataforma interna para organizar equipos de eSports, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta name="keywords" content="eSports, gestion de equipos, scrims, calendario, kanban, notas, roster, eTeam Manager">
+    <meta name="author" content="Parallax Esports">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#FF4655">
+    <meta property="og:site_name" content="eTeam Manager">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta property="og:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta property="og:image" content="assets/mini-logo.svg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta name="twitter:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
+    <meta name="twitter:image" content="assets/mini-logo.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/mini-logo.svg">
+    <link rel="apple-touch-icon" href="assets/mini-logo.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +32,7 @@
         <div class="container landing-nav" style="padding: 0;">
             <a class="landing-brand" href="#inicio" aria-label="Ir al inicio">
                 <span class="landing-brand-title">eTeam Manager</span>
-                <span class="small" style="margin-left: 10px;">eSports ops platform · V1 académica</span>
+                <span class="small" style="margin-left: 10px;">Plataforma interna de gestión para eSports</span>
             </a>
 
             <nav aria-label="Navegación principal" class="landing-nav-right">
@@ -26,9 +42,9 @@
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="#" data-auth-open="login">Login/Registro</a>
+                    <a class="landing-link" id="login-register" href="app.php?view=login">Acceso</a>
                 </div>
-                <a class="btn btn-primary landing-cta" href="app.php">Entrar a la app</a>
+                <a class="btn btn-primary landing-cta" href="app.php?view=login">Iniciar sesión</a>
             </nav>
         </div>
     </header>
@@ -38,14 +54,14 @@
             <div class="container">
                 <div class="landing-hero-content">
                     <div>
-                        <span class="badge" style="margin-bottom: 12px;">Organiza el dia a dia de una organizacion competitiva</span>
+                        <span class="badge" style="margin-bottom: 12px;">Organiza el dia a dia de un equipo competitivo</span>
                         <h1 class="h1" style="margin-bottom: 12px;">Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.</h1>
-                        <p style="max-width: 720px;">eTeam Manager es una aplicacion para llevar la gestion interna de organizaciones y equipos de eSports. Sirve para organizar miembros y roles, controlar equipos, programar eventos, registrar scrims, mover tareas en tableros y guardar notas estrategicas sin depender de varias herramientas separadas.</p>
+                        <p style="max-width: 720px;">eTeam Manager es una aplicacion para llevar la gestion interna de equipos de eSports. Sirve para organizar miembros y roles, controlar rosters, programar eventos, registrar scrims, mover tareas en tableros y guardar notas estrategicas sin depender de varias herramientas separadas.</p>
 
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
-                            <a class="btn btn-secondary" href="app.php">Entrar a la app interna</a>
-                            <a class="btn btn-secondary" href="#" data-auth-open="register">Abrir registro demo</a>
+                            <a class="btn btn-secondary" href="app.php?view=login">Iniciar sesión</a>
+                            <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
                         </div>
                     </div>
 
@@ -84,29 +100,29 @@
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Funciones principales de la app</h2>
-                    <p>La aplicacion esta pensada para cubrir el trabajo operativo diario de una organizacion o de un roster competitivo en un entorno unificado.</p>
+                    <p>La aplicacion esta pensada para cubrir el trabajo operativo diario de un roster competitivo en un entorno unificado.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-4">
                     <a class="card landing-feature-card" href="app.php?view=dashboard">
                         <h3 class="h3">Dashboard</h3>
-                        <p>Muestra un resumen general con la organizacion activa, el equipo seleccionado, eventos cercanos, scrims recientes y tareas pendientes.</p>
+                        <p>Muestra un resumen general con el equipo activo, eventos cercanos, scrims recientes y tareas pendientes.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-info">Vista general</span>
                             <span class="landing-feature-link">Abrir modulo</span>
                         </div>
                     </a>
-                    <a class="card landing-feature-card" href="app.php?view=organizations">
-                        <h3 class="h3">Organizaciones</h3>
-                        <p>Permite crear y editar organizaciones, ver sus miembros y asignar roles segun la responsabilidad de cada usuario.</p>
+                    <a class="card landing-feature-card" href="app.php?view=team-detail">
+                        <h3 class="h3">Detalle de equipo</h3>
+                        <p>Permite abrir el roster del equipo, ver miembros y ajustar roles internos sin salir del contexto operativo.</p>
                         <div class="landing-feature-footer">
-                            <span class="badge">Contexto activo</span>
+                            <span class="badge">Roster</span>
                             <span class="landing-feature-link">Abrir modulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=teams">
                         <h3 class="h3">Equipos</h3>
-                        <p>Permite gestionar varios equipos dentro de una organizacion, ver el detalle del roster y organizar jugadores, coach o analyst.</p>
+                        <p>Permite gestionar varios equipos, ver el detalle del roster y organizar jugadores, coach o analyst.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Roster</span>
                             <span class="landing-feature-link">Abrir modulo</span>
@@ -160,14 +176,14 @@
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Como funciona el flujo dentro de la app</h2>
-                    <p>El sistema sigue un flujo simple para que la organizacion y el equipo trabajen con contexto y orden.</p>
+                    <p>El sistema sigue un flujo simple para que el equipo trabaje con contexto y orden.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-3">
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 1</div>
                         <h3 class="h3">Entrar y seleccionar contexto</h3>
-                        <p>El usuario entra en la aplicacion, selecciona su organizacion y trabaja sobre el equipo que tenga activo.</p>
+                        <p>El usuario entra en la aplicacion y trabaja sobre el equipo que tenga activo.</p>
                     </div>
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 2</div>
@@ -187,7 +203,7 @@
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Pensada para distintos roles dentro del equipo</h2>
-                    <p>La aplicacion no esta pensada solo para jugadores. Tambien sirve para staff, gestion y responsables de organizacion.</p>
+                    <p>La aplicacion no esta pensada solo para jugadores. Tambien sirve para staff, gestion y responsables del roster.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-3">
@@ -195,7 +211,7 @@
                         <h3 class="h3">Direccion y gestion</h3>
                         <div class="landing-list">
                             <div class="landing-list-item">Owner y admin para control general.</div>
-                            <div class="landing-list-item">Manager para organizacion operativa.</div>
+                            <div class="landing-list-item">Manager para operativa del roster.</div>
                             <div class="landing-list-item">Gestion de miembros y permisos.</div>
                         </div>
                     </div>
@@ -224,11 +240,11 @@
                 <div class="card landing-cta-card">
                     <div>
                         <h2 class="h2" style="margin-top: 0;">Todo el trabajo interno del equipo, reunido en una sola aplicacion.</h2>
-                        <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que organizacion, staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
+                        <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">
-                        <a class="btn btn-primary" href="app.php">Entrar a la app interna</a>
-                        <a class="btn btn-secondary" href="#" data-auth-open="login">Abrir login demo</a>
+                        <a class="btn btn-primary" href="app.php?view=login">Iniciar sesión</a>
+                        <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
                     </div>
                 </div>
             </div>
@@ -247,11 +263,11 @@
                         <p style="margin-bottom: 0;"><a class="badge" href="mailto:contacto@parallax.gg">contacto@parallax.gg</a></p>
                     </div>
                     <div class="card">
-                        <h3 class="h3">Estado del proyecto</h3>
+                        <h3 class="h3">Estado del producto</h3>
                         <div style="display:flex; gap: 10px; flex-wrap: wrap;">
-                            <span class="badge">V1 académica</span>
+                            <span class="badge">Aplicación interna</span>
                             <span class="badge badge-info">Frontend modular</span>
-                            <span class="badge badge-warning">Mocks activos</span>
+                            <span class="badge badge-success">Base de datos conectada</span>
                         </div>
                     </div>
                 </div>
@@ -259,82 +275,22 @@
         </section>
     </main>
 
-    <!-- Auth Dialog (Login / Register) - Frontend demo only -->
-    <div class="modal-backdrop" id="authModalBackdrop" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-label="Autenticación">
-            <div class="modal-header">
-                <h3 class="modal-title" id="authModalTitle">Entrar</h3>
-                <button class="btn btn-secondary" type="button" data-auth-close>Cerrar</button>
-            </div>
-
-            <div class="auth-tabs" role="tablist" aria-label="Cambiar entre login y registro">
-                <button class="btn btn-primary auth-tab" type="button" data-auth-tab="login" role="tab" aria-selected="true">Login</button>
-                <button class="btn btn-secondary auth-tab" type="button" data-auth-tab="register" role="tab" aria-selected="false">Registro</button>
-            </div>
-
-            <div id="authMessage" class="badge" role="status" aria-live="polite" style="display:none; margin-top: 12px;"></div>
-
-            <form class="form" id="loginForm" action="#" method="post" style="margin-top: 16px;">
-                <div class="field">
-                    <label for="loginEmail">Email</label>
-                    <input id="loginEmail" name="email" type="email" placeholder="player@team.gg" autocomplete="email" required />
-                </div>
-
-                <div class="field">
-                    <label for="loginPassword">Contraseña</label>
-                    <input id="loginPassword" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
-                    <div class="help">Demo frontend: todavía no hay backend real.</div>
-                </div>
-
-                <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" type="submit">Entrar</button>
-                    <button class="btn btn-secondary" type="button" data-auth-open="register">Crear cuenta</button>
-                </div>
-            </form>
-
-            <form class="form" id="registerForm" action="#" method="post" style="margin-top: 16px; display:none;">
-                <div class="field">
-                    <label for="registerUsername">Username</label>
-                    <input id="registerUsername" name="username" type="text" placeholder="pv_player" autocomplete="username" required />
-                </div>
-
-                <div class="field">
-                    <label for="registerEmail">Email</label>
-                    <input id="registerEmail" name="email" type="email" placeholder="player@team.gg" autocomplete="email" required />
-                </div>
-
-                <div class="field">
-                    <label for="registerPassword">Contraseña</label>
-                    <input id="registerPassword" name="password" type="password" placeholder="••••••••" autocomplete="new-password" required />
-                    <div class="help">Se registrará cuando el backend esté listo. Por ahora es una simulación.</div>
-                </div>
-
-                <div style="display:flex; gap: 12px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                    <button class="btn btn-secondary" type="button" data-auth-open="login">Ya tengo cuenta</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <footer class="landing-footer">
         <div class="container landing-footer-inner">
             <div>
                 <div class="landing-footer-brand">eTeam Manager</div>
-                <div class="small">Sistema de gestion interna para organizaciones y equipos competitivos</div>
+                <div class="small">Sistema de gestion interna para equipos competitivos</div>
             </div>
             <div class="landing-footer-links">
                 <a class="landing-link" href="#funciones">Funciones</a>
                 <a class="landing-link" href="#flujo">Flujo</a>
                 <a class="landing-link" href="#roles">Roles</a>
                 <a class="landing-link" href="#contacto">Contacto</a>
-                <a class="landing-link" href="app.php">App interna</a>
+                <a class="landing-link" href="app.php?view=login">Acceso</a>
             </div>
             <div class="small">© 2026 Parallax Esports. Todos los derechos reservados.</div>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>

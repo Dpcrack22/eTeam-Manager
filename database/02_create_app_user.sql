@@ -7,7 +7,7 @@
 SET @DB_NAME = 'eteam_manager';
 SET @APP_USER = 'eteam_app';
 SET @APP_HOST = 'localhost'; -- change to '%' only if you really need remote connections
-SET @APP_PASSWORD = 'REPLACE_WITH_A_STRONG_PASSWORD';
+SET @APP_PASSWORD = 'pV7!Qm2#Rk9@Ls4^Tx8$Nd3!Wa6Zc1';
 
 -- Create user (dynamic SQL so variables work in identifiers)
 SET @sql_create_user = CONCAT(
