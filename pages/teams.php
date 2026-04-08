@@ -28,6 +28,7 @@ if (!empty($_SESSION['flash_success'])) {
     unset($_SESSION['flash_success']);
 }
 
+// Load teams for the current context; if there's no active organization, show all active teams so users can join
 if ($activeOrganizationId) {
     $teams = getOrganizationTeams($conn, $activeOrganizationId);
 
@@ -45,6 +46,27 @@ if ($activeOrganizationId) {
         if (isset($activeTeamId) && (int) $team['id'] === (int) $activeTeamId) {
             $activeTeam = $team;
             break;
+        }
+    }
+} else {
+    $teams = getAllActiveTeams($conn);
+
+    if (!empty($teams)) {
+        // prefer session active team if valid, otherwise pick first
+        $activeTeamId = $_SESSION['active_team_id'] ?? null;
+        if ($activeTeamId && getTeamById($conn, (int) $activeTeamId)) {
+            // find and set activeTeam
+            foreach ($teams as $team) {
+                if ((int) $team['id'] === (int) $activeTeamId) {
+                    $activeTeam = $team;
+                    break;
+                }
+            }
+        }
+
+        if (!$activeTeam) {
+            $activeTeam = $teams[0];
+            setActiveTeamContext($conn, (int) ($activeTeam['organization_id'] ?? 0), (int) $activeTeam['id']);
         }
     }
 }
@@ -74,11 +96,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
         }
-    } elseif (!$activeOrganizationId) {
-        $errors[] = 'Primero necesitas un contexto activo';
-    } elseif (!in_array((string) ($currentUser['role'] ?? ''), ['owner', 'admin', 'manager'], true)) {
-        $errors[] = 'No tienes permisos para gestionar equipos';
     } elseif ($action === 'create_team') {
+        // allow creating a team even if there's no active organization by falling back
+        // to the first organization the user belongs to (if any)
+        $teamName = trim((string) ($_POST['name'] ?? ''));
+        $teamTag = trim((string) ($_POST['tag'] ?? ''));
+        $teamDescription = trim((string) ($_POST['description'] ?? ''));
+        $gameId = (int) ($_POST['game_id'] ?? 0);
+
+        $userOrgs = getUserOrganizations($conn, $userId);
+        $targetOrgId = $activeOrganizationId ?: ($userOrgs[0]['id'] ?? 0);
+
+        if ($targetOrgId <= 0) {
+            $errors[] = 'Primero necesitas un contexto activo';
+        }
+
+        if ($teamName === '') {
+            $errors[] = 'El nombre del equipo es obligatorio';
+        }
+
+        if ($gameId <= 0) {
+            $errors[] = 'Selecciona un juego';
+        }
+
+        $gameExists = false;
+        foreach ($games as $game) {
+            if ((int) $game['id'] === $gameId) {
+                $gameExists = true;
+                break;
+            }
+        }
+
+        if (!$gameExists) {
+            $errors[] = 'El juego seleccionado no es válido';
+        }
+
+        if (empty($errors) && teamExistsByNameAndGame($conn, (int) $targetOrgId, $teamName, $gameId)) {
+            $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
+        }
+
+        // check permissions in the target organization
+        $allowed = false;
+        foreach ($userOrgs as $uo) {
+            if ((int) $uo['id'] === (int) $targetOrgId && in_array($uo['member_role'], ['owner', 'admin', 'manager'], true)) {
+                $allowed = true;
+                break;
+            }
+        }
+
+        if (!$allowed) {
+            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
+        }
+
+        if (empty($errors)) {
+            $newTeamId = createTeam(
+                $conn,
+                $targetOrgId,
+                $gameId,
+                $teamName,
+                $teamTag !== '' ? $teamTag : null,
+                $teamDescription !== '' ? $teamDescription : null
+            );
+
+            setActiveTeamContext($conn, $targetOrgId, $newTeamId);
+            $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
+            header('Location: ' . $returnTo);
+            exit;
+        }
+    } elseif ($action === 'join_team') {
+        $teamId = (int) ($_POST['team_id'] ?? 0);
+
+        if ($teamId <= 0) {
+            $errors[] = 'Selecciona un equipo válido';
+        } else {
+            $joinResult = joinTeam($conn, $teamId, $userId, 'player');
+            if (!empty($joinResult['success'])) {
+                $team = $joinResult['team'];
+                setActiveTeamContext($conn, (int) ($team['organization_id'] ?? 0), $teamId);
+                $_SESSION['flash_success'] = 'Te has unido al equipo';
+                header('Location: ' . $returnTo);
+                exit;
+            }
+
+            $errors[] = $joinResult['error'] ?? 'No se ha podido unir al equipo';
+        }
+    } elseif (!$activeOrganizationId) {
+        // keep the message when attempting other management actions without context
+        $errors[] = 'Primero necesitas un contexto activo';
+    }
         $teamName = trim((string) ($_POST['name'] ?? ''));
         $teamTag = trim((string) ($_POST['tag'] ?? ''));
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
@@ -125,7 +230,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $teams = getOrganizationTeams($conn, (int) $activeOrganizationId);
+    // refresh teams list according to current context
+    if ($activeOrganizationId) {
+        $teams = getOrganizationTeams($conn, (int) $activeOrganizationId);
+    } else {
+        $teams = getAllActiveTeams($conn);
+    }
+
+// build membership map for current user to show "Unirme" when appropriate
+$userTeamIds = [];
+if ($userId && !empty($teams)) {
+    $ids = array_map(function($t){ return (int)$t['id']; }, $teams);
+    $in = implode(',', $ids);
+    $stmt = $conn->prepare('SELECT team_id FROM team_members WHERE user_id = :user_id AND is_active = 1' . (count($ids) ? " AND team_id IN ($in)" : ''));
+    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->fetchAll();
+    foreach ($rows as $r) {
+        $userTeamIds[(int)$r['team_id']] = true;
+    }
 }
 ?>
 
@@ -177,14 +300,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="stack-sm">
                             <a class="btn btn-secondary" href="app.php?view=team-detail&amp;team_id=<?php echo (int) $team['id']; ?>">Ver detalle</a>
-
-                            <form method="post">
+                            <form method="post" style="display:inline-block;">
                                 <input type="hidden" name="action" value="activate_team" />
                                 <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
                                 <button class="btn <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
                                     <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'Equipo actual' : 'Usar este equipo'; ?>
                                 </button>
                             </form>
+
+                            <?php if ($userId && empty($userTeamIds[(int)$team['id']])): ?>
+                                <form method="post" style="display:inline-block; margin-left:8px;">
+                                    <input type="hidden" name="action" value="join_team" />
+                                    <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
+                                    <button class="btn btn-outline" type="submit">Unirme</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

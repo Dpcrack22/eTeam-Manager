@@ -249,3 +249,50 @@ function getActiveTeamId(PDO $conn, int $organizationId): ?int
 
     return $row ? (int) $row['id'] : null;
 }
+
+function getAllActiveTeams(PDO $conn): array
+{
+    $statement = $conn->query(
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, g.name AS game_name, t.organization_id, o.name AS organization_name,
+                COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count
+         FROM teams t
+         INNER JOIN games g ON g.id = t.game_id
+         LEFT JOIN organizations o ON o.id = t.organization_id
+         LEFT JOIN team_members tm ON tm.team_id = t.id
+         WHERE t.is_active = 1
+         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, g.name, t.organization_id, o.name
+         ORDER BY t.created_at DESC, t.name ASC'
+    );
+
+    return $statement->fetchAll();
+}
+
+function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'): array
+{
+    $team = getTeamById($conn, $teamId);
+
+    if (!$team) {
+        return ['success' => false, 'error' => 'El equipo no existe'];
+    }
+
+    $memberStatement = $conn->prepare('SELECT id, is_active FROM team_members WHERE team_id = :team_id AND user_id = :user_id LIMIT 1');
+    $memberStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $memberStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $memberStatement->execute();
+    $member = $memberStatement->fetch();
+
+    if ($member) {
+        $update = $conn->prepare('UPDATE team_members SET is_active = 1, role = :role WHERE id = :id');
+        $update->bindValue(':role', $role, PDO::PARAM_STR);
+        $update->bindValue(':id', (int) $member['id'], PDO::PARAM_INT);
+        $update->execute();
+    } else {
+        $insert = $conn->prepare('INSERT INTO team_members (team_id, user_id, role, joined_at, is_active) VALUES (:team_id, :user_id, :role, NOW(), 1)');
+        $insert->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $insert->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $insert->bindValue(':role', $role, PDO::PARAM_STR);
+        $insert->execute();
+    }
+
+    return ['success' => true, 'team' => $team];
+}
