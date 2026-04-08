@@ -64,6 +64,20 @@ foreach ($userOrganizations as $userOrganization) {
     }
 }
 
+// If active organization is not part of user's organizations (e.g. joined a team from another org),
+// try loading the organization directly so the dashboard can show correct info.
+if ($activeOrganizationId !== null && ($activeOrganization['id'] === null || (int)$activeOrganization['id'] !== (int)$activeOrganizationId)) {
+    $org = getOrganizationById($conn, (int) $activeOrganizationId);
+    if ($org) {
+        $activeOrganization = [
+            'id' => (int) $org['id'],
+            'name' => $org['name'],
+            'slug' => $org['slug'],
+            'description' => $org['description'] ?: 'Contexto activo cargado desde la base de datos.',
+        ];
+    }
+}
+
 $activeTeam = [
     'id' => null,
     'name' => 'Sin equipo',
