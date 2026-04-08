@@ -216,9 +216,17 @@ function setActiveTeamContext(PDO $conn, int $organizationId, int $teamId): arra
         return ['success' => false, 'error' => 'No tienes acceso a ese equipo'];
     }
 
+    // set active team
     $_SESSION['active_team_id'] = (int) $team['id'];
     $_SESSION['user']['team_id'] = (int) $team['id'];
     $_SESSION['user']['team'] = $team['name'];
+
+    // also set active organization context when available so UI shows team info
+    if (!empty($team['organization_id'])) {
+        $_SESSION['active_organization_id'] = (int) $team['organization_id'];
+        $_SESSION['user']['organization_id'] = (int) $team['organization_id'];
+        // organization name is not loaded here; app.php will resolve it on next request
+    }
 
     return ['success' => true, 'team' => $team];
 }
