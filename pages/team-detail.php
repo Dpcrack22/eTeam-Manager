@@ -56,10 +56,8 @@ if ($activeOrganizationId) {
         }
 
         if ($selectedTeam) {
-            if ($activeTeamId !== (int) $selectedTeam['id']) {
-                setActiveTeamContext($conn, (int) $activeOrganizationId, (int) $selectedTeam['id']);
-            }
-
+            // Do NOT automatically set the active team when merely viewing details.
+            // Setting active team should be an explicit action (from the teams list).
             $teamMembers = getTeamMembers($conn, (int) $selectedTeam['id']);
         }
     }
