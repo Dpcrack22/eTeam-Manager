@@ -205,7 +205,21 @@ function removeTeamMember(PDO $conn, int $teamId, int $userId): bool
     $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
 
-    return $statement->execute();
+    $result = $statement->execute();
+
+    // If the affected user is the current session user and the team was active in session,
+    // clear the active team context so the UI no longer shows the team.
+    if ($result && !empty($_SESSION['user']['id']) && (int) $_SESSION['user']['id'] === $userId) {
+        if (!empty($_SESSION['active_team_id']) && (int) $_SESSION['active_team_id'] === $teamId) {
+            unset($_SESSION['active_team_id']);
+        }
+        if (!empty($_SESSION['user']['team_id']) && (int) $_SESSION['user']['team_id'] === $teamId) {
+            unset($_SESSION['user']['team_id']);
+            unset($_SESSION['user']['team']);
+        }
+    }
+
+    return $result;
 }
 
 function setActiveTeamContext(PDO $conn, int $organizationId, int $teamId): array
@@ -319,6 +333,17 @@ function unjoinTeam(PDO $conn, int $teamId, int $userId) {
 
     if ($update->rowCount() === 0) {
         return ['success' => false, 'error' => 'El usuario no pertenece a este equipo'];
+    }
+
+    // If the user who left is the current session user and that team was active, clear session context
+    if (!empty($_SESSION['user']['id']) && (int) $_SESSION['user']['id'] === $userId) {
+        if (!empty($_SESSION['active_team_id']) && (int) $_SESSION['active_team_id'] === $teamId) {
+            unset($_SESSION['active_team_id']);
+        }
+        if (!empty($_SESSION['user']['team_id']) && (int) $_SESSION['user']['team_id'] === $teamId) {
+            unset($_SESSION['user']['team_id']);
+            unset($_SESSION['user']['team']);
+        }
     }
 
     return ["success" => true];

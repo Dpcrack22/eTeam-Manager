@@ -338,8 +338,6 @@ if ($userId && !empty($teams)) {
                                     <button class="btn btn-outline" type="submit">Salir</button>
                                 </form>
                             <?php endif; ?>
-
-                            
                         </div>
                     </div>
                 <?php endforeach; ?>
