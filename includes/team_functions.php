@@ -398,3 +398,12 @@ function unjoinTeam(PDO $conn, int $teamId, int $userId) {
     return ["success" => true];
 
 }
+
+function isUserActiveMember(PDO $conn, int $teamId, int $userId): bool
+{
+    $stmt = $conn->prepare('SELECT 1 FROM team_members WHERE team_id = :team_id AND user_id = :user_id AND is_active = 1 LIMIT 1');
+    $stmt->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    return (bool) $stmt->fetch();
+}

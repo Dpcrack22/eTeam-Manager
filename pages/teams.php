@@ -37,8 +37,19 @@ if ($activeOrganizationId) {
     } else {
         $activeTeamId = getActiveTeamId($conn, $activeOrganizationId);
         if ($activeTeamId === null) {
-            $activeTeamId = (int) $teams[0]['id'];
-            setActiveTeamContext($conn, $activeOrganizationId, $activeTeamId);
+            // prefer a team the user is a member of; otherwise do not auto-activate to avoid overwriting session
+            $found = false;
+            foreach ($teams as $t) {
+                if ($userId && isUserActiveMember($conn, (int)$t['id'], $userId)) {
+                    $activeTeamId = (int) $t['id'];
+                    setActiveTeamContext($conn, $activeOrganizationId, $activeTeamId);
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $activeTeamId = null;
+            }
         }
     }
 
@@ -51,7 +62,7 @@ if ($activeOrganizationId) {
 } else {
     $teams = getAllActiveTeams($conn);
 
-    if (!empty($teams)) {
+        if (!empty($teams)) {
         // prefer session active team if valid, otherwise pick first
         $activeTeamId = $_SESSION['active_team_id'] ?? null;
         if ($activeTeamId && getTeamById($conn, (int) $activeTeamId)) {
@@ -65,8 +76,14 @@ if ($activeOrganizationId) {
         }
 
         if (!$activeTeam) {
-            $activeTeam = $teams[0];
-            setActiveTeamContext($conn, (int) ($activeTeam['organization_id'] ?? 0), (int) $activeTeam['id']);
+            // pick first team only if the user is a member; otherwise leave no active team/context
+            foreach ($teams as $t) {
+                if ($userId && isUserActiveMember($conn, (int)$t['id'], $userId)) {
+                    $activeTeam = $t;
+                    setActiveTeamContext($conn, (int) ($activeTeam['organization_id'] ?? 0), (int) $activeTeam['id']);
+                    break;
+                }
+            }
         }
     }
 }

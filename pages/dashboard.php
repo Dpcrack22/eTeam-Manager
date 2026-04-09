@@ -95,8 +95,19 @@ if ($activeOrganization['id'] !== null) {
     $activeTeamId = getActiveTeamId($conn, (int) $activeOrganization['id']);
 
     if ($activeTeamId === null && !empty($organizationTeams)) {
-        $activeTeamId = (int) $organizationTeams[0]['id'];
-        setActiveTeamContext($conn, (int) $activeOrganization['id'], $activeTeamId);
+        // prefer the first team where the current user is an active member; otherwise leave no active team
+        $found = false;
+        foreach ($organizationTeams as $teamRow) {
+            if (isUserActiveMember($conn, (int)$teamRow['id'], $userId)) {
+                $activeTeamId = (int) $teamRow['id'];
+                setActiveTeamContext($conn, (int) $activeOrganization['id'], $activeTeamId);
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $activeTeamId = null;
+        }
     }
 
     foreach ($organizationTeams as $teamRow) {
