@@ -313,13 +313,17 @@ if ($userId && !empty($teams)) {
 
                         <div class="stack-sm">
                             <a class="btn btn-secondary" href="app.php?view=team-detail&amp;team_id=<?php echo (int) $team['id']; ?>">Ver detalle</a>
-                            <form method="post" style="display:inline-block;">
-                                <input type="hidden" name="action" value="activate_team" />
-                                <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
-                                <button class="btn <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
-                                    <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'Equipo actual' : 'Usar este equipo'; ?>
-                                </button>
-                            </form>
+                            <?php if ($userId && !empty($userTeamIds[(int)$team['id']])): ?>
+                                <form method="post" style="display:inline-block;">
+                                    <input type="hidden" name="action" value="activate_team" />
+                                    <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
+                                    <button class="btn <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'btn-secondary' : 'btn-primary'; ?>" type="submit">
+                                        <?php echo $activeTeam && (int) $activeTeam['id'] === (int) $team['id'] ? 'Equipo actual' : 'Usar este equipo'; ?>
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <button class="btn btn-outline" type="button" disabled title="Debes unirte al equipo para activarlo">Usar este equipo</button>
+                            <?php endif; ?>
 
                             <?php if ($userId && empty($userTeamIds[(int)$team['id']])): ?>
                                 <form method="post" style="display:inline-block; margin-left:8px;">
