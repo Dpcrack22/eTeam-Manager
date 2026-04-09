@@ -304,3 +304,23 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
 
     return ['success' => true, 'team' => $team];
 }
+
+function unjoinTeam(PDO $conn, int $teamId, int $userId) {
+    $team = getTeamById($conn, $teamId);
+
+    if (!$team) {
+        return ['success' => false, 'error' => 'El equipo no existe'];
+    }
+
+    $update = $conn->prepare("UPDATE team_members SET is_active = 0 WHERE team_id = :team_id AND user_id = :user_id");
+    $update->bindValue(":team_id", $teamId, PDO::PARAM_INT);
+    $update->bindValue(":user_id", $userId, PDO::PARAM_INT);
+    $update->execute();
+
+    if ($update->rowCount() === 0) {
+        return ['success' => false, 'error' => 'El usuario no pertenece a este equipo'];
+    }
+
+    return ["success" => true];
+
+}

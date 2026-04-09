@@ -180,6 +180,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $errors[] = $joinResult['error'] ?? 'No se ha podido unir al equipo';
         }
+    } else if ($action === "unjoin_team") {
+        $teamId = (int) ($_POST["team_id"] ?? 0);
+
+        if ($teamId <= 0) {
+            $errors[] = "Selecciona un equipo válido";
+        } else {
+            $unjoinResult = unjoinTeam($conn, $teamId, $userId);
+            if (!empty($unjoinResult["success"])) {
+                $_SESSION["flash_success"] = "Has dejado el equipo";
+                header("Location: " . $returnTo);
+                exit;
+            }
+        }
     } elseif (!$activeOrganizationId) {
         // keep the message when attempting other management actions without context
         $errors[] = 'Primero necesitas un contexto activo';
@@ -314,7 +327,15 @@ if ($userId && !empty($teams)) {
                                     <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
                                     <button class="btn btn-outline" type="submit">Unirme</button>
                                 </form>
+                            <?php elseif ($userId && !empty($userTeamIds[(int)$team['id']])): ?>
+                                <form method="post" style="display:inline-block; margin-left:8px;">
+                                    <input type="hidden" name="action" value="unjoin_team" />
+                                    <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
+                                    <button class="btn btn-outline" type="submit">Salir</button>
+                                </form>
                             <?php endif; ?>
+
+                            
                         </div>
                     </div>
                 <?php endforeach; ?>
