@@ -247,21 +247,70 @@ function setActiveTeamContext(PDO $conn, int $organizationId, int $teamId): arra
 
 function getActiveTeamId(PDO $conn, int $organizationId): ?int
 {
+    $sessionUserId = !empty($_SESSION['user']['id']) ? (int) $_SESSION['user']['id'] : null;
+
+    // Helper to validate a team belongs to the organization and (optionally) that the user is an active member
+    $validateTeam = function (int $teamId) use ($conn, $organizationId, $sessionUserId): bool {
+        $stmt = $conn->prepare('SELECT id FROM teams WHERE id = :team_id AND organization_id = :organization_id AND is_active = 1 LIMIT 1');
+        $stmt->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $stmt->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $stmt->execute();
+        $team = $stmt->fetch();
+        if (!$team) {
+            return false;
+        }
+
+        if ($sessionUserId !== null) {
+            $m = $conn->prepare('SELECT 1 FROM team_members WHERE team_id = :team_id AND user_id = :user_id AND is_active = 1 LIMIT 1');
+            $m->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+            $m->bindValue(':user_id', $sessionUserId, PDO::PARAM_INT);
+            $m->execute();
+            return (bool) $m->fetch();
+        }
+
+        return true;
+    };
+
     if (!empty($_SESSION['active_team_id'])) {
         $activeTeamId = (int) $_SESSION['active_team_id'];
-        if (getTeamById($conn, $activeTeamId, $organizationId)) {
+        if ($validateTeam($activeTeamId)) {
             return $activeTeamId;
         }
+        // invalid session reference -> clear it
+        unset($_SESSION['active_team_id']);
     }
 
     if (!empty($_SESSION['user']['team_id'])) {
         $activeTeamId = (int) $_SESSION['user']['team_id'];
-        if (getTeamById($conn, $activeTeamId, $organizationId)) {
+        if ($validateTeam($activeTeamId)) {
             $_SESSION['active_team_id'] = $activeTeamId;
             return $activeTeamId;
         }
+        unset($_SESSION['user']['team_id'], $_SESSION['user']['team']);
     }
 
+    // If there's a logged user, find a team in this organization that the user is an active member of
+    if ($sessionUserId !== null) {
+        $stmt = $conn->prepare(
+            'SELECT t.id FROM teams t
+             INNER JOIN team_members tm ON tm.team_id = t.id
+             WHERE t.organization_id = :organization_id AND t.is_active = 1 AND tm.user_id = :user_id AND tm.is_active = 1
+             ORDER BY tm.joined_at DESC, t.id DESC LIMIT 1'
+        );
+        $stmt->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $stmt->bindValue(':user_id', $sessionUserId, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+
+        if ($row) {
+            $_SESSION['active_team_id'] = (int) $row['id'];
+            return (int) $row['id'];
+        }
+
+        return null;
+    }
+
+    // Fallback for anonymous (no session user): keep previous behaviour
     $statement = $conn->prepare(
         'SELECT id FROM teams WHERE organization_id = :organization_id AND is_active = 1 ORDER BY created_at DESC, id DESC LIMIT 1'
     );
