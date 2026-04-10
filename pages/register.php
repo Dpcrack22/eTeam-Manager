@@ -8,9 +8,10 @@ $password = '';
 $passwordConfirm = '';
 $termsAccepted = false;
 $errors = [];
+$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
 
 if (isLogged()) {
-    echo '<script>window.location.href="app.php?view=dashboard";</script>';
+    echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
     exit;
 }
 
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
 
-            echo '<script>window.location.href="app.php?view=login";</script>';
+            echo '<script>window.location.href=' . json_encode('app.php?view=login&return_to=' . urlencode($returnTo)) . ';</script>';
             exit;
         }
     }
@@ -106,6 +107,7 @@ if (empty($layoutIncluded)) {
         </div>
 
         <form class="form auth-form" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8'); ?>" />
             <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
                 <label for="name">Nombre</label>
                 <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
@@ -145,7 +147,7 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                <a class="btn btn-secondary" href="app.php?view=login">Ya tengo cuenta</a>
+                <a class="btn btn-secondary" href="app.php?view=login&amp;return_to=<?php echo urlencode($returnTo); ?>">Ya tengo cuenta</a>
             </div>
         </form>
     </div>

@@ -155,10 +155,13 @@ CREATE TABLE IF NOT EXISTS teams (
   name VARCHAR(120) NOT NULL,
   tag VARCHAR(16) NULL,
   description TEXT NULL,
+  invite_token VARCHAR(128) NULL,
+  invite_token_created_at DATETIME NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   UNIQUE KEY uq_teams_org_name_game (organization_id, name, game_id),
+  UNIQUE KEY uq_teams_invite_token (invite_token),
   KEY idx_teams_game_id (game_id),
   CONSTRAINT fk_teams_organization
     FOREIGN KEY (organization_id) REFERENCES organizations (id)

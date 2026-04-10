@@ -3,6 +3,95 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/organization_functions.php';
 require_once __DIR__ . '/notification_functions.php';
 
+function ensureTeamInviteTokenStorage(PDO $conn): void
+{
+    try {
+        $statement = $conn->prepare(
+            'SELECT COUNT(*) AS total
+             FROM information_schema.columns
+             WHERE table_schema = DATABASE() AND table_name = "teams" AND column_name = "invite_token"'
+        );
+        $statement->execute();
+
+        if ((int) ($statement->fetch()['total'] ?? 0) > 0) {
+            return;
+        }
+
+        $conn->exec(
+            'ALTER TABLE teams
+             ADD COLUMN invite_token VARCHAR(128) NULL AFTER description,
+             ADD COLUMN invite_token_created_at DATETIME NULL AFTER invite_token,
+             ADD UNIQUE KEY uq_teams_invite_token (invite_token)'
+        );
+    } catch (Throwable $exception) {
+        // Older databases can still work without invite links.
+    }
+}
+
+function generateTeamInviteToken(): string
+{
+    return rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '=');
+}
+
+function ensureTeamInviteToken(PDO $conn, int $teamId): string
+{
+    ensureTeamInviteTokenStorage($conn);
+
+    $statement = $conn->prepare('SELECT invite_token FROM teams WHERE id = :team_id LIMIT 1');
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    if (!$row) {
+        return '';
+    }
+
+    if (!empty($row['invite_token'])) {
+        return (string) $row['invite_token'];
+    }
+
+    $token = generateTeamInviteToken();
+    $update = $conn->prepare('UPDATE teams SET invite_token = :invite_token, invite_token_created_at = NOW() WHERE id = :team_id');
+    $update->bindValue(':invite_token', $token, PDO::PARAM_STR);
+    $update->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $update->execute();
+
+    return $token;
+}
+
+function getTeamInviteLink(PDO $conn, int $teamId): string
+{
+    $token = ensureTeamInviteToken($conn, $teamId);
+    if ($token === '') {
+        return '';
+    }
+
+    $baseUrl = '';
+    if (!empty($_SERVER['HTTP_HOST'])) {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
+    }
+
+    return rtrim($baseUrl, '/') . '/invite.php?token=' . urlencode($token);
+}
+
+function getTeamByInviteToken(PDO $conn, string $inviteToken): array|false
+{
+    $statement = $conn->prepare(
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, t.invite_token, g.name AS game_name
+         FROM teams t
+         INNER JOIN games g ON g.id = t.game_id
+         WHERE t.invite_token = :invite_token AND t.is_active = 1
+         LIMIT 1'
+    );
+    $statement->bindValue(':invite_token', $inviteToken, PDO::PARAM_STR);
+    $statement->execute();
+
+    return $statement->fetch() ?: false;
+}
+
+ensureTeamInviteTokenStorage($conn);
+
 function getGames(PDO $conn): array
 {
     $statement = $conn->query('SELECT id, name, slug FROM games WHERE is_active = 1 ORDER BY name ASC');
@@ -12,13 +101,13 @@ function getGames(PDO $conn): array
 function getOrganizationTeams(PDO $conn, int $organizationId): array
 {
     $statement = $conn->prepare(
-        'SELECT t.id, t.name, t.tag, t.description, t.game_id, g.name AS game_name,
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name AS game_name,
                 COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count
          FROM teams t
          INNER JOIN games g ON g.id = t.game_id
          LEFT JOIN team_members tm ON tm.team_id = t.id
          WHERE t.organization_id = :organization_id AND t.is_active = 1
-         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, g.name
+         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name
          ORDER BY t.created_at DESC, t.name ASC'
     );
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
@@ -49,7 +138,7 @@ function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, i
 
 function getTeamById(PDO $conn, int $teamId, int $organizationId = 0): array|false
 {
-    $sql = 'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, g.name AS game_name
+    $sql = 'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, t.invite_token, g.name AS game_name
             FROM teams t
             INNER JOIN games g ON g.id = t.game_id
             WHERE t.id = :team_id';
@@ -72,9 +161,11 @@ function getTeamById(PDO $conn, int $teamId, int $organizationId = 0): array|fal
 
 function createTeam(PDO $conn, int $organizationId, int $gameId, string $name, ?string $tag = null, ?string $description = null): int
 {
+    ensureTeamInviteTokenStorage($conn);
+
     $statement = $conn->prepare(
-        'INSERT INTO teams (organization_id, game_id, name, tag, description, created_at, is_active)
-         VALUES (:organization_id, :game_id, :name, :tag, :description, NOW(), 1)'
+        'INSERT INTO teams (organization_id, game_id, name, tag, description, invite_token, invite_token_created_at, created_at, is_active)
+         VALUES (:organization_id, :game_id, :name, :tag, :description, :invite_token, NOW(), NOW(), 1)'
     );
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
     $statement->bindValue(':game_id', $gameId, PDO::PARAM_INT);
@@ -90,9 +181,13 @@ function createTeam(PDO $conn, int $organizationId, int $gameId, string $name, ?
     } else {
         $statement->bindValue(':description', $description, PDO::PARAM_STR);
     }
+    $statement->bindValue(':invite_token', generateTeamInviteToken(), PDO::PARAM_STR);
     $statement->execute();
 
-    return (int) $conn->lastInsertId();
+    $teamId = (int) $conn->lastInsertId();
+    ensureTeamInviteToken($conn, $teamId);
+
+    return $teamId;
 }
 
 function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, string $name, ?string $tag = null, ?string $description = null): bool
@@ -123,7 +218,13 @@ function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, st
     $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
 
-    return $statement->execute();
+    $updated = $statement->execute();
+
+    if ($updated) {
+        ensureTeamInviteToken($conn, $teamId);
+    }
+
+    return $updated;
 }
 
 function getTeamMembers(PDO $conn, int $teamId): array

@@ -26,6 +26,15 @@ if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     exit;
 }
 
+if ($view === 'notifications' && isset($_GET['poll']) && $isAuthenticated && !empty($_SESSION['user']['id'])) {
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode([
+        'unread_count' => getUnreadNotificationsCount($conn, (int) $_SESSION['user']['id']),
+        'timestamp' => time(),
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 $modulesToHide = ['organizations'];
 if (in_array($view, $modulesToHide, true)) {
     header('Location: app.php?view=teams');
@@ -224,6 +233,7 @@ $appUnreadNotificationCount = 0;
 if (
     $appAuthState === 'authenticated'
     && $view === 'notifications'
+    && !isset($_GET['poll'])
     && (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET'
     && !empty($_SESSION['user']['id'])
 ) {
@@ -247,11 +257,7 @@ if (!isset($appNavItems)) {
     $appNavItems = [];
 
     foreach ($appModules as $moduleKey => $module) {
-        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form'], true)) {
-            continue;
-        }
-
-        if ($moduleKey === 'admin' && !$appCanModerateOrganization) {
+        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form', 'login', 'register', 'admin'], true)) {
             continue;
         }
 

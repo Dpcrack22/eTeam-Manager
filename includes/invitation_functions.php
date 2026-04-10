@@ -3,6 +3,31 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/team_functions.php';
 require_once __DIR__ . '/notification_functions.php';
 
+function sendTeamInvitationEmail(array $invitedUser, array $team, string $role, string $inviteLink): bool
+{
+    $to = (string) ($invitedUser['email'] ?? '');
+    if ($to === '') {
+        return false;
+    }
+
+    $subject = 'Invitacion para unirte al equipo ' . $team['name'];
+    $message = "Hola {$invitedUser['username']},\n\n";
+    $message .= 'Te han invitado al equipo ' . $team['name'] . ' como ' . $role . ".\n";
+    if ($inviteLink !== '') {
+        $message .= 'Enlace de invitacion: ' . $inviteLink . "\n";
+    }
+    $message .= "\nPuedes aceptar o rechazar la solicitud desde la app una vez inicies sesión.\n";
+    $message .= "\n-- eTeam Manager\n";
+
+    $headers = [
+        'MIME-Version: 1.0',
+        'Content-type: text/plain; charset=UTF-8',
+        'From: eTeam Manager <no-reply@localhost>',
+    ];
+
+    return @mail($to, $subject, $message, implode("\r\n", $headers));
+}
+
 function getPendingTeamInvitationsForUser(PDO $conn, int $userId): array
 {
     $statement = $conn->prepare(
@@ -101,11 +126,15 @@ function createTeamInvitation(PDO $conn, int $teamId, int $invitedByUserId, stri
         'Tienes una invitación para unirte al equipo ' . $team['name'] . ' como ' . $role . '.'
     );
 
+    $inviteLink = getTeamInviteLink($conn, $teamId);
+    sendTeamInvitationEmail($invitedUser, $team, $role, $inviteLink);
+
     return [
         'success' => true,
         'invitation_id' => $invitationId,
         'team' => $team,
         'invited_user' => $invitedUser,
+        'invite_link' => $inviteLink,
     ];
 }
 

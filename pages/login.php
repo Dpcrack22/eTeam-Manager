@@ -5,9 +5,10 @@ $email = '';
 $password = '';
 $rememberMe = false;
 $errors = [];
+$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
 
 if (isLogged()) {
-    echo '<script>window.location.href="app.php?view=dashboard";</script>';
+    echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
     exit;
 }
 
@@ -44,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = login($email, $password, $rememberMe);
 
         if (!empty($result['success'])) {
-            echo '<script>window.location.href="app.php?view=dashboard";</script>';
+            echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
             exit;
         }
 
@@ -83,6 +84,7 @@ if (empty($layoutIncluded)) {
         </div>
 
         <form class="form auth-form" method="post" novalidate>
+            <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8'); ?>" />
             <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
                 <label for="email">Email</label>
                 <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
@@ -103,7 +105,7 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Entrar</button>
-                <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
+                <a class="btn btn-secondary" href="app.php?view=register&amp;return_to=<?php echo urlencode($returnTo); ?>">Crear cuenta</a>
             </div>
         </form>
     </div>

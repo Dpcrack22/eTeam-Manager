@@ -45,6 +45,26 @@ PREPARE stmt_org_moderation FROM @sql_org_moderation;
 EXECUTE stmt_org_moderation;
 DEALLOCATE PREPARE stmt_org_moderation;
 
+SET @team_invite_token_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'teams'
+    AND column_name = 'invite_token'
+);
+
+SET @sql_team_invite_token = IF(
+  @team_invite_token_exists = 0,
+  'ALTER TABLE teams
+     ADD COLUMN invite_token VARCHAR(128) NULL AFTER description,
+     ADD COLUMN invite_token_created_at DATETIME NULL AFTER invite_token,
+     ADD UNIQUE KEY uq_teams_invite_token (invite_token)',
+  'SELECT 1'
+);
+PREPARE stmt_team_invite_token FROM @sql_team_invite_token;
+EXECUTE stmt_team_invite_token;
+DEALLOCATE PREPARE stmt_team_invite_token;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Child tables first (safe order)

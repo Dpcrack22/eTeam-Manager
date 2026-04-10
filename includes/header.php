@@ -39,7 +39,10 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
                         <?php endif; ?>
 
                         <div class="app-notification-actions">
-                            <a class="app-user-menu-item" href="app.php?view=notifications&amp;mark_all_read=1">Marcar todo como leído</a>
+                            <form method="post" action="app.php?view=notifications">
+                                <input type="hidden" name="notification_action" value="mark_all_read" />
+                                <button class="app-user-menu-item" type="submit">Marcar todo como leído</button>
+                            </form>
                             <a class="app-user-menu-item" href="app.php?view=notifications">Ver todas</a>
                         </div>
                     </div>
@@ -70,7 +73,7 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
                         <a class="app-user-menu-item" href="app.php?view=teams">Equipos</a>
                         <a class="app-user-menu-item" href="app.php?view=calendar">Calendario</a>
                         <?php if (!empty($appCanModerateOrganization)): ?>
-                            <a class="app-user-menu-item" href="app.php?view=admin">Administracion</a>
+                            <a class="app-user-menu-item" href="admin.php">Administracion</a>
                         <?php endif; ?>
                         <a class="app-user-menu-item" href="app.php?view=settings">Mi perfil</a>
                         <a class="app-user-menu-item" href="includes/logout.php">Cerrar sesión</a>

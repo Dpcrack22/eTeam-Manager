@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManageModeration) {
 
                 if (!empty($result['success'])) {
                     $_SESSION['flash_success'] = $status === 'active' ? 'Miembro restaurado' : 'Miembro moderado';
-                    header('Location: app.php?view=admin');
+                    header('Location: admin.php');
                     exit;
                 }
 

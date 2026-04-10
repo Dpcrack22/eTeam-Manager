@@ -366,3 +366,23 @@ function redirectIfAuthenticated(): void
         exit;
     }
 }
+
+function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=dashboard'): string
+{
+    $returnTo = trim((string) $returnTo);
+
+    if ($returnTo === '') {
+        return $fallback;
+    }
+
+    if (
+        str_starts_with($returnTo, 'app.php?view=') ||
+        str_starts_with($returnTo, 'invite.php?token=') ||
+        $returnTo === 'index.php' ||
+        $returnTo === 'admin.php'
+    ) {
+        return $returnTo;
+    }
+
+    return $fallback;
+}

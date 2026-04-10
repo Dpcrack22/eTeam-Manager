@@ -689,6 +689,24 @@ p {
   width: min(560px, 100%);
 }
 
+.team-link-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  margin-top: var(--space-3);
+}
+
+.team-link-row input {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .team-link-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .team-switcher-list {
   display: grid;
   gap: 10px;
@@ -2864,7 +2882,7 @@ textarea:focus {
 }
 
 .boards-page .grid-2 {
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1.9fr) minmax(280px, 0.62fr);
   align-items: start;
 }
 
@@ -3244,6 +3262,13 @@ textarea:focus {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-4);
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.kanban-column.is-drop-target {
+  border-color: color-mix(in srgb, var(--color-primary) 64%, var(--border-subtle));
+  background: color-mix(in srgb, var(--bg-kanban-column) 82%, var(--color-primary));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 32%, transparent);
 }
 
 .kanban-column-title {
@@ -3258,6 +3283,17 @@ textarea:focus {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-3);
+  transition: transform 120ms ease, opacity 120ms ease, border-color 120ms ease;
+}
+
+.task[draggable="true"] {
+  cursor: grab;
+}
+
+.task.is-dragging {
+  opacity: 0.55;
+  transform: scale(0.98);
+  border-color: color-mix(in srgb, var(--color-primary) 42%, var(--border-subtle));
 }
 
 .task+.task {
