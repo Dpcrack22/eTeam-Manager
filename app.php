@@ -3,6 +3,7 @@ ob_start();
 
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/organization_functions.php';
+require_once __DIR__ . '/includes/notification_functions.php';
 require_once __DIR__ . '/includes/team_functions.php';
 
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
@@ -105,6 +106,13 @@ $appModules = [
         'description' => 'Repositorio interno para estrategia, analisis y documentacion del equipo.',
         'page' => __DIR__ . '/../pages/notes.php',
     ],
+    'notifications' => [
+        'label' => 'Notificaciones',
+        'title' => 'Notificaciones',
+        'eyebrow' => 'Modulo',
+        'description' => 'Centro de avisos, invitaciones y actividad reciente de la app.',
+        'page' => __DIR__ . '/../pages/notifications.php',
+    ],
     'settings' => [
         'label' => 'Configuracion',
         'title' => 'Perfil y ajustes',
@@ -193,9 +201,16 @@ if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
 
 $appActiveTeamId = $appCurrentUser['team_id'] ?? null;
 $appSidebarTeams = [];
+$appNotifications = [];
+$appUnreadNotificationCount = 0;
 
 if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null) {
     $appSidebarTeams = getOrganizationTeams($conn, (int) $appShellOrganizationId);
+}
+
+if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
+    $appNotifications = getRecentNotifications($conn, (int) $_SESSION['user']['id'], 6);
+    $appUnreadNotificationCount = getUnreadNotificationsCount($conn, (int) $_SESSION['user']['id']);
 }
 
 if ($view === 'dashboard') {

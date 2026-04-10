@@ -1,0 +1,87 @@
+eTeam Manager — Resumen técnico de la app
+
+Fecha: 10 de abril de 2026
+
+======================================================================
+
+1. Vista externa
+
+La parte visible de eTeam Manager está dividida en dos bloques:
+
+- Landing pública: presenta el producto, sus módulos y el acceso.
+- App interna: solo para usuarios autenticados, con navegación lateral y topbar.
+
+La landing sirve para explicar qué hace la plataforma, mientras que la app interna
+es el espacio operativo real del equipo.
+
+======================================================================
+
+2. Cómo se usa por fuera
+
+El usuario entra por la portada pública, revisa la propuesta de valor y accede a login o registro.
+Una vez autenticado, entra al dashboard y desde ahí navega por:
+
+- Equipos
+- Scrims
+- Calendario
+- Tableros
+- Notas
+- Notificaciones
+- Perfil y ajustes
+
+Esto permite entender la app como un producto de gestión interna, no como una web estática.
+
+======================================================================
+
+3. Vista interna
+
+La parte interna usa un layout compartido con:
+
+- Sidebar para navegación principal.
+- Topbar con contexto, notificaciones y perfil.
+- Área central para cada módulo.
+
+El contexto activo de organización y equipo hace que las vistas lean la misma referencia operativa.
+
+======================================================================
+
+4. Lógica principal
+
+La app conecta varias piezas clave:
+
+- Autenticación con sesión y recordarme.
+- Organización activa.
+- Equipo activo.
+- Scrims y calendario enlazados.
+- Kanban por equipo.
+- Notas con tags.
+- Notificaciones del sistema.
+
+Esto permite trabajar desde una única base de contexto.
+
+======================================================================
+
+5. Puntos fuertes actuales
+
+- Interfaz modular.
+- Módulos funcionales y reales.
+- Estilo visual consistente.
+- Base preparada para ampliaciones futuras.
+- Estructura clara para seguir creciendo sin rehacer la app.
+
+======================================================================
+
+6. Qué se puede ampliar
+
+- Invitaciones y solicitudes de equipo.
+- Analytics competitivos.
+- Moderación avanzada.
+- Strats y planificación táctica.
+- Integraciones externas con APIs.
+
+======================================================================
+
+7. Resumen final
+
+eTeam Manager ya funciona como una aplicación interna real para gestión de equipos competitivos.
+La portada explica el producto y la app interna centraliza la operativa diaria con contexto, módulos y datos.

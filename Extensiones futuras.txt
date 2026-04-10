@@ -1,15 +1,67 @@
-Archivo sencillo (David después adaptalo como quieras)
+eTeam Manager — Backlog de mejoras futuras
 
---- MEJORAS PARA EL FUTURO DE LA APP ---
-1. Invitación a un equipo via email/Notificación al usuario de que ha sido invitado dentro de la pagina
-2. Poder aceptar la invitación desde el email o un botón en el apartado de "Equipos"
-3. Analisis/analytics del jugador individual de la partida (por base de datos o subir la imagen)
-4. Opción de banear a jugadores si no respetan la normativa
-5. Normativa al unirse a un equipo (como un termino de condiciones)
-6. Eliminación de botón unirse a un equipo manualmente
-7. Eliminación de la recomendación de equipos en el apartado de "Equipos"
-8. (IDEA MUY LOCA, PERO QUE SERVIRIA PARA LA PRESENTACIÓN Y PARA NOSOTROS) 
-Documentar de forma resumida en un documento como funciona tanto la app por fuera como por dentro
+Este archivo recoge ideas para seguir ampliando la app después de cerrar la base funcional actual.
 
+======================================================================
 
-(Si vieras necesario mas mejoras ponlas sin problemas)
+PRIORIDAD ALTA
+
+1. Centro de notificaciones completo
+- Mostrar avisos en el header con contador de no leídas.
+- Abrir una vista dedicada de notificaciones.
+- Marcar avisos como leídos desde el panel o la lista.
+
+2. Invitaciones y solicitudes de equipo
+- Sustituir el flujo de unirte manualmente por invitaciones o solicitudes.
+- Permitir aceptar o rechazar desde la notificación o desde Equipos.
+- Notificar a owner/admin cuando alguien solicite unirse.
+
+3. Normativa de acceso
+- Mostrar condiciones al registrarse.
+- Guardar la aceptación de normas antes de entrar a la app.
+- Bloquear acceso a ciertas acciones si el usuario no ha aceptado la normativa.
+
+======================================================================
+
+PRIORIDAD MEDIA
+
+4. Analytics del equipo
+- Ver datos de scrims y partidos por API o carga manual.
+- Resumir rendimiento por mapa, rival y periodo.
+- Preparar paneles visuales para staff y analistas.
+
+5. Moderación y sanciones
+- Añadir estado de baneo o suspensión a miembros problemáticos.
+- Registrar motivo y fecha de sanción.
+- Mostrar avisos internos sobre usuarios bloqueados.
+
+6. Sistema de joins más limpio
+- Quitar el botón manual de unirse cuando el flujo de invitación esté listo.
+- Evitar recomendaciones de equipos si el acceso depende de invitaciones.
+- Sustituir ese espacio por solicitudes y estados pendientes.
+
+======================================================================
+
+PRIORIDAD BAJA / EXPANSIÓN
+
+7. Apartado de strats
+- Crear un módulo inspirado en herramientas de planificación como Valoplant.
+- Incluir mapas, agentes, habilidades y colocación de utilidades.
+- Guardar plantillas de estrategia por mapa y equipo.
+
+8. Documentación interna para presentación
+- Resumir cómo funciona la app por fuera.
+- Resumir cómo funciona por dentro.
+- Dejar una explicación visual y técnica corta para presentar el proyecto.
+
+9. Más integración externa
+- Sincronizar estadísticas con APIs de Valorant.
+- Importar datos de partidas o imágenes de forma manual/semiautomática.
+- Abrir la puerta a integraciones con Discord o calendarios externos.
+
+======================================================================
+
+NOTA
+
+- Cualquier mejora sensible, credencial o clave externa debe mantenerse fuera de este archivo.
+- Si aparece una nueva idea útil, se puede añadir aquí por prioridad.

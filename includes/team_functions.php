@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/organization_functions.php';
+require_once __DIR__ . '/notification_functions.php';
 
 function getGames(PDO $conn): array
 {
@@ -365,6 +367,35 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         $insert->execute();
     }
 
+    $teamOwnerStatement = $conn->prepare('SELECT organization_id, name FROM teams WHERE id = :team_id LIMIT 1');
+    $teamOwnerStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $teamOwnerStatement->execute();
+    $teamContext = $teamOwnerStatement->fetch() ?: null;
+
+    if ($teamContext) {
+        $organizationMembers = getOrganizationMembers($conn, (int) $teamContext['organization_id']);
+
+        foreach ($organizationMembers as $organizationMember) {
+            if ((int) $organizationMember['user_id'] === $userId) {
+                continue;
+            }
+
+            if (!in_array((string) $organizationMember['role'], ['owner', 'admin', 'manager'], true)) {
+                continue;
+            }
+
+            createNotification(
+                $conn,
+                (int) $organizationMember['user_id'],
+                'team_join',
+                $teamId,
+                'Un usuario se ha unido al equipo ' . $teamContext['name'] . '.'
+            );
+        }
+    }
+
+    createNotification($conn, $userId, 'team_join', $teamId, 'Te has unido al equipo ' . $team['name'] . '.');
+
     return ['success' => true, 'team' => $team];
 }
 
@@ -394,6 +425,8 @@ function unjoinTeam(PDO $conn, int $teamId, int $userId) {
             unset($_SESSION['user']['team']);
         }
     }
+
+    createNotification($conn, $userId, 'team_leave', $teamId, 'Has salido del equipo ' . $team['name'] . '.');
 
     return ["success" => true];
 

@@ -13,6 +13,37 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
         </div>
         <div class="app-topbar-actions">
             <?php if ($appAuthState === 'authenticated'): ?>
+                <details class="app-notification-dropdown">
+                    <summary class="app-notification-chip" aria-label="Abrir notificaciones">
+                        <span class="app-notification-icon" aria-hidden="true">🔔</span>
+                        <span class="app-notification-label">Avisos</span>
+                        <?php if (!empty($appUnreadNotificationCount)): ?>
+                            <span class="app-notification-badge"><?php echo (int) $appUnreadNotificationCount; ?></span>
+                        <?php endif; ?>
+                    </summary>
+                    <div class="app-notification-menu">
+                        <div class="app-notification-menu-head">
+                            <strong>Notificaciones</strong>
+                            <span><?php echo !empty($appUnreadNotificationCount) ? (int) $appUnreadNotificationCount . ' sin leer' : 'Todo al día'; ?></span>
+                        </div>
+
+                        <?php if (empty($appNotifications)): ?>
+                            <div class="app-notification-empty">No hay avisos recientes.</div>
+                        <?php else: ?>
+                            <?php foreach ($appNotifications as $notification): ?>
+                                <a class="app-notification-item<?php echo empty($notification['is_read']) ? ' is-unread' : ''; ?>" href="app.php?view=notifications">
+                                    <span class="app-notification-item-message"><?php echo htmlspecialchars((string) $notification['message'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <span class="app-notification-item-meta"><?php echo htmlspecialchars(notificationTypeLabel((string) $notification['type']), ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars(date('d/m/Y H:i', strtotime((string) $notification['created_at'])), ENT_QUOTES, 'UTF-8'); ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <div class="app-notification-actions">
+                            <a class="app-user-menu-item" href="app.php?view=notifications">Ver todas</a>
+                        </div>
+                    </div>
+                </details>
+
                 <details class="app-user-dropdown">
                     <summary class="app-user-chip" aria-label="Abrir menú de perfil">
                         <span class="app-user-avatar">

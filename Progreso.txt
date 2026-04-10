@@ -20,6 +20,7 @@ Resumen corto:
 - El Kanban de tareas ya existe como módulo funcional.
 - Las notas estratégicas ya tienen CRUD y tags.
 - La pantalla de ajustes/perfil ya está operativa.
+- Ya existe un centro de notificaciones con dropdown en el header y vista dedicada.
 
 Conclusión de estado:
 
@@ -109,6 +110,7 @@ Hecho:
 - Las notas estratégicas ya tienen listado, filtros, creación, edición y borrado.
 - Los tags se guardan y se reutilizan.
 - La página de ajustes/perfil ya permite modificar datos básicos de usuario.
+- El sistema de avisos ya muestra actividad reciente y permite marcar notificaciones como leídas.
 
 Resultado:
 - La capa de contenido táctico y ajustes ya está cubierta.

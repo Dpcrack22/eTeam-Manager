@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/invitation_functions.php';
 require_once __DIR__ . '/../includes/organization_functions.php';
 require_once __DIR__ . '/../includes/team_functions.php';
 
@@ -18,10 +19,27 @@ if (!$activeOrganization) {
     ];
 }
 $games = getGames($conn);
+$userOrganizations = $userId ? getUserOrganizations($conn, $userId) : [];
+$currentOrganizationRole = null;
+
+foreach ($userOrganizations as $userOrganization) {
+    if ((int) $userOrganization['id'] === (int) $activeOrganizationId) {
+        $currentOrganizationRole = (string) $userOrganization['member_role'];
+        break;
+    }
+}
+
+$canManageInvitations = in_array($currentOrganizationRole, ['owner', 'admin', 'manager'], true);
 $teams = [];
 $activeTeam = null;
 $errors = [];
 $successMessage = '';
+$pendingInvitations = $userId ? getPendingTeamInvitationsForUser($conn, $userId) : [];
+$pendingInvitationsById = [];
+
+foreach ($pendingInvitations as $pendingInvitation) {
+    $pendingInvitationsById[(int) $pendingInvitation['id']] = $pendingInvitation;
+}
 
 if (!empty($_SESSION['flash_success'])) {
     $successMessage = (string) $_SESSION['flash_success'];
@@ -112,6 +130,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
+        }
+    } elseif ($action === 'invite_member') {
+        $teamId = (int) ($_POST['team_id'] ?? 0);
+        $email = trim((string) ($_POST['email'] ?? ''));
+        $role = strtolower(trim((string) ($_POST['role'] ?? 'player')));
+        $allowedRoles = ['coach', 'player', 'analyst', 'substitute'];
+
+        if (!$canManageInvitations) {
+            $errors[] = 'No tienes permisos para invitar miembros en este contexto';
+        } elseif ($teamId <= 0 || !$activeTeamId || (int) $activeTeamId !== $teamId) {
+            $errors[] = 'Selecciona el equipo activo para enviar la invitación';
+        } elseif ($email === '' || strpos($email, '@') === false) {
+            $errors[] = 'Introduce un email válido';
+        } elseif (!in_array($role, $allowedRoles, true)) {
+            $errors[] = 'Selecciona un rol válido';
+        } else {
+            $inviteResult = createTeamInvitation($conn, $teamId, $userId, $email, $role);
+            if (!empty($inviteResult['success'])) {
+                $_SESSION['flash_success'] = 'Invitación enviada';
+                header('Location: app.php?view=teams');
+                exit;
+            }
+
+            $errors[] = $inviteResult['error'] ?? 'No se ha podido enviar la invitación';
+        }
+    } elseif ($action === 'accept_invite' || $action === 'decline_invite') {
+        $invitationId = (int) ($_POST['invitation_id'] ?? 0);
+
+        if ($invitationId <= 0) {
+            $errors[] = 'Selecciona una invitación válida';
+        } elseif ($action === 'accept_invite') {
+            $result = acceptTeamInvitation($conn, $invitationId, $userId);
+            if (!empty($result['success'])) {
+                if (!empty($result['team'])) {
+                    setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
+                }
+
+                $_SESSION['flash_success'] = 'Invitación aceptada';
+                header('Location: app.php?view=teams');
+                exit;
+            }
+
+            $errors[] = $result['error'] ?? 'No se ha podido aceptar la invitación';
+        } else {
+            $result = declineTeamInvitation($conn, $invitationId, $userId);
+            if (!empty($result['success'])) {
+                $_SESSION['flash_success'] = 'Invitación rechazada';
+                header('Location: app.php?view=teams');
+                exit;
+            }
+
+            $errors[] = $result['error'] ?? 'No se ha podido rechazar la invitación';
         }
     } elseif ($action === 'create_team') {
         // allow creating a team even if there's no active organization by falling back
@@ -314,6 +384,35 @@ if ($userId && !empty($teams)) {
             </div>
         <?php endif; ?>
 
+        <?php if (!empty($pendingInvitations)): ?>
+            <div class="team-invitations-list" style="margin-bottom: 16px;">
+                <?php foreach ($pendingInvitations as $invitation): ?>
+                    <article class="team-invitation-card">
+                        <div class="team-invitation-copy">
+                            <div class="team-invitation-top">
+                                <span class="badge badge-info"><?php echo htmlspecialchars((string) $invitation['team_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="small"><?php echo htmlspecialchars((string) $invitation['organization_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                            </div>
+                            <p class="team-invitation-message">Te ha invitado <?php echo htmlspecialchars((string) $invitation['inviter_name'], ENT_QUOTES, 'UTF-8'); ?> para el rol de <?php echo htmlspecialchars((string) $invitation['role'], ENT_QUOTES, 'UTF-8'); ?>.</p>
+                        </div>
+
+                        <div class="team-invitation-actions">
+                            <form method="post">
+                                <input type="hidden" name="action" value="accept_invite" />
+                                <input type="hidden" name="invitation_id" value="<?php echo (int) $invitation['id']; ?>" />
+                                <button class="btn btn-primary" type="submit">Aceptar</button>
+                            </form>
+                            <form method="post">
+                                <input type="hidden" name="action" value="decline_invite" />
+                                <input type="hidden" name="invitation_id" value="<?php echo (int) $invitation['id']; ?>" />
+                                <button class="btn btn-secondary" type="submit">Rechazar</button>
+                            </form>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <?php if (!empty($teams)): ?>
             <div class="landing-list">
                 <?php foreach ($teams as $team): ?>
@@ -402,6 +501,45 @@ if ($userId && !empty($teams)) {
 
             <button class="btn btn-primary" type="submit">Crear equipo</button>
         </form>
+
+        <?php if ($canManageInvitations && $activeTeamId !== null): ?>
+            <div class="team-invite-panel" style="margin-top: 20px;">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Invitaciones</div>
+                        <h3 class="h3">Invitar al equipo activo</h3>
+                    </div>
+                </div>
+
+                <form class="form team-invite-form" method="post" novalidate>
+                    <input type="hidden" name="action" value="invite_member" />
+                    <input type="hidden" name="team_id" value="<?php echo (int) $activeTeamId; ?>" />
+
+                    <div class="field">
+                        <label for="invite_email">Email</label>
+                        <input id="invite_email" name="email" type="email" placeholder="player@team.gg" />
+                    </div>
+
+                    <div class="field">
+                        <label for="invite_role">Rol</label>
+                        <select id="invite_role" name="role">
+                            <option value="player">Player</option>
+                            <option value="coach">Coach</option>
+                            <option value="analyst">Analyst</option>
+                            <option value="substitute">Substitute</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Enviar invitación</button>
+                </form>
+
+                <div class="small">La invitación aparecerá en notificaciones y se podrá aceptar desde ahí o desde esta página.</div>
+            </div>
+        <?php elseif ($activeTeamId !== null): ?>
+            <div class="team-invite-panel team-invite-panel--muted" style="margin-top: 20px;">
+                <div class="small">Solo los roles de gestión pueden enviar invitaciones a este equipo.</div>
+            </div>
+        <?php endif; ?>
 
         <div class="landing-list">
             <div class="landing-list-item">El equipo activo se usa como contexto operativo del dashboard.</div>

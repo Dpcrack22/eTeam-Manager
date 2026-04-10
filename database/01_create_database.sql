@@ -179,6 +179,40 @@ CREATE TABLE IF NOT EXISTS team_members (
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS team_invitations (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  team_id BIGINT UNSIGNED NOT NULL,
+  organization_id BIGINT UNSIGNED NOT NULL,
+  invited_by BIGINT UNSIGNED NOT NULL,
+  invited_user_id BIGINT UNSIGNED NOT NULL,
+  invited_email VARCHAR(255) NOT NULL,
+  role ENUM('coach','player','analyst','substitute') NOT NULL DEFAULT 'player',
+  status ENUM('pending','accepted','declined','cancelled') NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  responded_at DATETIME NULL,
+  PRIMARY KEY (id),
+  KEY idx_team_invitations_team_id (team_id),
+  KEY idx_team_invitations_organization_id (organization_id),
+  KEY idx_team_invitations_invited_user_id (invited_user_id),
+  KEY idx_team_invitations_status (status),
+  CONSTRAINT fk_team_invitations_team
+    FOREIGN KEY (team_id) REFERENCES teams (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT fk_team_invitations_organization
+    FOREIGN KEY (organization_id) REFERENCES organizations (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT fk_team_invitations_invited_by
+    FOREIGN KEY (invited_by) REFERENCES users (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT fk_team_invitations_invited_user
+    FOREIGN KEY (invited_user_id) REFERENCES users (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- EXTERNAL GAME ACCOUNTS
 
 CREATE TABLE IF NOT EXISTS user_game_accounts (

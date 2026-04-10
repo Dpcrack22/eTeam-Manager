@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/notification_functions.php';
 
 function getUserOrganizations(PDO $conn, int $userId): array
 {
@@ -156,6 +157,21 @@ function addOrUpdateOrganizationMemberByEmail(PDO $conn, int $organizationId, st
         $insertStatement->bindValue(':user_id', (int) $user['id'], PDO::PARAM_INT);
         $insertStatement->bindValue(':role', $role, PDO::PARAM_STR);
         $insertStatement->execute();
+    }
+
+    $orgStatement = $conn->prepare('SELECT name FROM organizations WHERE id = :organization_id LIMIT 1');
+    $orgStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $orgStatement->execute();
+    $organization = $orgStatement->fetch();
+
+    if ($organization) {
+        createNotification(
+            $conn,
+            (int) $user['id'],
+            'organization_invite',
+            $organizationId,
+            'Te han añadido a la organización ' . $organization['name'] . ' como ' . $role . '.'
+        );
     }
 
     return [

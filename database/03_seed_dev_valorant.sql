@@ -25,6 +25,7 @@ TRUNCATE TABLE matches;
 
 TRUNCATE TABLE user_game_accounts;
 TRUNCATE TABLE team_members;
+TRUNCATE TABLE team_invitations;
 TRUNCATE TABLE teams;
 
 TRUNCATE TABLE game_characters;
