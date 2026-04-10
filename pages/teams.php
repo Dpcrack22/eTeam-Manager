@@ -250,23 +250,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ' . $returnTo);
             exit;
         }
-    } elseif ($action === 'join_team') {
-        $teamId = (int) ($_POST['team_id'] ?? 0);
-
-        if ($teamId <= 0) {
-            $errors[] = 'Selecciona un equipo válido';
-        } else {
-            $joinResult = joinTeam($conn, $teamId, $userId, 'player');
-            if (!empty($joinResult['success'])) {
-                $team = $joinResult['team'];
-                setActiveTeamContext($conn, (int) ($team['organization_id'] ?? 0), $teamId);
-                $_SESSION['flash_success'] = 'Te has unido al equipo';
-                header('Location: ' . $returnTo);
-                exit;
-            }
-
-            $errors[] = $joinResult['error'] ?? 'No se ha podido unir al equipo';
-        }
     } else if ($action === "unjoin_team") {
         $teamId = (int) ($_POST["team_id"] ?? 0);
 
@@ -337,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teams = getAllActiveTeams($conn);
     }
 
-// build membership map for current user to show "Unirme" when appropriate
+// build membership map for current user to show only active-member actions
 $userTeamIds = [];
 if ($userId && !empty($teams)) {
     $ids = array_map(function($t){ return (int)$t['id']; }, $teams);
@@ -438,16 +421,10 @@ if ($userId && !empty($teams)) {
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <button class="btn btn-outline" type="button" disabled title="Debes unirte al equipo para activarlo">Usar este equipo</button>
+                                <button class="btn btn-outline" type="button" disabled title="Solo los miembros activos pueden activar este equipo">Usar este equipo</button>
                             <?php endif; ?>
 
-                            <?php if ($userId && empty($userTeamIds[(int)$team['id']])): ?>
-                                <form method="post" style="display:inline-block; margin-left:8px;">
-                                    <input type="hidden" name="action" value="join_team" />
-                                    <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
-                                    <button class="btn btn-outline" type="submit">Unirme</button>
-                                </form>
-                            <?php elseif ($userId && !empty($userTeamIds[(int)$team['id']])): ?>
+                            <?php if ($userId && !empty($userTeamIds[(int)$team['id']])): ?>
                                 <form method="post" style="display:inline-block; margin-left:8px;">
                                     <input type="hidden" name="action" value="unjoin_team" />
                                     <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />

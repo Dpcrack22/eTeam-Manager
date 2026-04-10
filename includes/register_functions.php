@@ -21,7 +21,7 @@ function createUser(PDO $conn, string $name, string $email, string $password, ?a
     }
 
     $statement = $conn->prepare(
-        'INSERT INTO users (username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW())'
+        'INSERT INTO users (username, email, password_hash, avatar_url, is_active, terms_accepted_at, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW(), NOW())'
     );
     $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
 
@@ -45,7 +45,7 @@ function validateOrganization(PDO $conn, int $organizationId): bool
 function addUserToOrganization(PDO $conn, int $userId, int $organizationId, string $role): void
 {
     $statement = $conn->prepare(
-        'INSERT INTO organization_members (organization_id, user_id, role, joined_at, is_active) VALUES (?, ?, ?, NOW(), 1)'
+        'INSERT INTO organization_members (organization_id, user_id, role, moderation_status, joined_at, is_active) VALUES (?, ?, ?, "active", NOW(), 1)'
     );
     $statement->execute([$organizationId, $userId, $role]);
 }

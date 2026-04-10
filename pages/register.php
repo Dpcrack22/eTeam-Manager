@@ -6,6 +6,7 @@ $name = '';
 $email = '';
 $password = '';
 $passwordConfirm = '';
+$termsAccepted = false;
 $errors = [];
 
 if (isLogged()) {
@@ -13,7 +14,7 @@ if (isLogged()) {
     exit;
 }
 
-function validateRegister(string $name, string $email, string $password, string $passwordConfirm): array
+function validateRegister(string $name, string $email, string $password, string $passwordConfirm, bool $termsAccepted): array
 {
     $errors = [];
 
@@ -43,6 +44,10 @@ function validateRegister(string $name, string $email, string $password, string 
         $errors['password_confirm'] = 'Las contraseñas no coinciden';
     }
 
+    if (!$termsAccepted) {
+        $errors['terms_accept'] = 'Debes aceptar la normativa de acceso';
+    }
+
     return $errors;
 }
 
@@ -51,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = (string) ($_POST['password'] ?? '');
     $passwordConfirm = (string) ($_POST['password_confirm'] ?? '');
+    $termsAccepted = !empty($_POST['terms_accept']);
 
-    $errors = validateRegister($name, $email, $password, $passwordConfirm);
+    $errors = validateRegister($name, $email, $password, $passwordConfirm, $termsAccepted);
 
     if (empty($errors)) {
         $statement = $conn->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
@@ -124,6 +130,14 @@ if (empty($layoutIncluded)) {
                 <label for="avatar_file">Avatar</label>
                 <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
             </div>
+
+            <label class="login-remember-row <?php echo isset($errors['terms_accept']) ? 'form-group-error' : ''; ?>">
+                <input type="checkbox" name="terms_accept" value="1" <?php echo $termsAccepted ? 'checked' : ''; ?> />
+                <span>
+                    <strong>Acepto la normativa de acceso</strong>
+                    <small>Necesario para crear la cuenta y entrar en la app.</small>
+                </span>
+            </label>
 
             <div class="help">
                 Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.

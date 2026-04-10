@@ -24,6 +24,7 @@ function notificationTypeLabel(string $type): string
 {
     return match ($type) {
         'team_join', 'team_leave', 'team_invite', 'team_invite_accepted', 'team_invite_declined', 'organization_invite' => 'Equipo',
+        'moderation_suspended', 'moderation_banned', 'moderation_restored' => 'Moderación',
         'event' => 'Evento',
         'task' => 'Tarea',
         'note' => 'Nota',

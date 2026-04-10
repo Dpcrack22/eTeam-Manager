@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash VARCHAR(255) NOT NULL,
   avatar_url VARCHAR(2048) NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
+  terms_accepted_at DATETIME NULL DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP NULL DEFAULT NULL,
@@ -67,10 +68,16 @@ CREATE TABLE IF NOT EXISTS organization_members (
   organization_id BIGINT UNSIGNED NOT NULL,
   user_id BIGINT UNSIGNED NOT NULL,
   role ENUM('owner','admin','manager','coach','analyst','player','viewer') NOT NULL,
+  moderation_status ENUM('active','suspended','banned') NOT NULL DEFAULT 'active',
+  moderation_reason TEXT NULL,
+  moderated_by BIGINT UNSIGNED NULL,
+  moderated_at DATETIME NULL,
+  moderation_until DATETIME NULL,
   joined_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   UNIQUE KEY uq_org_members_org_user (organization_id, user_id),
+  KEY idx_org_members_moderation_status (moderation_status),
   KEY idx_org_members_user_id (user_id),
   CONSTRAINT fk_org_members_organization
     FOREIGN KEY (organization_id) REFERENCES organizations (id)
@@ -79,7 +86,11 @@ CREATE TABLE IF NOT EXISTS organization_members (
   CONSTRAINT fk_org_members_user
     FOREIGN KEY (user_id) REFERENCES users (id)
     ON UPDATE CASCADE
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT fk_org_members_moderated_by
+    FOREIGN KEY (moderated_by) REFERENCES users (id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- MULTI-GAME SYSTEM

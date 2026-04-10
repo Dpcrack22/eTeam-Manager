@@ -82,6 +82,7 @@ function notificationViewLink(array $notification): string
 {
     return match ((string) $notification['type']) {
         'team_join', 'team_leave', 'organization_invite', 'team_invite', 'team_invite_accepted', 'team_invite_declined' => 'app.php?view=teams',
+        'moderation_suspended', 'moderation_banned', 'moderation_restored' => 'app.php?view=admin',
         'event' => 'app.php?view=calendar',
         'task' => 'app.php?view=boards',
         'note' => 'app.php?view=notes',

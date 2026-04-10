@@ -2,6 +2,7 @@
 ob_start();
 
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/analytics_functions.php';
 require_once __DIR__ . '/includes/organization_functions.php';
 require_once __DIR__ . '/includes/notification_functions.php';
 require_once __DIR__ . '/includes/team_functions.php';
@@ -77,6 +78,20 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Resumen competitivo del enfrentamiento, con mapas, score y contexto.',
         'page' => __DIR__ . '/../pages/scrim-detail.php',
+    ],
+    'analytics' => [
+        'label' => 'Analitica',
+        'title' => 'Analitica del equipo',
+        'eyebrow' => 'Modulo',
+        'description' => 'Resumen competitivo con victorias, mapas, rivales y rendimiento reciente.',
+        'page' => __DIR__ . '/../pages/analytics.php',
+    ],
+    'admin' => [
+        'label' => 'Administracion',
+        'title' => 'Panel de administracion',
+        'eyebrow' => 'Modulo',
+        'description' => 'Moderacion de miembros, sanciones y control interno de la organizacion activa.',
+        'page' => __DIR__ . '/../pages/admin.php',
     ],
     'event-form' => [
         'label' => 'Evento',
@@ -180,6 +195,8 @@ if (empty($appCurrentUser['initials'])) {
     }
 }
 
+$appCanModerateOrganization = in_array(strtolower((string) ($appCurrentUser['role'] ?? '')), ['owner', 'admin'], true);
+
 if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
     $appShellUserId = (int) $_SESSION['user']['id'];
     $appShellOrganizationId = getActiveOrganizationId($conn, $appShellUserId);
@@ -204,6 +221,15 @@ $appSidebarTeams = [];
 $appNotifications = [];
 $appUnreadNotificationCount = 0;
 
+if (
+    $appAuthState === 'authenticated'
+    && $view === 'notifications'
+    && (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET'
+    && !empty($_SESSION['user']['id'])
+) {
+    markAllNotificationsAsRead($conn, (int) $_SESSION['user']['id']);
+}
+
 if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null) {
     $appSidebarTeams = getOrganizationTeams($conn, (int) $appShellOrganizationId);
 }
@@ -222,6 +248,10 @@ if (!isset($appNavItems)) {
 
     foreach ($appModules as $moduleKey => $module) {
         if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form'], true)) {
+            continue;
+        }
+
+        if ($moduleKey === 'admin' && !$appCanModerateOrganization) {
             continue;
         }
 
