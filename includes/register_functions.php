@@ -20,10 +20,22 @@ function createUser(PDO $conn, string $name, string $email, string $password, ?a
         }
     }
 
-    $statement = $conn->prepare(
-        'INSERT INTO users (username, email, password_hash, avatar_url, is_active, terms_accepted_at, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW(), NOW())'
+    $termsColumnStatement = $conn->query(
+        "SELECT COUNT(*) AS total FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'users' AND column_name = 'terms_accepted_at'"
     );
-    $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
+    $hasTermsAcceptedColumn = (int) ($termsColumnStatement->fetch()['total'] ?? 0) > 0;
+
+    if ($hasTermsAcceptedColumn) {
+        $statement = $conn->prepare(
+            'INSERT INTO users (username, email, password_hash, avatar_url, is_active, terms_accepted_at, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW(), NOW())'
+        );
+        $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
+    } else {
+        $statement = $conn->prepare(
+            'INSERT INTO users (username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW())'
+        );
+        $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
+    }
 
     return (int) $conn->lastInsertId();
 }

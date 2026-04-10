@@ -4,6 +4,47 @@
 
 USE eteam_manager;
 
+SET @schema_name = DATABASE();
+
+SET @users_terms_column_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'users'
+    AND column_name = 'terms_accepted_at'
+);
+
+SET @sql_users_terms = IF(
+  @users_terms_column_exists = 0,
+  'ALTER TABLE users ADD COLUMN terms_accepted_at DATETIME NULL DEFAULT NULL AFTER is_active',
+  'SELECT 1'
+);
+PREPARE stmt_users_terms FROM @sql_users_terms;
+EXECUTE stmt_users_terms;
+DEALLOCATE PREPARE stmt_users_terms;
+
+SET @org_moderation_column_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'organization_members'
+    AND column_name = 'moderation_status'
+);
+
+SET @sql_org_moderation = IF(
+  @org_moderation_column_exists = 0,
+  'ALTER TABLE organization_members
+     ADD COLUMN moderation_status ENUM("active","suspended","banned") NOT NULL DEFAULT "active" AFTER role,
+     ADD COLUMN moderation_reason TEXT NULL AFTER moderation_status,
+     ADD COLUMN moderated_by BIGINT UNSIGNED NULL AFTER moderation_reason,
+     ADD COLUMN moderated_at DATETIME NULL AFTER moderated_by,
+     ADD COLUMN moderation_until DATETIME NULL AFTER moderated_at',
+  'SELECT 1'
+);
+PREPARE stmt_org_moderation FROM @sql_org_moderation;
+EXECUTE stmt_org_moderation;
+DEALLOCATE PREPARE stmt_org_moderation;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Child tables first (safe order)
