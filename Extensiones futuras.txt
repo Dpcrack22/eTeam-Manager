@@ -2,46 +2,9 @@ eTeam Manager — Backlog de mejoras futuras
 
 Este archivo recoge ideas para seguir ampliando la app después de cerrar la base funcional actual.
 
+Las extensiones ya completadas se han movido a "Extensiones completadas.txt".
+
 Estado: [x] hecho | [ ] pendiente
-
-======================================================================
-
-PRIORIDAD ALTA
-
-1. [x] Centro de notificaciones completo
-- [x] Mostrar avisos en el header con contador de no leídas.
-- [x] Abrir una vista dedicada de notificaciones.
-- [x] Marcar avisos como leídos desde el panel o la lista.
-
-2. [x] Invitaciones y solicitudes de equipo
-- [x] Sustituir el flujo de unirte manualmente por invitaciones o solicitudes.
-- [x] Permitir aceptar o rechazar desde la notificación o desde Equipos.
-- [x] Notificar a owner/admin cuando alguien solicite unirse.
-
-3. [ ] Normativa de acceso
-- [ ] Mostrar condiciones al registrarse.
-- [ ] Guardar la aceptación de normas antes de entrar a la app.
-- [ ] Bloquear acceso a ciertas acciones si el usuario no ha aceptado la normativa.
-
-======================================================================
-
-PRIORIDAD MEDIA
-
-4. [ ] Analytics del equipo
-- [ ] Ver datos de scrims y partidos por API o carga manual.
-- [ ] Resumir rendimiento por mapa, rival y periodo.
-- [ ] Preparar paneles visuales para staff y analistas.
-
-5. [ ] Moderación y sanciones
-- [ ] Paguina de administracion /admin o alguna manera de entrar a un panel de administracion para la app
-- [ ] Añadir estado de baneo o suspensión a miembros problemáticos.
-- [ ] Registrar motivo y fecha de sanción.
-- [ ] Mostrar avisos internos sobre usuarios bloqueados.
-
-6. [ ] Sistema de joins más limpio
-- [ ] Quitar el botón manual de unirse cuando el flujo de invitación esté listo.
-- [ ] Evitar recomendaciones de equipos si el acceso depende de invitaciones.
-- [ ] Sustituir ese espacio por solicitudes y estados pendientes.
 
 ======================================================================
 
@@ -61,26 +24,6 @@ PRIORIDAD BAJA / EXPANSIÓN
 - [ ] Sincronizar estadísticas con APIs de Valorant.
 - [ ] Importar datos de partidas o imágenes de forma manual/semiautomática.
 - [ ] Abrir la puerta a integraciones con Discord o calendarios externos.
-
-10. [ ] Gestión avanzada de roles y permisos
-- [ ] Crear una matriz de permisos por rol dentro de organización y equipo.
-- [ ] Separar acciones de owner, admin, manager, coach y jugador.
-- [ ] Bloquear o mostrar secciones según el permiso real del usuario.
-
-11. [ ] Disponibilidad de jugadores
-- [ ] Marcar cuándo un jugador está disponible para scrims o torneos.
-- [ ] Ver un estado rápido de disponibilidad desde equipos y calendario.
-- [ ] Avisar si falta gente para una sesión o evento.
-
-12. [ ] Historial y auditoría de actividad
-- [ ] Registrar quién crea, edita o borra contenido importante.
-- [ ] Guardar cambios en equipos, eventos, scrims y notas clave.
-- [ ] Mostrar una vista de actividad reciente para staff.
-
-13. [ ] Perfil competitivo del jugador
-- [ ] Mostrar estadísticas acumuladas por jugador.
-- [ ] Resumir rendimiento por rol, mapa y tipo de partida.
-- [ ] Dejar una ficha útil para seguimiento interno y scouting.
 
 ======================================================================
 
