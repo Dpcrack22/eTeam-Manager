@@ -4,7 +4,9 @@ $resolvedDescription = isset($pageDescription) ? trim((string) $pageDescription)
 $siteLogoPath = 'assets/mini-logo.svg';
 $mainCssPath = __DIR__ . '/../css/main.css';
 $siteLogoFile = __DIR__ . '/../' . $siteLogoPath;
-$mainCssVersion = is_file($mainCssPath) ? filemtime($mainCssPath) : time();
+$mainCssVersion = is_file($mainCssPath)
+    ? filemtime($mainCssPath) . '-' . substr(sha1_file($mainCssPath) ?: '', 0, 10)
+    : (string) time();
 $siteLogoVersion = is_file($siteLogoFile) ? filemtime($siteLogoFile) : time();
 ?>
 <!DOCTYPE html>
