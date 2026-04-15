@@ -21,7 +21,7 @@ if (!str_starts_with($appCurrentRequestUri, 'app.php?view=')) {
 }
 
 if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
-    header('Location: /login.php');
+    header('Location: app.php?view=login&cb=1');
     exit;
 }
 
@@ -30,13 +30,8 @@ if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     exit;
 }
 
-if ($view === 'login') {
-    header('Location: /login.php');
-    exit;
-}
-
-if ($view === 'register') {
-    header('Location: /register.php');
+if (in_array($view, ['login', 'register'], true) && !isset($_GET['cb'])) {
+    header('Location: app.php?view=' . $view . '&cb=1');
     exit;
 }
 

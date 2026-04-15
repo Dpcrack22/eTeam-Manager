@@ -354,7 +354,7 @@ function logout(): void
 function requireAuth(): void
 {
     if (!isLogged()) {
-        header('Location: /login.php');
+        header('Location: app.php?view=login&cb=1');
         exit;
     }
 }

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
 
-            header('Location: /login.php?return_to=' . urlencode($returnTo));
+            header('Location: app.php?view=login&cb=1&return_to=' . urlencode($returnTo));
             exit;
         }
     }
@@ -147,7 +147,7 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                <a class="btn btn-secondary" href="/login.php?return_to=<?php echo urlencode($returnTo); ?>">Ya tengo cuenta</a>
+                <a class="btn btn-secondary" href="app.php?view=login&amp;cb=1&amp;return_to=<?php echo urlencode($returnTo); ?>">Ya tengo cuenta</a>
             </div>
         </form>
     </div>
