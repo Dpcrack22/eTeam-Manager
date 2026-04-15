@@ -1,0 +1,151 @@
+Aqui apuntare las APIs de Valorant algunas con Key y otras sin:
+
+🧠 APIs para stats de jugadores y partidas
+
+Estas son las que sirven para hacer cosas tipo tracker de partidas.
+
+1️⃣ HenrikDev API
+
+La más usada en proyectos de comunidad.
+
+Web / docs:
+https://docs.henrikdev.xyz
+
+KEY: HDEV-311dd021-864a-4c18-8845-b4c235f27e44
+
+
+Qué te permite hacer
+buscar cuentas
+ver rank / MMR
+ver historial de partidas
+ver datos completos de una partida
+leaderboard
+cambios de rank
+Ejemplos de endpoints
+
+Account
+/valorant/v1/account/{name}/{tag}
+
+MMR
+/valorant/v1/mmr/{region}/{name}/{tag}
+
+Match history
+/valorant/v3/matches/{region}/{name}/{tag}
+
+Match details
+/valorant/v4/match/{region}/{matchid}
+Rate limit
+
+Normalmente:
+30 requests / minuto
+
+👉 Es la mejor API pública para stats ahora mismo.
+
+2️⃣ Vaccie Valorant API
+
+API comunitaria hecha por desarrolladores.
+
+Qué ofrece
+rank
+historial competitivo
+cambios de RR
+algunas stats
+Ejemplos
+
+MMR
+
+/mmr/{username}/{tag}/{region}
+
+Match history
+
+/match_history/{username}/{tag}/{region}/pc
+Problemas
+
+⚠️ No siempre es estable.
+
+3️⃣ Reng.ar API
+
+API simple para stats rápidas.
+
+Web
+
+https://reng.ar
+
+Qué devuelve
+rank
+elo
+tier
+
+Ejemplo:
+
+/api/mmr/{name}/{tag}
+
+👉 Es más simple que Henrik.
+
+🎮 APIs para datos del juego
+
+Estas NO dan stats de jugadores, solo datos del juego.
+
+4️⃣ Valorant-API.com
+
+La API más famosa para assets del juego.
+
+Web
+
+https://valorant-api.com
+
+Datos disponibles
+agentes
+mapas
+armas
+skins
+abilities
+sprays
+ranks
+buddies
+
+Ejemplo:
+
+Agents
+
+/v1/agents
+
+Maps
+
+/v1/maps
+
+Weapons
+
+/v1/weapons
+
+👉 Muy usada para hacer webs de Valorant.
+
+🧰 Wrappers / SDKs
+
+No son APIs nuevas, sino librerías que usan las APIs anteriores.
+
+5️⃣ ValorantJS
+
+Wrapper para NodeJS.
+
+Permite usar:
+
+HenrikDev
+Riot API
+6️⃣ ValorantAPI (Python)
+
+Wrapper Python para trabajar con datos de Valorant.
+
+7️⃣ Valorant-NET
+
+Wrapper para C# / .NET.
+
+📊 Resumen rápido
+API	Tipo	Para qué sirve
+HenrikDev	stats	partidas, rank, match data
+Vaccie	stats	rank e historial
+Reng.ar	stats	rank simple
+Valorant-API	game data	agentes, skins, mapas
+ValorantJS	wrapper	usar APIs en Node
+ValorantAPI Python	wrapper	usar APIs en Python
+Valorant-NET	wrapper	usar APIs en C#

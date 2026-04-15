@@ -8,7 +8,7 @@ $errors = [];
 $returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
 
 if (isLogged()) {
-    echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
+    header('Location: ' . $returnTo);
     exit;
 }
 
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = login($email, $password, $rememberMe);
 
         if (!empty($result['success'])) {
-            echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
+            header('Location: ' . $returnTo);
             exit;
         }
 

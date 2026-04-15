@@ -11,7 +11,7 @@ $errors = [];
 $returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
 
 if (isLogged()) {
-    echo '<script>window.location.href=' . json_encode($returnTo) . ';</script>';
+    header('Location: ' . $returnTo);
     exit;
 }
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
 
-            echo '<script>window.location.href=' . json_encode('app.php?view=login&return_to=' . urlencode($returnTo)) . ';</script>';
+            header('Location: app.php?view=login&return_to=' . urlencode($returnTo));
             exit;
         }
     }
