@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$team) {
         $errors[] = 'El enlace de invitación no es válido';
     } elseif (!$isAuthenticated) {
-        header('Location: app.php?view=login&return_to=' . urlencode('invite.php?token=' . $token));
+        header('Location: /login.php?return_to=' . urlencode('invite.php?token=' . $token));
         exit;
     } elseif ($action === 'join') {
         if (isUserActiveMember($conn, (int) $team['id'], $userId)) {
@@ -160,8 +160,8 @@ require __DIR__ . '/includes/layout-start.php';
             <?php else: ?>
                 <div class="dashboard-empty-state">Necesitas iniciar sesión para usar el enlace y entrar al equipo.</div>
                 <div class="auth-actions" style="margin-top: 16px;">
-                    <a class="btn btn-primary" href="app.php?view=login&amp;return_to=<?php echo urlencode('invite.php?token=' . $token); ?>">Entrar</a>
-                    <a class="btn btn-secondary" href="app.php?view=register&amp;return_to=<?php echo urlencode('invite.php?token=' . $token); ?>">Crear cuenta</a>
+                    <a class="btn btn-primary" href="login.php?return_to=<?php echo urlencode('invite.php?token=' . $token); ?>">Entrar</a>
+                    <a class="btn btn-secondary" href="register.php?return_to=<?php echo urlencode('invite.php?token=' . $token); ?>">Crear cuenta</a>
                 </div>
             <?php endif; ?>
         <?php endif; ?>

@@ -105,7 +105,7 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Entrar</button>
-                <a class="btn btn-secondary" href="app.php?view=register&amp;return_to=<?php echo urlencode($returnTo); ?>">Crear cuenta</a>
+                <a class="btn btn-secondary" href="/register.php?return_to=<?php echo urlencode($returnTo); ?>">Crear cuenta</a>
             </div>
         </form>
     </div>

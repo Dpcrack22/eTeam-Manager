@@ -1,4 +1,8 @@
 <?php
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 ob_start();
 
 require_once __DIR__ . '/includes/auth.php';
@@ -17,12 +21,22 @@ if (!str_starts_with($appCurrentRequestUri, 'app.php?view=')) {
 }
 
 if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
-    header('Location: app.php?view=login');
+    header('Location: /login.php');
     exit;
 }
 
 if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     header('Location: app.php?view=dashboard');
+    exit;
+}
+
+if ($view === 'login') {
+    header('Location: /login.php');
+    exit;
+}
+
+if ($view === 'register') {
+    header('Location: /register.php');
     exit;
 }
 

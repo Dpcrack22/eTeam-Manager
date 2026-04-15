@@ -354,7 +354,7 @@ function logout(): void
 function requireAuth(): void
 {
     if (!isLogged()) {
-        header('Location: app.php?view=login');
+        header('Location: /login.php');
         exit;
     }
 }
@@ -378,6 +378,8 @@ function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=
     if (
         str_starts_with($returnTo, 'app.php?view=') ||
         str_starts_with($returnTo, 'invite.php?token=') ||
+        $returnTo === 'login.php' ||
+        $returnTo === 'register.php' ||
         $returnTo === 'index.php' ||
         $returnTo === 'admin.php'
     ) {

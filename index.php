@@ -42,9 +42,9 @@
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="app.php?view=login">Acceso</a>
+                    <a class="landing-link" id="login-register" href="login.php">Acceso</a>
                 </div>
-                <a class="btn btn-primary landing-cta" href="app.php?view=login">Iniciar sesión</a>
+                <a class="btn btn-primary landing-cta" href="login.php">Iniciar sesión</a>
             </nav>
         </div>
     </header>
@@ -60,8 +60,8 @@
 
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
-                            <a class="btn btn-secondary" href="app.php?view=login">Iniciar sesión</a>
-                            <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
+                            <a class="btn btn-secondary" href="login.php">Iniciar sesión</a>
+                            <a class="btn btn-secondary" href="register.php">Crear cuenta</a>
                         </div>
                     </div>
 
@@ -243,8 +243,8 @@
                         <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">
-                        <a class="btn btn-primary" href="app.php?view=login">Iniciar sesión</a>
-                        <a class="btn btn-secondary" href="app.php?view=register">Crear cuenta</a>
+                        <a class="btn btn-primary" href="login.php">Iniciar sesión</a>
+                        <a class="btn btn-secondary" href="register.php">Crear cuenta</a>
                     </div>
                 </div>
             </div>
