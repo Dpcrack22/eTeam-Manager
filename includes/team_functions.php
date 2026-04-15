@@ -113,7 +113,7 @@ function getOrganizationTeams(PDO $conn, int $organizationId): array
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
     $statement->execute();
 
-    return $statement->fetchAll();
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, int $gameId, ?int $ignoreTeamId = null): bool

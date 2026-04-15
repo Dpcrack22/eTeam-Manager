@@ -43,10 +43,10 @@ function getOrganizationById(PDO $conn, int $organizationId, int $userId = 0): a
 function getOrganizationMembers(PDO $conn, int $organizationId): array
 {
     $statement = $conn->prepare(
-        'SELECT u.id AS user_id, u.username, u.email, u.avatar_url, om.role, om.joined_at, om.is_active, COALESCE(om.moderation_status, "active") AS moderation_status, om.moderation_reason, om.moderation_until, om.moderated_at, mod.username AS moderated_by_name
+        'SELECT u.id AS user_id, u.username, u.email, u.avatar_url, om.role, om.joined_at, om.is_active, COALESCE(om.moderation_status, "active") AS moderation_status, om.moderation_reason, om.moderation_until, om.moderated_at, m.username AS moderated_by_name
          FROM organization_members om
          INNER JOIN users u ON u.id = om.user_id
-         LEFT JOIN users mod ON mod.id = om.moderated_by
+         LEFT JOIN users m ON m.id = om.moderated_by
          WHERE om.organization_id = :organization_id
          ORDER BY FIELD(om.role, "owner", "admin", "manager", "coach", "analyst", "player", "viewer"), u.username ASC'
     );
