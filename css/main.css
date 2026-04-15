@@ -3798,10 +3798,36 @@ textarea:focus {
 /* ESTILOS CSS MENSAJES DE ERROR LOGIN, SE QUEDARAN AQUI PARCIALMENTE */
 .app--no-sidebar {
   grid-template-columns: 1fr;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(255, 70, 85, 0.08), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 52%, #e7ebf2 100%);
 }
 
 .app--no-sidebar .main {
   width: 100%;
+  background: transparent;
+}
+
+.app--no-sidebar .topbar {
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.app--no-sidebar .topbar .small,
+.app--no-sidebar .topbar .app-topbar-title,
+.app--no-sidebar .topbar .app-topbar-copy,
+.app--no-sidebar .topbar .app-state-chip {
+  color: #1e293b;
+}
+
+.app--no-sidebar .btn-secondary {
+  background: #e9edf4;
+  color: #111827;
+}
+
+.app--no-sidebar .btn-secondary:hover {
+  background: #dde4ee;
 }
 
 .app--no-sidebar .container {
@@ -3815,15 +3841,48 @@ textarea:focus {
   padding-top: 32px;
   padding-bottom: 48px;
   min-height: calc(100vh - 120px);
+  background: transparent;
 }
 
 .app--no-sidebar .card {
   width: 100%;
   max-width: 560px;
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(15, 23, 42, 0.10);
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+}
+
+.app--no-sidebar .auth-card {
+  border-color: rgba(15, 23, 42, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14);
 }
 
 .app--no-sidebar .auth-page {
   margin-top: 0;
+}
+
+.app--no-sidebar label {
+  color: #334155;
+}
+
+.app--no-sidebar input,
+.app--no-sidebar select,
+.app--no-sidebar textarea {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #d6dbe6;
+}
+
+.app--no-sidebar input::placeholder,
+.app--no-sidebar textarea::placeholder {
+  color: #94a3b8;
+}
+
+.app--no-sidebar .small,
+.app--no-sidebar .help,
+.app--no-sidebar .login-remember-row small {
+  color: #64748b;
 }
 
 /* Error container and boxes centered to match the login/register card layout */
