@@ -3811,17 +3811,19 @@ textarea:focus {
 }
 
 .app--no-sidebar .page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
+  display: block;
+  padding-top: 32px;
+  padding-bottom: 48px;
   min-height: calc(100vh - 120px);
 }
 
 .app--no-sidebar .card {
   width: 100%;
   max-width: 560px;
+}
+
+.app--no-sidebar .auth-page {
+  margin-top: 0;
 }
 
 /* Error container and boxes centered to match the login/register card layout */
