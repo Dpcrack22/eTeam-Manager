@@ -120,14 +120,15 @@ function getUserOrganizationTeams(PDO $conn, int $organizationId, int $userId): 
 {
     $statement = $conn->prepare(
         'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name AS game_name,
-                COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count
+                COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count,
+                MAX(my.joined_at) AS my_joined_at
          FROM teams t
          INNER JOIN games g ON g.id = t.game_id
          INNER JOIN team_members my ON my.team_id = t.id AND my.user_id = :user_id AND my.is_active = 1
          LEFT JOIN team_members tm ON tm.team_id = t.id
          WHERE t.organization_id = :organization_id AND t.is_active = 1
          GROUP BY t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name
-         ORDER BY my.joined_at DESC, t.created_at DESC, t.name ASC'
+         ORDER BY my_joined_at DESC, t.created_at DESC, t.name ASC'
     );
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
     $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
