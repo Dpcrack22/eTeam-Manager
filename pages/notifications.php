@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = acceptTeamInvitation($conn, $invitationId, $userId);
             if (!empty($result['success'])) {
                 if (!empty($result['team'])) {
+                    setActiveOrganizationContext($conn, $userId, (int) $result['team']['organization_id']);
                     setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
                 }
 

@@ -449,6 +449,58 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         return ['success' => false, 'error' => 'El equipo no existe'];
     }
 
+    $role = strtolower(trim($role));
+    $allowedRoles = ['coach', 'player', 'analyst', 'substitute'];
+    if (!in_array($role, $allowedRoles, true)) {
+        $role = 'player';
+    }
+
+    $organizationId = (int) ($team['organization_id'] ?? 0);
+
+    if ($organizationId > 0) {
+        $orgMemberStatement = $conn->prepare(
+            'SELECT moderation_status, is_active
+             FROM organization_members
+             WHERE organization_id = :organization_id AND user_id = :user_id
+             LIMIT 1'
+        );
+        $orgMemberStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $orgMemberStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $orgMemberStatement->execute();
+        $orgMember = $orgMemberStatement->fetch();
+
+        if ($orgMember) {
+            if ((string) ($orgMember['moderation_status'] ?? 'active') !== 'active') {
+                return ['success' => false, 'error' => 'No tienes acceso a esta organización'];
+            }
+
+            if ((int) ($orgMember['is_active'] ?? 0) !== 1) {
+                $reactivateOrgMember = $conn->prepare(
+                    'UPDATE organization_members
+                     SET is_active = 1
+                     WHERE organization_id = :organization_id AND user_id = :user_id'
+                );
+                $reactivateOrgMember->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+                $reactivateOrgMember->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $reactivateOrgMember->execute();
+            }
+        } else {
+            $orgRole = $role;
+            if ($orgRole === 'substitute') {
+                $orgRole = 'player';
+            }
+
+            $insertOrgMember = $conn->prepare(
+                'INSERT INTO organization_members (organization_id, user_id, role, moderation_status, joined_at, is_active)
+                 VALUES (:organization_id, :user_id, :role, "active", NOW(), 1)'
+            );
+            $insertOrgMember->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+            $insertOrgMember->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $insertOrgMember->bindValue(':role', $orgRole, PDO::PARAM_STR);
+            $insertOrgMember->execute();
+        }
+    }
+
     $memberStatement = $conn->prepare('SELECT id, is_active FROM team_members WHERE team_id = :team_id AND user_id = :user_id LIMIT 1');
     $memberStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $memberStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);

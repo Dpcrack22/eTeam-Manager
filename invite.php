@@ -31,6 +31,7 @@ if ($team && $isAuthenticated && !$pendingInvitation && (string) ($_SERVER['REQU
 
         if (!empty($joinResult['success'])) {
             if (!empty($joinResult['team'])) {
+                setActiveOrganizationContext($conn, $userId, (int) $joinResult['team']['organization_id']);
                 setActiveTeamContext($conn, (int) $joinResult['team']['organization_id'], (int) $joinResult['team']['id']);
             }
 
@@ -41,6 +42,7 @@ if ($team && $isAuthenticated && !$pendingInvitation && (string) ($_SERVER['REQU
 
         $errors[] = $joinResult['error'] ?? 'No se ha podido unir al equipo desde el enlace';
     } else {
+        setActiveOrganizationContext($conn, $userId, (int) $team['organization_id']);
         setActiveTeamContext($conn, (int) $team['organization_id'], (int) $team['id']);
         $_SESSION['flash_success'] = 'Ya perteneces a este equipo';
         header('Location: app.php?view=teams');
@@ -67,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $joinResult = joinTeam($conn, (int) $team['id'], $userId, 'player');
         if (!empty($joinResult['success'])) {
             if (!empty($joinResult['team'])) {
+                setActiveOrganizationContext($conn, $userId, (int) $joinResult['team']['organization_id']);
                 setActiveTeamContext($conn, (int) $joinResult['team']['organization_id'], (int) $joinResult['team']['id']);
             }
 
@@ -83,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($result['success'])) {
             if (!empty($result['team'])) {
+                setActiveOrganizationContext($conn, $userId, (int) $result['team']['organization_id']);
                 setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
             }
 

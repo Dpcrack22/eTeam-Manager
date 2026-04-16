@@ -117,19 +117,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'activate_team') {
         $teamId = (int) ($_POST['team_id'] ?? 0);
 
-        if (!$activeOrganizationId) {
-            $errors[] = 'Primero necesitas un contexto activo';
-        } elseif ($teamId <= 0) {
+        if ($teamId <= 0) {
             $errors[] = 'Selecciona un equipo válido';
         } else {
-            $result = setActiveTeamContext($conn, (int) $activeOrganizationId, $teamId);
+            $team = getTeamById($conn, $teamId);
 
-            if (!empty($result['success'])) {
-                header('Location: ' . $returnTo);
-                exit;
+            if (!$team) {
+                $errors[] = 'Selecciona un equipo válido';
+            } else {
+                $teamOrganizationId = (int) ($team['organization_id'] ?? 0);
+
+                if ($teamOrganizationId <= 0) {
+                    $errors[] = 'No tienes acceso a ese equipo';
+                } else {
+                    $orgContext = setActiveOrganizationContext($conn, $userId, $teamOrganizationId);
+
+                    if (empty($orgContext['success'])) {
+                        $errors[] = $orgContext['error'] ?? 'No tienes acceso a esa organización';
+                    } else {
+                        $orgRole = strtolower((string) ($orgContext['organization']['role'] ?? ''));
+                        $isMember = isUserActiveMember($conn, $teamId, $userId);
+
+                        if (!$isMember && !in_array($orgRole, ['owner', 'admin', 'manager'], true)) {
+                            $errors[] = 'No tienes acceso a ese equipo';
+                        } else {
+                            $result = setActiveTeamContext($conn, $teamOrganizationId, $teamId);
+
+                            if (!empty($result['success'])) {
+                                header('Location: ' . $returnTo);
+                                exit;
+                            }
+
+                            $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
+                        }
+                    }
+                }
             }
-
-            $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
         }
     } elseif ($action === 'invite_member') {
         $teamId = (int) ($_POST['team_id'] ?? 0);
@@ -164,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = acceptTeamInvitation($conn, $invitationId, $userId);
             if (!empty($result['success'])) {
                 if (!empty($result['team'])) {
+                    setActiveOrganizationContext($conn, $userId, (int) $result['team']['organization_id']);
                     setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
                 }
 
@@ -245,10 +269,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $teamDescription !== '' ? $teamDescription : null
             );
 
-            setActiveTeamContext($conn, $targetOrgId, $newTeamId);
-            $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
-            header('Location: ' . $returnTo);
-            exit;
+            $joinResult = joinTeam($conn, $newTeamId, $userId, 'coach');
+            if (empty($joinResult['success'])) {
+                $errors[] = $joinResult['error'] ?? 'No se ha podido añadirte como miembro del equipo';
+            } else {
+                setActiveOrganizationContext($conn, $userId, (int) $targetOrgId);
+                setActiveTeamContext($conn, $targetOrgId, $newTeamId);
+                $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
+                header('Location: ' . $returnTo);
+                exit;
+            }
         }
     } else if ($action === "unjoin_team") {
         $teamId = (int) ($_POST["team_id"] ?? 0);
@@ -267,51 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // keep the message when attempting other management actions without context
         $errors[] = 'Primero necesitas un contexto activo';
     }
-        $teamName = trim((string) ($_POST['name'] ?? ''));
-        $teamTag = trim((string) ($_POST['tag'] ?? ''));
-        $teamDescription = trim((string) ($_POST['description'] ?? ''));
-        $gameId = (int) ($_POST['game_id'] ?? 0);
-
-        if ($teamName === '') {
-            $errors[] = 'El nombre del equipo es obligatorio';
-        }
-
-        if ($gameId <= 0) {
-            $errors[] = 'Selecciona un juego';
-        }
-
-        $gameExists = false;
-        foreach ($games as $game) {
-            if ((int) $game['id'] === $gameId) {
-                $gameExists = true;
-                break;
-            }
-        }
-
-        if (!$gameExists) {
-            $errors[] = 'El juego seleccionado no es válido';
-        }
-
-        if (empty($errors) && teamExistsByNameAndGame($conn, (int) $activeOrganizationId, $teamName, $gameId)) {
-            $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
-        }
-
-        if (empty($errors)) {
-            $newTeamId = createTeam(
-                $conn,
-                $activeOrganizationId,
-                $gameId,
-                $teamName,
-                $teamTag !== '' ? $teamTag : null,
-                $teamDescription !== '' ? $teamDescription : null
-            );
-
-            setActiveTeamContext($conn, $activeOrganizationId, $newTeamId);
-            $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
-            header('Location: ' . $returnTo);
-            exit;
-        }
-    }
+}
 
     // refresh teams list according to current context
     if ($activeOrganizationId) {
