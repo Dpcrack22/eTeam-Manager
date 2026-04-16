@@ -441,6 +441,8 @@ p {
   display: grid;
   gap: 8px;
   z-index: 60;
+  max-height: min(70vh, 520px);
+  overflow: auto;
 }
 
 .app-notification-menu-head {
@@ -492,7 +494,21 @@ p {
 }
 
 .app-notification-actions {
+  display: grid;
+  gap: 8px;
   padding-top: 2px;
+}
+
+.app-notification-actions form {
+  margin: 0;
+}
+
+.app-notification-actions .app-user-menu-item {
+  width: 100%;
+}
+
+.app-notification-actions button.app-user-menu-item {
+  border: 0;
 }
 
 .app-user-dropdown {

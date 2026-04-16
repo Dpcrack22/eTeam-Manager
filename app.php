@@ -249,12 +249,12 @@ if (
     markAllNotificationsAsRead($conn, (int) $_SESSION['user']['id']);
 }
 
-if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null) {
-    $appSidebarTeams = getOrganizationTeams($conn, (int) $appShellOrganizationId);
+if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null && !empty($_SESSION['user']['id'])) {
+    $appSidebarTeams = getUserOrganizationTeams($conn, (int) $appShellOrganizationId, (int) $_SESSION['user']['id']);
 }
 
 if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
-    $appNotifications = getRecentNotifications($conn, (int) $_SESSION['user']['id'], 6);
+    $appNotifications = getUnreadNotifications($conn, (int) $_SESSION['user']['id'], 6);
     $appUnreadNotificationCount = getUnreadNotificationsCount($conn, (int) $_SESSION['user']['id']);
 }
 

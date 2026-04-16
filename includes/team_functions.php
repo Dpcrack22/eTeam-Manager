@@ -116,6 +116,26 @@ function getOrganizationTeams(PDO $conn, int $organizationId): array
     return $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getUserOrganizationTeams(PDO $conn, int $organizationId, int $userId): array
+{
+    $statement = $conn->prepare(
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name AS game_name,
+                COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count
+         FROM teams t
+         INNER JOIN games g ON g.id = t.game_id
+         INNER JOIN team_members my ON my.team_id = t.id AND my.user_id = :user_id AND my.is_active = 1
+         LEFT JOIN team_members tm ON tm.team_id = t.id
+         WHERE t.organization_id = :organization_id AND t.is_active = 1
+         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name
+         ORDER BY my.joined_at DESC, t.created_at DESC, t.name ASC'
+    );
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, int $gameId, ?int $ignoreTeamId = null): bool
 {
     $sql = 'SELECT id FROM teams WHERE organization_id = :organization_id AND game_id = :game_id AND name = :name';
@@ -225,6 +245,48 @@ function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, st
     }
 
     return $updated;
+}
+
+function deleteTeam(PDO $conn, int $teamId, int $organizationId): bool
+{
+    try {
+        $conn->beginTransaction();
+
+        $statement = $conn->prepare(
+            'UPDATE teams
+             SET is_active = 0
+             WHERE id = :team_id AND organization_id = :organization_id AND is_active = 1'
+        );
+        $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $statement->execute();
+
+        if ($statement->rowCount() === 0) {
+            $conn->rollBack();
+            return false;
+        }
+
+        $cancelInvites = $conn->prepare(
+            'UPDATE team_invitations
+             SET status = "cancelled", responded_at = NOW()
+             WHERE team_id = :team_id AND status = "pending"'
+        );
+        $cancelInvites->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $cancelInvites->execute();
+
+        $deactivateMembers = $conn->prepare('UPDATE team_members SET is_active = 0 WHERE team_id = :team_id');
+        $deactivateMembers->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $deactivateMembers->execute();
+
+        $conn->commit();
+        return true;
+    } catch (Throwable $exception) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        return false;
+    }
 }
 
 function getTeamMembers(PDO $conn, int $teamId): array

@@ -57,6 +57,22 @@ function getRecentNotifications(PDO $conn, int $userId, int $limit = 6): array
     return $statement->fetchAll();
 }
 
+function getUnreadNotifications(PDO $conn, int $userId, int $limit = 6): array
+{
+    $statement = $conn->prepare(
+        'SELECT id, type, reference_id, message, is_read, created_at
+         FROM notifications
+         WHERE user_id = :user_id AND is_read = 0
+         ORDER BY created_at DESC, id DESC
+         LIMIT :limit'
+    );
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll();
+}
+
 function markNotificationAsRead(PDO $conn, int $notificationId, int $userId): bool
 {
     $statement = $conn->prepare(

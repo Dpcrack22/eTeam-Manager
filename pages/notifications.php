@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/invitation_functions.php';
 require_once __DIR__ . '/../includes/notification_functions.php';
+require_once __DIR__ . '/../includes/organization_functions.php';
 
 requireAuth();
 

@@ -46,28 +46,18 @@ if (!empty($_SESSION['flash_success'])) {
     unset($_SESSION['flash_success']);
 }
 
-// Load teams for the current context; if there's no active organization, show all active teams so users can join
+// Load teams for the current context (only the teams where the user is an active member).
 if ($activeOrganizationId) {
-    $teams = getOrganizationTeams($conn, $activeOrganizationId);
+    $teams = $userId ? getUserOrganizationTeams($conn, $activeOrganizationId, $userId) : [];
 
     if (empty($teams)) {
         $activeTeamId = null;
     } else {
         $activeTeamId = getActiveTeamId($conn, $activeOrganizationId);
+
         if ($activeTeamId === null) {
-            // prefer a team the user is a member of; otherwise do not auto-activate to avoid overwriting session
-            $found = false;
-            foreach ($teams as $t) {
-                if ($userId && isUserActiveMember($conn, (int)$t['id'], $userId)) {
-                    $activeTeamId = (int) $t['id'];
-                    setActiveTeamContext($conn, $activeOrganizationId, $activeTeamId);
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                $activeTeamId = null;
-            }
+            $activeTeamId = (int) $teams[0]['id'];
+            setActiveTeamContext($conn, $activeOrganizationId, $activeTeamId);
         }
     }
 
@@ -78,32 +68,9 @@ if ($activeOrganizationId) {
         }
     }
 } else {
-    $teams = getAllActiveTeams($conn);
-
-        if (!empty($teams)) {
-        // prefer session active team if valid, otherwise pick first
-        $activeTeamId = $_SESSION['active_team_id'] ?? null;
-        if ($activeTeamId && getTeamById($conn, (int) $activeTeamId)) {
-            // find and set activeTeam
-            foreach ($teams as $team) {
-                if ((int) $team['id'] === (int) $activeTeamId) {
-                    $activeTeam = $team;
-                    break;
-                }
-            }
-        }
-
-        if (!$activeTeam) {
-            // pick first team only if the user is a member; otherwise leave no active team/context
-            foreach ($teams as $t) {
-                if ($userId && isUserActiveMember($conn, (int)$t['id'], $userId)) {
-                    $activeTeam = $t;
-                    setActiveTeamContext($conn, (int) ($activeTeam['organization_id'] ?? 0), (int) $activeTeam['id']);
-                    break;
-                }
-            }
-        }
-    }
+    $teams = [];
+    $activeTeam = null;
+    $activeTeamId = null;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -151,6 +118,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $errors[] = $result['error'] ?? 'No se ha podido cambiar el equipo activo';
                         }
                     }
+                }
+            }
+        }
+    } elseif ($action === 'delete_team') {
+        $teamId = (int) ($_POST['team_id'] ?? 0);
+
+        if ($teamId <= 0) {
+            $errors[] = 'Selecciona un equipo válido';
+        } else {
+            $team = getTeamById($conn, $teamId);
+
+            if (!$team) {
+                $errors[] = 'Selecciona un equipo válido';
+            } else {
+                $teamOrganizationId = (int) ($team['organization_id'] ?? 0);
+
+                $roleStatement = $conn->prepare(
+                    'SELECT role
+                     FROM organization_members
+                     WHERE user_id = :user_id
+                       AND organization_id = :organization_id
+                       AND is_active = 1
+                       AND COALESCE(moderation_status, "active") = "active"
+                     LIMIT 1'
+                );
+                $roleStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $roleStatement->bindValue(':organization_id', $teamOrganizationId, PDO::PARAM_INT);
+                $roleStatement->execute();
+                $roleRow = $roleStatement->fetch();
+                $role = strtolower((string) ($roleRow['role'] ?? ''));
+
+                if ($role !== 'owner') {
+                    $errors[] = 'Solo el owner puede eliminar equipos';
+                } elseif (empty(deleteTeam($conn, $teamId, $teamOrganizationId))) {
+                    $errors[] = 'No se ha podido eliminar el equipo';
+                } else {
+                    if (!empty($_SESSION['active_team_id']) && (int) $_SESSION['active_team_id'] === $teamId) {
+                        unset($_SESSION['active_team_id']);
+                    }
+                    if (!empty($_SESSION['user']['team_id']) && (int) $_SESSION['user']['team_id'] === $teamId) {
+                        unset($_SESSION['user']['team_id'], $_SESSION['user']['team']);
+                    }
+
+                    $_SESSION['flash_success'] = 'Equipo eliminado';
+                    header('Location: ' . $returnTo);
+                    exit;
                 }
             }
         }
@@ -299,11 +312,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-    // refresh teams list according to current context
-    if ($activeOrganizationId) {
-        $teams = getOrganizationTeams($conn, (int) $activeOrganizationId);
+    // refresh teams list according to current context (member teams only)
+    if ($activeOrganizationId && $userId) {
+        $teams = getUserOrganizationTeams($conn, (int) $activeOrganizationId, $userId);
     } else {
-        $teams = getAllActiveTeams($conn);
+        $teams = [];
     }
 
 // build membership map for current user to show only active-member actions
@@ -415,6 +428,15 @@ if ($userId && !empty($teams)) {
                                     <input type="hidden" name="action" value="unjoin_team" />
                                     <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
                                     <button class="btn btn-outline" type="submit">Salir</button>
+                                </form>
+                            <?php endif; ?>
+
+                            <?php if (strtolower((string) $currentOrganizationRole) === 'owner'): ?>
+                                <form method="post" style="display:inline-block; margin-left:8px;" onsubmit="return confirm('¿Seguro que quieres eliminar este equipo? Esta acción no se puede deshacer.');">
+                                    <input type="hidden" name="action" value="delete_team" />
+                                    <input type="hidden" name="team_id" value="<?php echo (int) $team['id']; ?>" />
+                                    <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($appCurrentRequestUri ?? 'app.php?view=teams', ENT_QUOTES, 'UTF-8'); ?>" />
+                                    <button class="btn btn-secondary" type="submit">Eliminar</button>
                                 </form>
                             <?php endif; ?>
                         </div>

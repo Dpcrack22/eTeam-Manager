@@ -28,7 +28,7 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
                         </div>
 
                         <?php if (empty($appNotifications)): ?>
-                            <div class="app-notification-empty">No hay avisos recientes.</div>
+                            <div class="app-notification-empty">No hay avisos sin leer.</div>
                         <?php else: ?>
                             <?php foreach ($appNotifications as $notification): ?>
                                 <a class="app-notification-item<?php echo empty($notification['is_read']) ? ' is-unread' : ''; ?>" href="app.php?view=notifications">
