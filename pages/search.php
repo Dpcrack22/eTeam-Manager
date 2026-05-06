@@ -31,8 +31,8 @@ if (empty($layoutIncluded)) { require __DIR__ . '/../includes/layout-start.php';
 
             <form method="get" action="/pages/search.php" style="margin-top:12px;">
                 <div style="display:flex; gap:8px; align-items:center;">
-                    <input id="page-search-input" name="q" type="search" placeholder="Escribe al menos 2 caracteres" value="<?php echo htmlspecialchars($q, ENT_QUOTES, 'UTF-8'); ?>" style="flex:1; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text-main);" autocomplete="off" />
-                    <select id="page-search-type" name="type" aria-label="Tipo" style="padding:8px; border-radius:6px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text-main);">
+                    <input id="page-search-input" name="q" type="search" placeholder="Escribe al menos 2 caracteres" value="<?php echo htmlspecialchars($q, ENT_QUOTES, 'UTF-8'); ?>" autocomplete="off" />
+                    <select id="page-search-type" name="type" aria-label="Tipo">
                         <option value="users" <?php echo $type === 'users' ? 'selected' : ''; ?>>Usuarios</option>
                         <option value="teams" <?php echo $type === 'teams' ? 'selected' : ''; ?>>Equipos</option>
                     </select>

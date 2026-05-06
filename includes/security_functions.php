@@ -25,7 +25,11 @@ function ensureUserSecurityStorage(PDO $conn): void
         $exists = (int) ($statement->fetch()['total'] ?? 0) > 0;
 
         if (!$exists) {
-            $conn->exec($alterSql);
+            try {
+                $conn->exec($alterSql);
+            } catch (Throwable $ex) {
+                // Ignore migration failure at runtime; administrator should run migrations manually.
+            }
         }
     }
 
@@ -41,7 +45,11 @@ function ensureUserSecurityStorage(PDO $conn): void
         $exists = (int) ($statement->fetch()['total'] ?? 0) > 0;
 
         if (!$exists) {
-            $conn->exec($alterSql);
+            try {
+                $conn->exec($alterSql);
+            } catch (Throwable $ex) {
+                // Ignore index creation failure at runtime.
+            }
         }
     }
 }
