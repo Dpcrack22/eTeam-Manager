@@ -68,5 +68,6 @@
         <script src="<?php echo htmlspecialchars($scriptPath, ENT_QUOTES, 'UTF-8'); ?>"></script>
     <?php endforeach; ?>
 <?php endif; ?>
+    <script src="js/main.js?v=<?php echo file_exists(__DIR__ . '/../js/main.js') ? filemtime(__DIR__ . '/../js/main.js') : time(); ?>"></script>
 </body>
 </html>

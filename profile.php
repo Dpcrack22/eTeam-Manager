@@ -9,6 +9,9 @@ $username = trim((string) ($_GET['user'] ?? ''));
 $shouldCloseLayout = false;
 $hideSidebar = true;
 
+// ensure DB has required columns (runtime migration)
+ensureUserSecurityStorage($conn);
+
 $profileStatement = $conn->prepare(
     'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, u.created_at, u.last_login_at, u.email_verified_at,
             COUNT(DISTINCT om.organization_id) AS organization_count,
