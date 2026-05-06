@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/security_functions.php';
 requireAuth();
 
 global $conn;
@@ -10,7 +11,7 @@ $errors = [];
 $successMessage = '';
 
 $userStatement = $conn->prepare(
-    'SELECT u.id, u.username, u.email, u.avatar_url, om.role, o.name AS organization_name
+    'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, om.role, o.name AS organization_name
      FROM users u
      LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
      LEFT JOIN organizations o ON o.id = om.organization_id
@@ -23,12 +24,14 @@ $profileUser = $userStatement->fetch() ?: [
     'username' => $currentUser['name'] ?? 'Usuario',
     'email' => $currentUser['email'] ?? '',
     'avatar_url' => $currentUser['avatar_url'] ?? null,
+    'bio' => $currentUser['bio'] ?? null,
     'role' => $currentUser['role'] ?? 'Member',
     'organization_name' => $currentUser['organization'] ?? 'Sin organización',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
+    $bio = trim((string) ($_POST['bio'] ?? ''));
     $avatarUrl = $profileUser['avatar_url'] ?? null;
 
     if ($username === '') {
@@ -54,22 +57,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
+        $bioValue = $bio !== '' ? $bio : null;
+
         if ($avatarUrl !== null) {
             $updateStatement = $conn->prepare(
-                'UPDATE users SET username = :username, avatar_url = :avatar_url, updated_at = NOW() WHERE id = :user_id'
+                'UPDATE users SET username = :username, bio = :bio, avatar_url = :avatar_url, updated_at = NOW() WHERE id = :user_id'
             );
             $updateStatement->bindValue(':avatar_url', $avatarUrl, PDO::PARAM_STR);
         } else {
             $updateStatement = $conn->prepare(
-                'UPDATE users SET username = :username, updated_at = NOW() WHERE id = :user_id'
+                'UPDATE users SET username = :username, bio = :bio, updated_at = NOW() WHERE id = :user_id'
             );
         }
 
         $updateStatement->bindValue(':username', $username, PDO::PARAM_STR);
+        if ($bioValue === null) {
+            $updateStatement->bindValue(':bio', null, PDO::PARAM_NULL);
+        } else {
+            $updateStatement->bindValue(':bio', $bioValue, PDO::PARAM_STR);
+        }
         $updateStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
         $updateStatement->execute();
 
         $_SESSION['user']['name'] = $username;
+        $_SESSION['user']['bio'] = $bioValue;
         if ($avatarUrl !== null) {
             $_SESSION['user']['avatar_url'] = $avatarUrl;
         }
@@ -79,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userStatement->execute();
         $profileUser = $userStatement->fetch() ?: $profileUser;
         $profileUser['username'] = $username;
+        $profileUser['bio'] = $bioValue;
         if ($avatarUrl !== null) {
             $profileUser['avatar_url'] = $avatarUrl;
         }
@@ -151,6 +163,10 @@ if ($avatarInitials === '') {
                     <div class="profile-summary-label">Rol</div>
                     <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?></div>
                 </div>
+                <div class="profile-summary-item">
+                    <div class="profile-summary-label">Perfil público</div>
+                    <div class="profile-summary-value"><a href="profile.php?user=<?php echo urlencode((string) $profileUser['username']); ?>">Ver perfil</a></div>
+                </div>
             </div>
         </div>
 
@@ -192,6 +208,11 @@ if ($avatarInitials === '') {
                     <div class="field <?php echo isset($errors['username']) ? 'form-group-error' : ''; ?>">
                         <label for="username">Nombre de usuario</label>
                         <input id="username" name="username" type="text" value="<?php echo htmlspecialchars($profileUser['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+                    </div>
+
+                    <div class="field">
+                        <label for="bio">Bio pública</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Cuéntale a la gente quién eres"><?php echo htmlspecialchars((string) ($profileUser['bio'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></textarea>
                     </div>
 
                     <div class="field">

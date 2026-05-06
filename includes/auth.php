@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/security_functions.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -72,7 +73,7 @@ function ensureRememberMeStorage(PDO $conn): void
 function fetchAuthenticatedUserByEmail(PDO $conn, string $email): array|false
 {
     $statement = $conn->prepare(
-        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, u.terms_accepted_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
+        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.bio, u.is_active, u.terms_accepted_at, u.email_verified_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
          FROM users u
          LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 AND COALESCE(om.moderation_status, "active") = "active"
          LEFT JOIN organizations o ON o.id = om.organization_id
@@ -89,7 +90,7 @@ function fetchAuthenticatedUserByEmail(PDO $conn, string $email): array|false
 function fetchAuthenticatedUserById(PDO $conn, int $userId): array|false
 {
     $statement = $conn->prepare(
-        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, u.terms_accepted_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
+        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.bio, u.is_active, u.terms_accepted_at, u.email_verified_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
          FROM users u
          LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 AND COALESCE(om.moderation_status, "active") = "active"
          LEFT JOIN organizations o ON o.id = om.organization_id
@@ -110,10 +111,12 @@ function populateAuthenticatedSession(array $user): void
         'email' => $user['email'],
         'name' => $user['username'],
         'avatar_url' => $user['avatar_url'],
+        'bio' => $user['bio'] ?? null,
         'role' => $user['organization_role'] ?? 'Member',
         'organization' => $user['organization_name'] ?? 'Sin organización',
         'organization_id' => isset($user['organization_id']) ? (int) $user['organization_id'] : null,
         'terms_accepted_at' => $user['terms_accepted_at'] ?? null,
+        'email_verified_at' => $user['email_verified_at'] ?? null,
     ];
 }
 
@@ -270,6 +273,14 @@ function login($email, $password, bool $rememberMe = false)
             ];
         }
 
+        if (empty($user['email_verified_at'])) {
+            return [
+                'success' => false,
+                'error' => 'Correo pendiente de verificacion',
+                'errors' => ['general' => 'Debes verificar tu correo antes de entrar.'],
+            ];
+        }
+
         if (empty($user['terms_accepted_at'])) {
             return [
                 'success' => false,
@@ -354,7 +365,8 @@ function logout(): void
 function requireAuth(): void
 {
     if (!isLogged()) {
-        header('Location: app.php?view=login&cb=1');
+        $_SESSION['return_to'] = safeReturnToTarget((string) ($_SERVER['REQUEST_URI'] ?? 'app.php?view=dashboard'));
+        header('Location: login.php');
         exit;
     }
 }
@@ -378,6 +390,10 @@ function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=
     if (
         str_starts_with($returnTo, 'app.php?view=') ||
         str_starts_with($returnTo, 'invite.php?token=') ||
+        str_starts_with($returnTo, 'profile.php?user=') ||
+        str_starts_with($returnTo, 'verify-email.php') ||
+        str_starts_with($returnTo, 'forgot-password.php') ||
+        str_starts_with($returnTo, 'reset-password.php') ||
         $returnTo === 'login.php' ||
         $returnTo === 'register.php' ||
         $returnTo === 'index.php' ||

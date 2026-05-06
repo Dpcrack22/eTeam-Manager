@@ -35,16 +35,25 @@
                 <span class="small" style="margin-left: 10px;">Plataforma interna de gestión para eSports</span>
             </a>
 
-            <nav aria-label="Navegación principal" class="landing-nav-right">
+            <button class="landing-menu-toggle" type="button" aria-controls="landing-menu" aria-expanded="false">
+                <span class="landing-menu-icon" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+                <span class="landing-menu-label">Menú</span>
+            </button>
+
+            <nav aria-label="Navegación principal" class="landing-nav-right" id="landing-menu">
                 <div class="landing-links">
                     <a class="landing-link" href="#inicio">Inicio</a>
                     <a class="landing-link" href="#funciones">Funciones</a>
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="app.php?view=login&cb=1">Acceso</a>
+                    <a class="landing-link" id="login-register" href="login.php">Acceso</a>
                 </div>
-                <a class="btn btn-primary landing-cta" href="app.php?view=login&cb=1">Iniciar sesión</a>
+                <a class="btn btn-primary landing-cta" href="login.php">Iniciar sesión</a>
             </nav>
         </div>
     </header>
@@ -60,8 +69,8 @@
 
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
-                            <a class="btn btn-secondary" href="app.php?view=login&cb=1">Iniciar sesión</a>
-                            <a class="btn btn-secondary" href="app.php?view=register&cb=1">Crear cuenta</a>
+                            <a class="btn btn-secondary" href="login.php">Iniciar sesión</a>
+                            <a class="btn btn-secondary" href="register.php">Crear cuenta</a>
                         </div>
                     </div>
 
@@ -243,8 +252,8 @@
                         <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">
-                        <a class="btn btn-primary" href="app.php?view=login&cb=1">Iniciar sesión</a>
-                        <a class="btn btn-secondary" href="app.php?view=register&cb=1">Crear cuenta</a>
+                        <a class="btn btn-primary" href="login.php">Iniciar sesión</a>
+                        <a class="btn btn-secondary" href="register.php">Crear cuenta</a>
                     </div>
                 </div>
             </div>
@@ -286,11 +295,45 @@
                 <a class="landing-link" href="#flujo">Flujo</a>
                 <a class="landing-link" href="#roles">Roles</a>
                 <a class="landing-link" href="#contacto">Contacto</a>
-                <a class="landing-link" href="app.php?view=login">Acceso</a>
+                <a class="landing-link" href="login.php">Acceso</a>
             </div>
             <div class="small">© 2026 Parallax Esports. Todos los derechos reservados.</div>
         </div>
     </footer>
+
+    <script>
+        (function () {
+            const header = document.querySelector('.landing-header');
+            const toggle = document.querySelector('.landing-menu-toggle');
+            const menu = document.getElementById('landing-menu');
+
+            if (!header || !toggle || !menu) {
+                return;
+            }
+
+            const closeMenu = () => {
+                header.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            };
+
+            toggle.addEventListener('click', () => {
+                const isOpen = header.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+
+            menu.addEventListener('click', (event) => {
+                if (event.target instanceof HTMLElement && event.target.closest('a')) {
+                    closeMenu();
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 960) {
+                    closeMenu();
+                }
+            });
+        }());
+    </script>
 
 </body>
 </html>

@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/security_functions.php';
 
 $email = '';
 $password = '';
 $rememberMe = false;
 $errors = [];
-$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
+$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? ($_SESSION['return_to'] ?? null));
+unset($_SESSION['return_to']);
 
 if (isLogged()) {
     header('Location: ' . $returnTo);
@@ -50,6 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $errors = $result['errors'] ?? ['login' => $result['error'] ?? 'Usuario o contraseña incorrectos'];
+
+        if (($result['error'] ?? '') === 'Correo pendiente de verificacion') {
+            $errors['verification'] = 'Debes verificar tu correo antes de entrar. Usa la página de verificación o revisa el email.';
+        }
     }
 }
 
@@ -105,7 +111,11 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Entrar</button>
-                <a class="btn btn-secondary" href="app.php?view=register&amp;cb=1&amp;return_to=<?php echo urlencode($returnTo); ?>">Crear cuenta</a>
+                <a class="btn btn-secondary" href="register.php">Crear cuenta</a>
+            </div>
+
+            <div class="help">
+                <a href="forgot-password.php">He olvidado mi contraseña</a> · <a href="verify-email.php">Reenviar verificación</a>
             </div>
         </form>
     </div>

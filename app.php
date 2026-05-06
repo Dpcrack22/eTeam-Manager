@@ -21,17 +21,13 @@ if (!str_starts_with($appCurrentRequestUri, 'app.php?view=')) {
 }
 
 if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
-    header('Location: app.php?view=login&cb=1');
+    $_SESSION['return_to'] = safeReturnToTarget($appCurrentRequestUri);
+    header('Location: login.php');
     exit;
 }
 
 if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     header('Location: app.php?view=dashboard');
-    exit;
-}
-
-if (in_array($view, ['login', 'register'], true) && !isset($_GET['cb'])) {
-    header('Location: app.php?view=' . $view . '&cb=1');
     exit;
 }
 
@@ -186,6 +182,7 @@ $appCurrentUser = $appCurrentUser ?? [
     'role' => $_SESSION['user']['role'] ?? 'Manager',
     'team' => $_SESSION['user']['team'] ?? 'Sin equipo',
     'avatar_url' => $_SESSION['user']['avatar_url'] ?? null,
+    'bio' => $_SESSION['user']['bio'] ?? null,
 ];
 
 if (empty($appCurrentUser['initials'])) {

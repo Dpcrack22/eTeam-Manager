@@ -1,0 +1,13 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^login/?$ login.php [L,QSA]
+RewriteRule ^register/?$ register.php [L,QSA]
+RewriteRule ^forgot-password/?$ forgot-password.php [L,QSA]
+RewriteRule ^verify-email/?$ verify-email.php [L,QSA]
+RewriteRule ^reset-password/?$ reset-password.php [L,QSA]
+RewriteRule ^perfil/([A-Za-z0-9_.-]+)/?$ profile.php?user=$1 [L,QSA]
+RewriteRule ^u/([A-Za-z0-9_.-]+)/?$ profile.php?user=$1 [L,QSA]

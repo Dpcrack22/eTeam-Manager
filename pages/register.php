@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/register_functions.php';
+require_once __DIR__ . '/../includes/security_functions.php';
 
 $name = '';
 $email = '';
@@ -8,7 +9,8 @@ $password = '';
 $passwordConfirm = '';
 $termsAccepted = false;
 $errors = [];
-$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
+$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? ($_SESSION['return_to'] ?? null));
+unset($_SESSION['return_to']);
 
 if (isLogged()) {
     header('Location: ' . $returnTo);
@@ -68,9 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($statement->fetch()) {
             $errors['email'] = 'Este correo ya está registrado';
         } else {
-            $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
+            $createdUser = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
+            $verificationToken = (string) ($createdUser['verification_token'] ?? '');
+            if ($verificationToken !== '') {
+                $userStatement = $conn->prepare('SELECT username, email FROM users WHERE id = :user_id LIMIT 1');
+                $userStatement->bindValue(':user_id', (int) $createdUser['user_id'], PDO::PARAM_INT);
+                $userStatement->execute();
+                $createdProfile = $userStatement->fetch() ?: ['username' => $name, 'email' => $email];
+                sendVerificationEmail($createdProfile, $verificationToken);
+            }
 
-            header('Location: app.php?view=login&cb=1&return_to=' . urlencode($returnTo));
+            $_SESSION['return_to'] = $returnTo;
+            header('Location: verify-email.php?email=' . urlencode($email) . '&sent=1');
             exit;
         }
     }
@@ -147,7 +158,7 @@ if (empty($layoutIncluded)) {
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                <a class="btn btn-secondary" href="app.php?view=login&amp;cb=1&amp;return_to=<?php echo urlencode($returnTo); ?>">Ya tengo cuenta</a>
+                <a class="btn btn-secondary" href="login.php">Ya tengo cuenta</a>
             </div>
         </form>
     </div>

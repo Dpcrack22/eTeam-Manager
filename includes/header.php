@@ -69,6 +69,7 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
                             <span><?php echo htmlspecialchars($appCurrentUser['team'], ENT_QUOTES, 'UTF-8'); ?></span>
                         </div>
                         <a class="app-user-menu-item" href="index.php">Inicio</a>
+                        <a class="app-user-menu-item" href="profile.php?user=<?php echo urlencode((string) $appCurrentUser['name']); ?>">Perfil público</a>
                         <a class="app-user-menu-item" href="app.php?view=dashboard">Dashboard</a>
                         <a class="app-user-menu-item" href="app.php?view=teams">Equipos</a>
                         <a class="app-user-menu-item" href="app.php?view=calendar">Calendario</a>

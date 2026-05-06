@@ -1,6 +1,6 @@
-eTeam Manager — Extensiones completadas
+eTeam Manager — Tareas completadas
 
-Este archivo recoge las mejoras ya cerradas para no mezclarlas con el backlog pendiente.
+Este archivo recoge lo que ya está cerrado en la app para no mezclarlo con el trabajo pendiente.
 
 Estado: [x] completado
 
@@ -41,9 +41,19 @@ Estado: [x] completado
 - [x] Evitar recomendaciones de equipos si el acceso depende de invitaciones.
 - [x] Sustituir ese espacio por solicitudes y estados pendientes.
 
+7. [x] Seguridad y acceso
+- [x] Limpiar parámetros GET visibles en la URL con reglas de reescritura.
+- [x] Verificar el correo al registrarse mediante enlace.
+- [x] Recuperar contraseña por correo con enlace temporal.
+- [x] Mejorar el texto y la presentación de la normativa de acceso.
+
+8. [x] Perfiles públicos
+- [x] Crear una vista pública compartible para cada usuario.
+- [x] Mostrar avatar, bio y actividad visible.
+- [x] Exponer el enlace público desde ajustes y el menú del usuario.
+
 ======================================================================
 
 NOTA
 
 - Cualquier mejora sensible, credencial o clave externa debe mantenerse fuera de este archivo.
-- Lo pendiente sigue en "Extensiones futuras.txt".

@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/security_functions.php';
 
-function createUser(PDO $conn, string $name, string $email, string $password, ?array $avatarFile = null): int
+function createUser(PDO $conn, string $name, string $email, string $password, ?array $avatarFile = null): array
 {
+    ensureUserSecurityStorage($conn);
+
     $passwordHash = hash('sha256', $password);
     $avatarUrl = null;
 
@@ -27,17 +30,23 @@ function createUser(PDO $conn, string $name, string $email, string $password, ?a
 
     if ($hasTermsAcceptedColumn) {
         $statement = $conn->prepare(
-            'INSERT INTO users (username, email, password_hash, avatar_url, is_active, terms_accepted_at, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW(), NOW())'
+            'INSERT INTO users (username, email, password_hash, avatar_url, bio, is_active, terms_accepted_at, email_verified_at, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, NULL, 1, NOW(), NULL, NOW(), NOW(), NULL)'
         );
         $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
     } else {
         $statement = $conn->prepare(
-            'INSERT INTO users (username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW())'
+            'INSERT INTO users (username, email, password_hash, avatar_url, bio, is_active, created_at, updated_at, last_login_at) VALUES (?, ?, ?, ?, NULL, 1, NOW(), NOW(), NULL)'
         );
         $statement->execute([$name, $email, $passwordHash, $avatarUrl]);
     }
 
-    return (int) $conn->lastInsertId();
+    $userId = (int) $conn->lastInsertId();
+    $verificationToken = issueEmailVerificationToken($conn, $userId);
+
+    return [
+        'user_id' => $userId,
+        'verification_token' => $verificationToken,
+    ];
 }
 
 function getAllOrganizations(PDO $conn): array

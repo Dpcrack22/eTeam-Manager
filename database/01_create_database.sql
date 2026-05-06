@@ -17,14 +17,23 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   avatar_url VARCHAR(2048) NULL,
+  bio TEXT NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   terms_accepted_at DATETIME NULL DEFAULT NULL,
+  email_verified_at DATETIME NULL DEFAULT NULL,
+  email_verification_token VARCHAR(128) NULL,
+  email_verification_sent_at DATETIME NULL DEFAULT NULL,
+  password_reset_token VARCHAR(128) NULL,
+  password_reset_sent_at DATETIME NULL DEFAULT NULL,
+  password_reset_expires_at DATETIME NULL DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_users_username (username),
-  UNIQUE KEY uq_users_email (email)
+  UNIQUE KEY uq_users_email (email),
+  UNIQUE KEY uq_users_email_verification_token (email_verification_token),
+  UNIQUE KEY uq_users_password_reset_token (password_reset_token)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS remember_tokens (
