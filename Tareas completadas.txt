@@ -46,6 +46,7 @@ Estado: [x] completado
 - [x] Verificar el correo al registrarse mediante enlace.
 - [x] Recuperar contraseña por correo con enlace temporal.
 - [x] Mejorar el texto y la presentación de la normativa de acceso.
+- [x] Añadir inicio de sesión por código temporal.
 
 8. [x] Perfiles públicos
 - [x] Crear una vista pública compartible para cada usuario.

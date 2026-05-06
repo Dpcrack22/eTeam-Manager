@@ -11,6 +11,9 @@ function ensureUserSecurityStorage(PDO $conn): void
         'password_reset_token' => 'ALTER TABLE users ADD COLUMN password_reset_token VARCHAR(128) NULL AFTER email_verification_sent_at',
         'password_reset_sent_at' => 'ALTER TABLE users ADD COLUMN password_reset_sent_at DATETIME NULL DEFAULT NULL AFTER password_reset_token',
         'password_reset_expires_at' => 'ALTER TABLE users ADD COLUMN password_reset_expires_at DATETIME NULL DEFAULT NULL AFTER password_reset_sent_at',
+        'login_code_token' => 'ALTER TABLE users ADD COLUMN login_code_token VARCHAR(64) NULL AFTER password_reset_expires_at',
+        'login_code_sent_at' => 'ALTER TABLE users ADD COLUMN login_code_sent_at DATETIME NULL DEFAULT NULL AFTER login_code_token',
+        'login_code_expires_at' => 'ALTER TABLE users ADD COLUMN login_code_expires_at DATETIME NULL DEFAULT NULL AFTER login_code_sent_at',
     ];
 
     foreach ($columns as $columnName => $alterSql) {
@@ -112,6 +115,27 @@ function sendPasswordResetEmail(array $user, string $token): bool
     return sendMailMessage($email, $subject, $message);
 }
 
+function sendLoginCodeEmail(array $user, string $code): bool
+{
+    $email = (string) ($user['email'] ?? '');
+    if ($email === '') {
+        return false;
+    }
+
+    $loginLink = absoluteAppUrl('login-code.php');
+    $subject = 'Tu código temporal para eTeam Manager';
+    $message = "Hola {$user['username']},\n\n";
+    $message .= 'Tu código temporal de acceso es:' . "\n";
+    $message .= $code . "\n\n";
+    $message .= 'Caduca en 15 minutos y solo puede usarse una vez.' . "\n";
+    $message .= 'Puedes completar el acceso desde este enlace:' . "\n";
+    $message .= $loginLink . "\n\n";
+    $message .= 'Si no has solicitado este código, ignora este mensaje.' . "\n\n";
+    $message .= "-- eTeam Manager\n";
+
+    return sendMailMessage($email, $subject, $message);
+}
+
 function issueEmailVerificationToken(PDO $conn, int $userId): string
 {
     $token = generateSecurityToken(24);
@@ -136,6 +160,20 @@ function issuePasswordResetToken(PDO $conn, int $userId): string
     $statement->execute();
 
     return $token;
+}
+
+function issueLoginCodeToken(PDO $conn, int $userId): string
+{
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $codeHash = hash('sha256', $code);
+    $statement = $conn->prepare(
+        'UPDATE users SET login_code_token = :token, login_code_sent_at = NOW(), login_code_expires_at = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id = :user_id LIMIT 1'
+    );
+    $statement->bindValue(':token', $codeHash, PDO::PARAM_STR);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $code;
 }
 
 function findUserByEmailToken(PDO $conn, string $token): array|false
@@ -171,6 +209,15 @@ function resetUserPassword(PDO $conn, int $userId, string $passwordHash): void
         'UPDATE users SET password_hash = :password_hash, password_reset_token = NULL, password_reset_sent_at = NULL, password_reset_expires_at = NULL, updated_at = NOW() WHERE id = :user_id LIMIT 1'
     );
     $statement->bindValue(':password_hash', $passwordHash, PDO::PARAM_STR);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+}
+
+function clearLoginCodeToken(PDO $conn, int $userId): void
+{
+    $statement = $conn->prepare(
+        'UPDATE users SET login_code_token = NULL, login_code_sent_at = NULL, login_code_expires_at = NULL WHERE id = :user_id LIMIT 1'
+    );
     $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
     $statement->execute();
 }
@@ -211,4 +258,70 @@ function requestPasswordReset(PDO $conn, string $email): array
     sendPasswordResetEmail($user, $token);
 
     return ['success' => true, 'message' => 'Si el correo existe, recibirás un enlace para restablecer la contraseña'];
+}
+
+function requestLoginCode(PDO $conn, string $email): array
+{
+    $statement = $conn->prepare(
+        'SELECT id, username, email, is_active, terms_accepted_at, email_verified_at FROM users WHERE email = :email LIMIT 1'
+    );
+    $statement->bindValue(':email', $email, PDO::PARAM_STR);
+    $statement->execute();
+    $user = $statement->fetch();
+
+    if (!$user || !(int) $user['is_active'] || empty($user['terms_accepted_at']) || empty($user['email_verified_at'])) {
+        return ['success' => true, 'message' => 'Si el correo existe y está verificado, recibirás un código temporal'];
+    }
+
+    $code = issueLoginCodeToken($conn, (int) $user['id']);
+    sendLoginCodeEmail($user, $code);
+
+    return ['success' => true, 'message' => 'Si el correo existe y está verificado, recibirás un código temporal'];
+}
+
+function fetchUserForLoginCode(PDO $conn, string $email): array|false
+{
+    $statement = $conn->prepare(
+        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.bio, u.is_active, u.terms_accepted_at, u.email_verified_at, u.login_code_token, u.login_code_expires_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
+         FROM users u
+         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 AND COALESCE(om.moderation_status, "active") = "active"
+         LEFT JOIN organizations o ON o.id = om.organization_id
+         WHERE u.email = :email
+         ORDER BY om.joined_at DESC, o.id DESC
+         LIMIT 1'
+    );
+    $statement->bindValue(':email', $email, PDO::PARAM_STR);
+    $statement->execute();
+
+    return $statement->fetch() ?: false;
+}
+
+function verifyLoginCodeForUser(array $user, string $code): array
+{
+    $errors = [];
+
+    if (empty($user['is_active'])) {
+        $errors['general'] = 'La cuenta está desactivada.';
+    } elseif (empty($user['email_verified_at'])) {
+        $errors['general'] = 'Debes verificar tu correo antes de entrar.';
+    } elseif (empty($user['terms_accepted_at'])) {
+        $errors['general'] = 'Debes aceptar la normativa antes de entrar.';
+    } elseif (empty($user['login_code_token']) || empty($user['login_code_expires_at'])) {
+        $errors['code'] = 'Primero debes solicitar un código temporal.';
+    } else {
+        $expiresAt = strtotime((string) $user['login_code_expires_at']) ?: 0;
+        $submittedHash = hash('sha256', trim($code));
+
+        if ($expiresAt <= time()) {
+            $errors['code'] = 'El código temporal ha caducado.';
+        } elseif (!hash_equals((string) $user['login_code_token'], $submittedHash)) {
+            $errors['code'] = 'El código temporal no es válido.';
+        }
+    }
+
+    if (!empty($errors)) {
+        return ['success' => false, 'errors' => $errors];
+    }
+
+    return ['success' => true];
 }

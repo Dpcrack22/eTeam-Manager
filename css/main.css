@@ -103,6 +103,16 @@ a:hover {
   color: var(--text-main);
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, white);
+  outline-offset: 2px;
+}
+
 /* Typography */
 .h1,
 h1 {
@@ -1548,6 +1558,17 @@ body.is-modal-open {
   background: #353540;
 }
 
+.btn-secondary:focus-visible,
+.btn-primary:focus-visible,
+.landing-link:focus-visible,
+.landing-menu-toggle:focus-visible,
+.app-user-menu-item:focus-visible,
+.app-notification-chip:focus-visible,
+.app-user-chip:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 42%, var(--border-subtle));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
 /* Forms */
 .form {
   display: grid;
@@ -1658,6 +1679,10 @@ textarea:focus {
   margin-bottom: 0;
 }
 
+.auth-card-head .small {
+  color: var(--text-secondary);
+}
+
 .auth-form {
   display: grid;
   gap: var(--space-4);
@@ -1671,6 +1696,28 @@ textarea:focus {
 
 .auth-actions .btn {
   width: auto;
+}
+
+.auth-legal-box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-secondary) 88%, var(--bg-card));
+}
+
+.auth-legal-box strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+
+.auth-legal-box p {
+  margin-bottom: 0;
+  font-size: var(--font-size-secondary);
 }
 
 .auth-page {
@@ -1691,6 +1738,12 @@ textarea:focus {
 
 .auth-page > .auth-card {
   margin-top: 0;
+}
+
+.auth-page .error-container,
+.auth-page .auth-card,
+.auth-page .auth-legal-box {
+  max-width: 640px;
 }
 
 /* Tables (scrims, listados, etc.) */
@@ -3775,6 +3828,15 @@ textarea:focus {
   }
 
   .auth-actions .btn {
+    width: 100%;
+  }
+
+  .auth-legal-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .auth-legal-box .btn {
     width: 100%;
   }
 

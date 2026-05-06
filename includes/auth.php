@@ -394,6 +394,8 @@ function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=
         str_starts_with($returnTo, 'verify-email.php') ||
         str_starts_with($returnTo, 'forgot-password.php') ||
         str_starts_with($returnTo, 'reset-password.php') ||
+        str_starts_with($returnTo, 'login-code.php') ||
+        str_starts_with($returnTo, 'normativa.html') ||
         $returnTo === 'login.php' ||
         $returnTo === 'register.php' ||
         $returnTo === 'index.php' ||

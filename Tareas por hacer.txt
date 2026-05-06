@@ -24,7 +24,7 @@ Estado: [ ] pendiente | [x] hecho
 [x] Revisar el texto legal y la presentación visual de esa normativa para que quede más clara.
 [x] Verificación de correo al registrarse mediante enlace o código.
 [x] Recuperación de contraseña por email.
-[ ] Valorar inicio de sesión por código temporal por email como alternativa o extra.
+[x] Valorar inicio de sesión por código temporal por email como alternativa o extra.
 
 ======================================================================
 
@@ -42,7 +42,7 @@ Estado: [ ] pendiente | [x] hecho
 [ ] Revisar textos con poco contraste o colores difíciles de leer.
 [ ] Corregir estados de foco, ayudas y pequeños detalles de accesibilidad.
 [ ] Hacer una revisión final de responsive en vistas clave.
-[ ] Hacer la landing completamente responsive con menú hamburguesa en móvil.
+[x] Hacer la landing completamente responsive con menú hamburguesa en móvil.
 
 ======================================================================
 
