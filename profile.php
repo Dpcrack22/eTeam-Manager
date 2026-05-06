@@ -29,9 +29,6 @@ $profileStatement->bindValue(':username', $username, PDO::PARAM_STR);
 $profileStatement->execute();
 $profileUser = $profileStatement->fetch();
 
-// ensure DB has required columns (runtime migration)
-ensureUserSecurityStorage($conn);
-
 if (!$profileUser) {
     $pageTitle = 'Perfil no encontrado';
     $pageEyebrow = 'Perfil público';
@@ -174,7 +171,7 @@ if ($profileUser) {
         if (in_array($role, ['owner','admin','manager'], true)) {
             require_once __DIR__ . '/includes/notification_functions.php';
             // notify all org admins/owners
-            $adminsStmt = $conn->prepare('SELECT user_id FROM organization_members WHERE organization_id = (SELECT organization_id FROM teams WHERE id = :team_id) AND role IN ("owner","admin") AND is_active = 1');
+            $adminsStmt = $conn->prepare('SELECT user_id FROM organization_members WHERE organization_id = (SELECT organization_id FROM teams WHERE id = :team_id) AND role IN (\'owner\',\'admin\') AND is_active = 1');
             $adminsStmt->bindValue(':team_id', $teamId, PDO::PARAM_INT);
             $adminsStmt->execute();
             $admins = $adminsStmt->fetchAll();
