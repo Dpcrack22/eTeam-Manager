@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/invitation_functions.php';
+require_once __DIR__ . '/includes/security_functions.php';
 
 global $conn;
 
@@ -24,6 +25,9 @@ $profileStatement = $conn->prepare(
 $profileStatement->bindValue(':username', $username, PDO::PARAM_STR);
 $profileStatement->execute();
 $profileUser = $profileStatement->fetch();
+
+// ensure DB has required columns (runtime migration)
+ensureUserSecurityStorage($conn);
 
 if (!$profileUser) {
     $pageTitle = 'Perfil no encontrado';

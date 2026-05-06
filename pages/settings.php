@@ -5,6 +5,9 @@ requireAuth();
 
 global $conn;
 
+// Ensure DB has the optional profile columns before selecting/updating
+ensureUserSecurityStorage($conn);
+
 $currentUser = $_SESSION['user'] ?? [];
 $userId = (int) ($currentUser['id'] ?? 0);
 $errors = [];
