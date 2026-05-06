@@ -12,22 +12,48 @@ $hideSidebar = true;
 // ensure DB has required columns (runtime migration)
 ensureUserSecurityStorage($conn);
 
-$profileStatement = $conn->prepare(
-    'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, u.created_at, u.last_login_at, u.email_verified_at,
-            COUNT(DISTINCT om.organization_id) AS organization_count,
-            COUNT(DISTINCT tm.team_id) AS team_count,
-            o.name AS organization_name, om.role AS organization_role
-     FROM users u
-     LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
-     LEFT JOIN organizations o ON o.id = om.organization_id
-     LEFT JOIN team_members tm ON tm.user_id = u.id AND tm.is_active = 1
-     WHERE u.username = :username
-    GROUP BY u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, u.created_at, u.last_login_at, u.email_verified_at, o.name, om.role
-     LIMIT 1'
-);
-$profileStatement->bindValue(':username', $username, PDO::PARAM_STR);
-$profileStatement->execute();
-$profileUser = $profileStatement->fetch();
+// Try the full query (with optional columns). If it fails (missing columns/schema mismatch), fall back to a safer, minimal query.
+try {
+    $profileStatement = $conn->prepare(
+        'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, u.created_at, u.last_login_at, u.email_verified_at,
+                COUNT(DISTINCT om.organization_id) AS organization_count,
+                COUNT(DISTINCT tm.team_id) AS team_count,
+                o.name AS organization_name, om.role AS organization_role
+         FROM users u
+         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
+         LEFT JOIN organizations o ON o.id = om.organization_id
+         LEFT JOIN team_members tm ON tm.user_id = u.id AND tm.is_active = 1
+         WHERE u.username = :username
+        GROUP BY u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, u.created_at, u.last_login_at, u.email_verified_at, o.name, om.role
+         LIMIT 1'
+    );
+    $profileStatement->bindValue(':username', $username, PDO::PARAM_STR);
+    $profileStatement->execute();
+    $profileUser = $profileStatement->fetch();
+} catch (PDOException $ex) {
+    // Fallback: run a minimal query that doesn't reference newer columns or complex joins.
+    try {
+        $fallbackStmt = $conn->prepare('SELECT id, username, email, avatar_url, bio, created_at, last_login_at, email_verified_at FROM users WHERE username = :username LIMIT 1');
+        $fallbackStmt->bindValue(':username', $username, PDO::PARAM_STR);
+        $fallbackStmt->execute();
+        $row = $fallbackStmt->fetch();
+        if ($row) {
+            $profileUser = $row;
+            // Ensure expected keys exist so templates don't error
+            $profileUser['profile_public'] = $profileUser['profile_public'] ?? 0;
+            $profileUser['bio_public'] = $profileUser['bio_public'] ?? 0;
+            $profileUser['organization_count'] = 0;
+            $profileUser['team_count'] = 0;
+            $profileUser['organization_name'] = null;
+            $profileUser['organization_role'] = null;
+        } else {
+            $profileUser = false;
+        }
+    } catch (PDOException $ex2) {
+        // If fallback also fails, treat as not found to avoid 500.
+        $profileUser = false;
+    }
+}
 
 if (!$profileUser) {
     $pageTitle = 'Perfil no encontrado';
