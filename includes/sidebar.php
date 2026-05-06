@@ -25,7 +25,15 @@ if (!isset($appNavItems)) {
     </div>
 
     <?php if ($appAuthState === 'authenticated'): ?>
-        <?php require __DIR__ . '/sidebar-search.php'; ?>
+        <div class="card sidebar-panel">
+            <div class="small">Buscar</div>
+            <div style="margin-top:12px;">
+                <p class="small">Busca usuarios o equipos desde la página de búsqueda.</p>
+                <div class="stack-sm">
+                    <a class="btn btn-primary" href="/pages/search.php">Abrir búsqueda</a>
+                </div>
+            </div>
+        </div>
         <div class="card sidebar-panel">
             <div class="small">Navegacion principal</div>
             <nav class="sidebar-nav" aria-label="Navegacion interna">
