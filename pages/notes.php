@@ -256,12 +256,6 @@ $activeSection = 'notes';
                     </div>
                 </div>
 
-                <div class="landing-list">
-                    <div class="landing-list-item">El editor se abre en overlay para dejar la biblioteca visible.</div>
-                    <div class="landing-list-item">Las notas pueden abrirse y editarse sin perder el contexto del filtro.</div>
-                    <div class="landing-list-item">Los tags siguen resolviéndose de forma automática.</div>
-                </div>
-
                 <div class="stack-sm" style="margin-top: 20px;">
                     <button class="btn btn-primary" type="button" data-open-modal="[data-note-modal]">Nueva nota</button>
                     <?php if ($editingNote): ?>

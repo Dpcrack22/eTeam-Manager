@@ -237,8 +237,9 @@ $dashboardData = [
             <div>
                 <div class="small">Equipo seleccionado</div>
                 <h3 class="h3"><?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?></h3>
-                <p class="dashboard-inline-copy">Todo lo que ves debajo corresponde a este equipo. Si cambias el equipo en la vista de equipos, el dashboard leerá ese nuevo contexto.</p>
+                <p class="dashboard-inline-copy">Todo lo que se ve a continuación corresponde a <?php echo htmlspecialchars($activeTeam['name'], ENT_QUOTES, 'UTF-8'); ?>.</p>
             </div>
+            
             <div class="stack-sm dashboard-context-actions">
                 <span class="badge badge-success">Activo</span>
                 <a class="btn btn-secondary" href="app.php?view=teams">Cambiar equipo</a>
@@ -366,29 +367,7 @@ $dashboardData = [
         </article>
     </div>
 
-    <div class="grid-2 dashboard-main-grid">
-        <article class="card">
-            <div class="dashboard-section-head">
-                <div>
-                    <div class="small">Contexto actual</div>
-                    <h3 class="h3">Estado del usuario</h3>
-                </div>
-                <a class="btn btn-secondary" href="app.php?view=settings">Ir a mi cuenta</a>
-            </div>
-
-            <div class="dashboard-profile-summary">
-                <div class="dashboard-avatar" data-dashboard-avatar><?php echo htmlspecialchars($dashboardInitials, ENT_QUOTES, 'UTF-8'); ?></div>
-                <div>
-                    <div class="h4" data-dashboard-user-name><?php echo htmlspecialchars($currentUserName, ENT_QUOTES, 'UTF-8'); ?></div>
-                    <p class="dashboard-inline-copy" data-dashboard-user-email><?php echo htmlspecialchars($currentUserEmail, ENT_QUOTES, 'UTF-8'); ?></p>
-                    <div class="stack-sm">
-                        <span class="badge">Roster activo</span>
-                        <span class="badge badge-info" data-dashboard-team-tag><?php echo htmlspecialchars($activeTeam['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
-                    </div>
-                </div>
-            </div>
-        </article>
-
+    <div class="dashboard-main-grid">
         <article class="card">
             <div class="dashboard-section-head">
                 <div>

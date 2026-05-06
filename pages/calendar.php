@@ -200,21 +200,6 @@ $pageScripts[] = 'js/modules/calendar.js';
                         </div>
                     <?php endif; ?>
                 </div>
-
-                <div class="card calendar-panel">
-                    <div class="dashboard-section-head">
-                        <div>
-                            <div class="small">Lectura rápida</div>
-                            <h3 class="h3">Siguientes pasos</h3>
-                        </div>
-                    </div>
-
-                    <div class="landing-list">
-                        <div class="landing-list-item">Los scrims aparecen en el mes y también en la agenda lateral.</div>
-                        <div class="landing-list-item">Puedes abrir un scrim desde el calendario sin salir del contexto del equipo.</div>
-                        <div class="landing-list-item">Si después quieres, aquí ya cabe una edición visual del evento.</div>
-                    </div>
-                </div>
             </div>
         </div>
 

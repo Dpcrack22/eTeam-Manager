@@ -152,12 +152,6 @@ if ($avatarInitials === '') {
                     <div class="profile-summary-value"><?php echo htmlspecialchars($profileUser['role'] ?? 'Member', ENT_QUOTES, 'UTF-8'); ?></div>
                 </div>
             </div>
-
-            <div class="landing-list" style="margin-top: 16px;">
-                <div class="landing-list-item">El nombre se actualiza en la sesión y en la base de datos.</div>
-                <div class="landing-list-item">El avatar se sube localmente y se reutiliza en toda la app.</div>
-                <div class="landing-list-item">El perfil mantiene el contexto operativo del usuario.</div>
-            </div>
         </div>
 
         <div class="card profile-form-card">

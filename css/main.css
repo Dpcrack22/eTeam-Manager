@@ -837,11 +837,10 @@ body.is-modal-open {
 
 .dashboard-context-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column; /* Alinea los hijos uno debajo del otro */
+  align-items: flex-start; /* Alinea todo a la izquierda */
   gap: var(--space-4);
   min-width: 0;
-  flex-wrap: wrap;
 }
 
 .dashboard-context-actions {

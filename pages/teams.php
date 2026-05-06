@@ -525,11 +525,5 @@ if ($userId && !empty($teams)) {
                 <div class="small">Solo los roles de gestión pueden enviar invitaciones a este equipo.</div>
             </div>
         <?php endif; ?>
-
-        <div class="landing-list">
-            <div class="landing-list-item">El equipo activo se usa como contexto operativo del dashboard.</div>
-            <div class="landing-list-item">La gestión de miembros y roles vive en el detalle de cada equipo.</div>
-            <div class="landing-list-item">Solo roles de gestión pueden crear equipos.</div>
-        </div>
     </div>
 </div>

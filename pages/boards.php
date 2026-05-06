@@ -266,12 +266,6 @@ $activeSection = 'boards';
                     <a class="btn btn-secondary" href="app.php?view=teams">Cambiar equipo</a>
                 </div>
 
-                <div class="landing-list">
-                    <div class="landing-list-item">Las tareas se guardan en la base de datos y quedan ligadas al equipo activo.</div>
-                    <div class="landing-list-item">Puedes mover una tarea entre columnas con un clic.</div>
-                    <div class="landing-list-item">El tablero se crea automáticamente si el equipo no tenía uno.</div>
-                </div>
-
                 <div class="kanban" data-kanban-board>
                     <?php foreach ($boardColumns as $column): ?>
                         <?php $columnTasks = $taskByColumn[(int) $column['id']] ?? []; ?>
@@ -355,12 +349,6 @@ $activeSection = 'boards';
                         <div class="small">Formulario en modal</div>
                         <h3 class="h3"><?php echo $editingTask ? 'Editando tarjeta' : 'Crear tarjeta'; ?></h3>
                     </div>
-                </div>
-
-                <div class="landing-list">
-                    <div class="landing-list-item">El formulario se abre en una capa superior para dejar más espacio al tablero.</div>
-                    <div class="landing-list-item">Usa mover atrás y mover adelante para cambios rápidos entre columnas.</div>
-                    <div class="landing-list-item">Al editar una tarjeta, el modal se abre automáticamente.</div>
                 </div>
 
                 <div class="stack-sm" style="margin-top: 20px;">

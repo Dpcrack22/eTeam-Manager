@@ -51,17 +51,7 @@ if (!isset($appNavItems)) {
             <div class="landing-list" style="margin-top: 12px;">
                 <div class="landing-list-item">La sesión no está iniciada.</div>
                 <div class="landing-list-item">La navegación completa se desbloquea tras autenticarte.</div>
-                <div class="landing-list-item">Este panel solo muestra la estructura pública.</div>
             </div>
         </div>
     <?php endif; ?>
-
-    <div class="card sidebar-panel">
-        <div class="small">Estructura base</div>
-        <div class="landing-list" style="margin-top: 12px;">
-            <div class="landing-list-item">Includes compartidos para layout comun.</div>
-            <div class="landing-list-item">Pages separadas por modulo.</div>
-            <div class="landing-list-item">Base lista para nuevos módulos y vistas internas.</div>
-        </div>
-    </div>
 </aside>
