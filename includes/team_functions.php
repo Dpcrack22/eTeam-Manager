@@ -1,5 +1,96 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/organization_functions.php';
+require_once __DIR__ . '/notification_functions.php';
+
+function ensureTeamInviteTokenStorage(PDO $conn): void
+{
+    try {
+        $statement = $conn->prepare(
+            'SELECT COUNT(*) AS total
+             FROM information_schema.columns
+             WHERE table_schema = DATABASE() AND table_name = "teams" AND column_name = "invite_token"'
+        );
+        $statement->execute();
+
+        if ((int) ($statement->fetch()['total'] ?? 0) > 0) {
+            return;
+        }
+
+        $conn->exec(
+            'ALTER TABLE teams
+             ADD COLUMN invite_token VARCHAR(128) NULL AFTER description,
+             ADD COLUMN invite_token_created_at DATETIME NULL AFTER invite_token,
+             ADD UNIQUE KEY uq_teams_invite_token (invite_token)'
+        );
+    } catch (Throwable $exception) {
+        // Older databases can still work without invite links.
+    }
+}
+
+function generateTeamInviteToken(): string
+{
+    return rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '=');
+}
+
+function ensureTeamInviteToken(PDO $conn, int $teamId): string
+{
+    ensureTeamInviteTokenStorage($conn);
+
+    $statement = $conn->prepare('SELECT invite_token FROM teams WHERE id = :team_id LIMIT 1');
+    $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    if (!$row) {
+        return '';
+    }
+
+    if (!empty($row['invite_token'])) {
+        return (string) $row['invite_token'];
+    }
+
+    $token = generateTeamInviteToken();
+    $update = $conn->prepare('UPDATE teams SET invite_token = :invite_token, invite_token_created_at = NOW() WHERE id = :team_id');
+    $update->bindValue(':invite_token', $token, PDO::PARAM_STR);
+    $update->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $update->execute();
+
+    return $token;
+}
+
+function getTeamInviteLink(PDO $conn, int $teamId): string
+{
+    $token = ensureTeamInviteToken($conn, $teamId);
+    if ($token === '') {
+        return '';
+    }
+
+    $baseUrl = '';
+    if (!empty($_SERVER['HTTP_HOST'])) {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'];
+    }
+
+    return rtrim($baseUrl, '/') . '/invite.php?token=' . urlencode($token);
+}
+
+function getTeamByInviteToken(PDO $conn, string $inviteToken): array|false
+{
+    $statement = $conn->prepare(
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, t.invite_token, g.name AS game_name
+         FROM teams t
+         INNER JOIN games g ON g.id = t.game_id
+         WHERE t.invite_token = :invite_token AND t.is_active = 1
+         LIMIT 1'
+    );
+    $statement->bindValue(':invite_token', $inviteToken, PDO::PARAM_STR);
+    $statement->execute();
+
+    return $statement->fetch() ?: false;
+}
+
+ensureTeamInviteTokenStorage($conn);
 
 function getGames(PDO $conn): array
 {
@@ -10,19 +101,40 @@ function getGames(PDO $conn): array
 function getOrganizationTeams(PDO $conn, int $organizationId): array
 {
     $statement = $conn->prepare(
-        'SELECT t.id, t.name, t.tag, t.description, t.game_id, g.name AS game_name,
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name AS game_name,
                 COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count
          FROM teams t
          INNER JOIN games g ON g.id = t.game_id
          LEFT JOIN team_members tm ON tm.team_id = t.id
          WHERE t.organization_id = :organization_id AND t.is_active = 1
-         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, g.name
+         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name
          ORDER BY t.created_at DESC, t.name ASC'
     );
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
     $statement->execute();
 
-    return $statement->fetchAll();
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getUserOrganizationTeams(PDO $conn, int $organizationId, int $userId): array
+{
+    $statement = $conn->prepare(
+        'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name AS game_name,
+                COUNT(CASE WHEN tm.is_active = 1 THEN tm.id END) AS members_count,
+                MAX(my.joined_at) AS my_joined_at
+         FROM teams t
+         INNER JOIN games g ON g.id = t.game_id
+         INNER JOIN team_members my ON my.team_id = t.id AND my.user_id = :user_id AND my.is_active = 1
+         LEFT JOIN team_members tm ON tm.team_id = t.id
+         WHERE t.organization_id = :organization_id AND t.is_active = 1
+         GROUP BY t.id, t.name, t.tag, t.description, t.game_id, t.invite_token, g.name
+         ORDER BY my_joined_at DESC, t.created_at DESC, t.name ASC'
+    );
+    $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+    $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, int $gameId, ?int $ignoreTeamId = null): bool
@@ -47,7 +159,7 @@ function teamExistsByNameAndGame(PDO $conn, int $organizationId, string $name, i
 
 function getTeamById(PDO $conn, int $teamId, int $organizationId = 0): array|false
 {
-    $sql = 'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, g.name AS game_name
+    $sql = 'SELECT t.id, t.name, t.tag, t.description, t.game_id, t.organization_id, t.invite_token, g.name AS game_name
             FROM teams t
             INNER JOIN games g ON g.id = t.game_id
             WHERE t.id = :team_id';
@@ -70,9 +182,11 @@ function getTeamById(PDO $conn, int $teamId, int $organizationId = 0): array|fal
 
 function createTeam(PDO $conn, int $organizationId, int $gameId, string $name, ?string $tag = null, ?string $description = null): int
 {
+    ensureTeamInviteTokenStorage($conn);
+
     $statement = $conn->prepare(
-        'INSERT INTO teams (organization_id, game_id, name, tag, description, created_at, is_active)
-         VALUES (:organization_id, :game_id, :name, :tag, :description, NOW(), 1)'
+        'INSERT INTO teams (organization_id, game_id, name, tag, description, invite_token, invite_token_created_at, created_at, is_active)
+         VALUES (:organization_id, :game_id, :name, :tag, :description, :invite_token, NOW(), NOW(), 1)'
     );
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
     $statement->bindValue(':game_id', $gameId, PDO::PARAM_INT);
@@ -88,9 +202,13 @@ function createTeam(PDO $conn, int $organizationId, int $gameId, string $name, ?
     } else {
         $statement->bindValue(':description', $description, PDO::PARAM_STR);
     }
+    $statement->bindValue(':invite_token', generateTeamInviteToken(), PDO::PARAM_STR);
     $statement->execute();
 
-    return (int) $conn->lastInsertId();
+    $teamId = (int) $conn->lastInsertId();
+    ensureTeamInviteToken($conn, $teamId);
+
+    return $teamId;
 }
 
 function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, string $name, ?string $tag = null, ?string $description = null): bool
@@ -121,7 +239,55 @@ function updateTeam(PDO $conn, int $teamId, int $organizationId, int $gameId, st
     $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
 
-    return $statement->execute();
+    $updated = $statement->execute();
+
+    if ($updated) {
+        ensureTeamInviteToken($conn, $teamId);
+    }
+
+    return $updated;
+}
+
+function deleteTeam(PDO $conn, int $teamId, int $organizationId): bool
+{
+    try {
+        $conn->beginTransaction();
+
+        $statement = $conn->prepare(
+            'UPDATE teams
+             SET is_active = 0
+             WHERE id = :team_id AND organization_id = :organization_id AND is_active = 1'
+        );
+        $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $statement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $statement->execute();
+
+        if ($statement->rowCount() === 0) {
+            $conn->rollBack();
+            return false;
+        }
+
+        $cancelInvites = $conn->prepare(
+            'UPDATE team_invitations
+             SET status = "cancelled", responded_at = NOW()
+             WHERE team_id = :team_id AND status = "pending"'
+        );
+        $cancelInvites->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $cancelInvites->execute();
+
+        $deactivateMembers = $conn->prepare('UPDATE team_members SET is_active = 0 WHERE team_id = :team_id');
+        $deactivateMembers->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+        $deactivateMembers->execute();
+
+        $conn->commit();
+        return true;
+    } catch (Throwable $exception) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+
+        return false;
+    }
 }
 
 function getTeamMembers(PDO $conn, int $teamId): array
@@ -346,6 +512,58 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         return ['success' => false, 'error' => 'El equipo no existe'];
     }
 
+    $role = strtolower(trim($role));
+    $allowedRoles = ['coach', 'player', 'analyst', 'substitute'];
+    if (!in_array($role, $allowedRoles, true)) {
+        $role = 'player';
+    }
+
+    $organizationId = (int) ($team['organization_id'] ?? 0);
+
+    if ($organizationId > 0) {
+        $orgMemberStatement = $conn->prepare(
+            'SELECT moderation_status, is_active
+             FROM organization_members
+             WHERE organization_id = :organization_id AND user_id = :user_id
+             LIMIT 1'
+        );
+        $orgMemberStatement->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+        $orgMemberStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $orgMemberStatement->execute();
+        $orgMember = $orgMemberStatement->fetch();
+
+        if ($orgMember) {
+            if ((string) ($orgMember['moderation_status'] ?? 'active') !== 'active') {
+                return ['success' => false, 'error' => 'No tienes acceso a esta organización'];
+            }
+
+            if ((int) ($orgMember['is_active'] ?? 0) !== 1) {
+                $reactivateOrgMember = $conn->prepare(
+                    'UPDATE organization_members
+                     SET is_active = 1
+                     WHERE organization_id = :organization_id AND user_id = :user_id'
+                );
+                $reactivateOrgMember->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+                $reactivateOrgMember->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $reactivateOrgMember->execute();
+            }
+        } else {
+            $orgRole = $role;
+            if ($orgRole === 'substitute') {
+                $orgRole = 'player';
+            }
+
+            $insertOrgMember = $conn->prepare(
+                'INSERT INTO organization_members (organization_id, user_id, role, moderation_status, joined_at, is_active)
+                 VALUES (:organization_id, :user_id, :role, "active", NOW(), 1)'
+            );
+            $insertOrgMember->bindValue(':organization_id', $organizationId, PDO::PARAM_INT);
+            $insertOrgMember->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $insertOrgMember->bindValue(':role', $orgRole, PDO::PARAM_STR);
+            $insertOrgMember->execute();
+        }
+    }
+
     $memberStatement = $conn->prepare('SELECT id, is_active FROM team_members WHERE team_id = :team_id AND user_id = :user_id LIMIT 1');
     $memberStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $memberStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
@@ -364,6 +582,35 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         $insert->bindValue(':role', $role, PDO::PARAM_STR);
         $insert->execute();
     }
+
+    $teamOwnerStatement = $conn->prepare('SELECT organization_id, name FROM teams WHERE id = :team_id LIMIT 1');
+    $teamOwnerStatement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
+    $teamOwnerStatement->execute();
+    $teamContext = $teamOwnerStatement->fetch() ?: null;
+
+    if ($teamContext) {
+        $organizationMembers = getOrganizationMembers($conn, (int) $teamContext['organization_id']);
+
+        foreach ($organizationMembers as $organizationMember) {
+            if ((int) $organizationMember['user_id'] === $userId) {
+                continue;
+            }
+
+            if (!in_array((string) $organizationMember['role'], ['owner', 'admin', 'manager'], true)) {
+                continue;
+            }
+
+            createNotification(
+                $conn,
+                (int) $organizationMember['user_id'],
+                'team_join',
+                $teamId,
+                'Un usuario se ha unido al equipo ' . $teamContext['name'] . '.'
+            );
+        }
+    }
+
+    createNotification($conn, $userId, 'team_join', $teamId, 'Te has unido al equipo ' . $team['name'] . '.');
 
     return ['success' => true, 'team' => $team];
 }
@@ -394,6 +641,8 @@ function unjoinTeam(PDO $conn, int $teamId, int $userId) {
             unset($_SESSION['user']['team']);
         }
     }
+
+    createNotification($conn, $userId, 'team_leave', $teamId, 'Has salido del equipo ' . $team['name'] . '.');
 
     return ["success" => true];
 

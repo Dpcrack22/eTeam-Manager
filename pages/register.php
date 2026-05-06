@@ -6,14 +6,16 @@ $name = '';
 $email = '';
 $password = '';
 $passwordConfirm = '';
+$termsAccepted = false;
 $errors = [];
+$returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? null);
 
 if (isLogged()) {
-    echo '<script>window.location.href="app.php?view=dashboard";</script>';
+    header('Location: ' . $returnTo);
     exit;
 }
 
-function validateRegister(string $name, string $email, string $password, string $passwordConfirm): array
+function validateRegister(string $name, string $email, string $password, string $passwordConfirm, bool $termsAccepted): array
 {
     $errors = [];
 
@@ -43,6 +45,10 @@ function validateRegister(string $name, string $email, string $password, string 
         $errors['password_confirm'] = 'Las contraseñas no coinciden';
     }
 
+    if (!$termsAccepted) {
+        $errors['terms_accept'] = 'Debes aceptar la normativa de acceso';
+    }
+
     return $errors;
 }
 
@@ -51,8 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = (string) ($_POST['password'] ?? '');
     $passwordConfirm = (string) ($_POST['password_confirm'] ?? '');
+    $termsAccepted = !empty($_POST['terms_accept']);
 
-    $errors = validateRegister($name, $email, $password, $passwordConfirm);
+    $errors = validateRegister($name, $email, $password, $passwordConfirm, $termsAccepted);
 
     if (empty($errors)) {
         $statement = $conn->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
@@ -63,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $userId = createUser($conn, $name, $email, $password, $_FILES['avatar_file'] ?? null);
 
-            echo '<script>window.location.href="app.php?view=login";</script>';
+            header('Location: app.php?view=login&cb=1&return_to=' . urlencode($returnTo));
             exit;
         }
     }
@@ -100,6 +107,7 @@ if (empty($layoutIncluded)) {
         </div>
 
         <form class="form auth-form" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8'); ?>" />
             <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
                 <label for="name">Nombre</label>
                 <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
@@ -125,13 +133,21 @@ if (empty($layoutIncluded)) {
                 <input id="avatar_file" name="avatar_file" type="file" accept="image/*" />
             </div>
 
+            <label class="login-remember-row <?php echo isset($errors['terms_accept']) ? 'form-group-error' : ''; ?>">
+                <input type="checkbox" name="terms_accept" value="1" <?php echo $termsAccepted ? 'checked' : ''; ?> />
+                <span>
+                    <strong>Acepto la normativa de acceso</strong>
+                    <small>Necesario para crear la cuenta y entrar en la app.</small>
+                </span>
+            </label>
+
             <div class="help">
                 Las organizaciones, equipos y roles se asignan después mediante invitación o por un administrador.
             </div>
 
             <div class="auth-actions">
                 <button class="btn btn-primary" type="submit">Crear cuenta</button>
-                <a class="btn btn-secondary" href="app.php?view=login">Ya tengo cuenta</a>
+                <a class="btn btn-secondary" href="app.php?view=login&amp;cb=1&amp;return_to=<?php echo urlencode($returnTo); ?>">Ya tengo cuenta</a>
             </div>
         </form>
     </div>

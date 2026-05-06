@@ -1,8 +1,14 @@
 <?php
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 ob_start();
 
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/analytics_functions.php';
 require_once __DIR__ . '/includes/organization_functions.php';
+require_once __DIR__ . '/includes/notification_functions.php';
 require_once __DIR__ . '/includes/team_functions.php';
 
 $view = isset($view) ? strtolower((string) $view) : (isset($_GET['view']) ? strtolower((string) $_GET['view']) : 'dashboard');
@@ -15,12 +21,26 @@ if (!str_starts_with($appCurrentRequestUri, 'app.php?view=')) {
 }
 
 if (!$isAuthenticated && !in_array($view, ['login', 'register'], true)) {
-    header('Location: app.php?view=login');
+    header('Location: app.php?view=login&cb=1');
     exit;
 }
 
 if ($isAuthenticated && in_array($view, ['login', 'register'], true)) {
     header('Location: app.php?view=dashboard');
+    exit;
+}
+
+if (in_array($view, ['login', 'register'], true) && !isset($_GET['cb'])) {
+    header('Location: app.php?view=' . $view . '&cb=1');
+    exit;
+}
+
+if ($view === 'notifications' && isset($_GET['poll']) && $isAuthenticated && !empty($_SESSION['user']['id'])) {
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode([
+        'unread_count' => getUnreadNotificationsCount($conn, (int) $_SESSION['user']['id']),
+        'timestamp' => time(),
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -77,6 +97,20 @@ $appModules = [
         'description' => 'Resumen competitivo del enfrentamiento, con mapas, score y contexto.',
         'page' => __DIR__ . '/../pages/scrim-detail.php',
     ],
+    'analytics' => [
+        'label' => 'Analitica',
+        'title' => 'Analitica del equipo',
+        'eyebrow' => 'Modulo',
+        'description' => 'Resumen competitivo con victorias, mapas, rivales y rendimiento reciente.',
+        'page' => __DIR__ . '/../pages/analytics.php',
+    ],
+    'admin' => [
+        'label' => 'Administracion',
+        'title' => 'Panel de administracion',
+        'eyebrow' => 'Modulo',
+        'description' => 'Moderacion de miembros, sanciones y control interno de la organizacion activa.',
+        'page' => __DIR__ . '/../pages/admin.php',
+    ],
     'event-form' => [
         'label' => 'Evento',
         'title' => 'Evento',
@@ -104,6 +138,13 @@ $appModules = [
         'eyebrow' => 'Modulo',
         'description' => 'Repositorio interno para estrategia, analisis y documentacion del equipo.',
         'page' => __DIR__ . '/../pages/notes.php',
+    ],
+    'notifications' => [
+        'label' => 'Notificaciones',
+        'title' => 'Notificaciones',
+        'eyebrow' => 'Modulo',
+        'description' => 'Centro de avisos, invitaciones y actividad reciente de la app.',
+        'page' => __DIR__ . '/../pages/notifications.php',
     ],
     'settings' => [
         'label' => 'Configuracion',
@@ -172,6 +213,8 @@ if (empty($appCurrentUser['initials'])) {
     }
 }
 
+$appCanModerateOrganization = in_array(strtolower((string) ($appCurrentUser['role'] ?? '')), ['owner', 'admin'], true);
+
 if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
     $appShellUserId = (int) $_SESSION['user']['id'];
     $appShellOrganizationId = getActiveOrganizationId($conn, $appShellUserId);
@@ -193,9 +236,26 @@ if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
 
 $appActiveTeamId = $appCurrentUser['team_id'] ?? null;
 $appSidebarTeams = [];
+$appNotifications = [];
+$appUnreadNotificationCount = 0;
 
-if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null) {
-    $appSidebarTeams = getOrganizationTeams($conn, (int) $appShellOrganizationId);
+if (
+    $appAuthState === 'authenticated'
+    && $view === 'notifications'
+    && !isset($_GET['poll'])
+    && (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET'
+    && !empty($_SESSION['user']['id'])
+) {
+    markAllNotificationsAsRead($conn, (int) $_SESSION['user']['id']);
+}
+
+if ($appAuthState === 'authenticated' && $appShellOrganizationId !== null && !empty($_SESSION['user']['id'])) {
+    $appSidebarTeams = getUserOrganizationTeams($conn, (int) $appShellOrganizationId, (int) $_SESSION['user']['id']);
+}
+
+if ($appAuthState === 'authenticated' && !empty($_SESSION['user']['id'])) {
+    $appNotifications = getUnreadNotifications($conn, (int) $_SESSION['user']['id'], 6);
+    $appUnreadNotificationCount = getUnreadNotificationsCount($conn, (int) $_SESSION['user']['id']);
 }
 
 if ($view === 'dashboard') {
@@ -206,7 +266,7 @@ if (!isset($appNavItems)) {
     $appNavItems = [];
 
     foreach ($appModules as $moduleKey => $module) {
-        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form'], true)) {
+        if (in_array($moduleKey, ['team-detail', 'scrim-form', 'scrim-detail', 'event-form', 'login', 'register', 'admin'], true)) {
             continue;
         }
 

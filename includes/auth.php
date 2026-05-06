@@ -72,9 +72,9 @@ function ensureRememberMeStorage(PDO $conn): void
 function fetchAuthenticatedUserByEmail(PDO $conn, string $email): array|false
 {
     $statement = $conn->prepare(
-        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
+        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, u.terms_accepted_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
          FROM users u
-         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
+         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 AND COALESCE(om.moderation_status, "active") = "active"
          LEFT JOIN organizations o ON o.id = om.organization_id
          WHERE u.email = :email
          ORDER BY om.joined_at DESC, o.id DESC
@@ -89,9 +89,9 @@ function fetchAuthenticatedUserByEmail(PDO $conn, string $email): array|false
 function fetchAuthenticatedUserById(PDO $conn, int $userId): array|false
 {
     $statement = $conn->prepare(
-        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
+        'SELECT u.id, u.username, u.email, u.password_hash, u.avatar_url, u.is_active, u.terms_accepted_at, om.role AS organization_role, o.id AS organization_id, o.name AS organization_name
          FROM users u
-         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
+         LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1 AND COALESCE(om.moderation_status, "active") = "active"
          LEFT JOIN organizations o ON o.id = om.organization_id
          WHERE u.id = :user_id
          ORDER BY om.joined_at DESC, o.id DESC
@@ -113,6 +113,7 @@ function populateAuthenticatedSession(array $user): void
         'role' => $user['organization_role'] ?? 'Member',
         'organization' => $user['organization_name'] ?? 'Sin organización',
         'organization_id' => isset($user['organization_id']) ? (int) $user['organization_id'] : null,
+        'terms_accepted_at' => $user['terms_accepted_at'] ?? null,
     ];
 }
 
@@ -269,6 +270,14 @@ function login($email, $password, bool $rememberMe = false)
             ];
         }
 
+        if (empty($user['terms_accepted_at'])) {
+            return [
+                'success' => false,
+                'error' => 'Normativa no aceptada',
+                'errors' => ['general' => 'Debes aceptar la normativa de acceso antes de entrar.'],
+            ];
+        }
+
         if (hash('sha256', $password) !== $user['password_hash']) {
             return [
                 'success' => false,
@@ -345,7 +354,7 @@ function logout(): void
 function requireAuth(): void
 {
     if (!isLogged()) {
-        header('Location: app.php?view=login');
+        header('Location: app.php?view=login&cb=1');
         exit;
     }
 }
@@ -356,4 +365,26 @@ function redirectIfAuthenticated(): void
         header('Location: app.php?view=dashboard');
         exit;
     }
+}
+
+function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=dashboard'): string
+{
+    $returnTo = trim((string) $returnTo);
+
+    if ($returnTo === '') {
+        return $fallback;
+    }
+
+    if (
+        str_starts_with($returnTo, 'app.php?view=') ||
+        str_starts_with($returnTo, 'invite.php?token=') ||
+        $returnTo === 'login.php' ||
+        $returnTo === 'register.php' ||
+        $returnTo === 'index.php' ||
+        $returnTo === 'admin.php'
+    ) {
+        return $returnTo;
+    }
+
+    return $fallback;
 }

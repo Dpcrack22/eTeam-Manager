@@ -170,7 +170,7 @@ $activeSection = 'notes';
             No hay un equipo activo para escribir notas. Ve a Equipos y activa uno para usar este repositorio táctico.
         </div>
     <?php else: ?>
-        <div class="grid-2">
+        <div class="grid-2 notes-workspace">
             <div class="card">
                 <div class="dashboard-section-head">
                     <div>
@@ -248,15 +248,38 @@ $activeSection = 'notes';
                 <?php endif; ?>
             </div>
 
-            <div class="card">
+            <div class="card notes-actions-card">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Formulario en modal</div>
+                        <h3 class="h3"><?php echo $editingNote ? 'Editando nota' : 'Crear nota'; ?></h3>
+                    </div>
+                </div>
+
+                <div class="landing-list">
+                    <div class="landing-list-item">El editor se abre en overlay para dejar la biblioteca visible.</div>
+                    <div class="landing-list-item">Las notas pueden abrirse y editarse sin perder el contexto del filtro.</div>
+                    <div class="landing-list-item">Los tags siguen resolviéndose de forma automática.</div>
+                </div>
+
+                <div class="stack-sm" style="margin-top: 20px;">
+                    <button class="btn btn-primary" type="button" data-open-modal="[data-note-modal]">Nueva nota</button>
+                    <?php if ($editingNote): ?>
+                        <a class="btn btn-secondary" href="app.php?view=notes">Cerrar edición</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-modal" data-note-modal<?php echo $editingNote ? '' : ' hidden'; ?>>
+            <div class="app-modal-backdrop" data-modal-close></div>
+            <div class="app-modal-panel" role="dialog" aria-modal="true" aria-labelledby="note-modal-title">
                 <div class="dashboard-section-head">
                     <div>
                         <div class="small"><?php echo $editingNote ? 'Editar nota' : 'Nueva nota'; ?></div>
-                        <h3 class="h3"><?php echo $editingNote ? 'Actualizar contenido' : 'Crear nota'; ?></h3>
+                        <h3 class="h3" id="note-modal-title"><?php echo $editingNote ? 'Actualizar contenido' : 'Crear nota'; ?></h3>
                     </div>
-                    <?php if ($editingNote): ?>
-                        <a class="btn btn-secondary" href="app.php?view=notes">Cancelar edición</a>
-                    <?php endif; ?>
+                    <a class="btn btn-secondary" href="app.php?view=notes">Cerrar</a>
                 </div>
 
                 <form class="form" method="post" novalidate>

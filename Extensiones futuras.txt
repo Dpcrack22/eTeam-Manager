@@ -1,15 +1,33 @@
-Archivo sencillo (David después adaptalo como quieras)
+eTeam Manager — Backlog de mejoras futuras
 
---- MEJORAS PARA EL FUTURO DE LA APP ---
-1. Invitación a un equipo via email/Notificación al usuario de que ha sido invitado dentro de la pagina
-2. Poder aceptar la invitación desde el email o un botón en el apartado de "Equipos"
-3. Analisis/analytics del jugador individual de la partida (por base de datos o subir la imagen)
-4. Opción de banear a jugadores si no respetan la normativa
-5. Normativa al unirse a un equipo (como un termino de condiciones)
-6. Eliminación de botón unirse a un equipo manualmente
-7. Eliminación de la recomendación de equipos en el apartado de "Equipos"
-8. (IDEA MUY LOCA, PERO QUE SERVIRIA PARA LA PRESENTACIÓN Y PARA NOSOTROS) 
-Documentar de forma resumida en un documento como funciona tanto la app por fuera como por dentro
+Este archivo recoge ideas para seguir ampliando la app después de cerrar la base funcional actual.
 
+Las extensiones ya completadas se han movido a "Extensiones completadas.txt".
 
-(Si vieras necesario mas mejoras ponlas sin problemas)
+Estado: [x] hecho | [ ] pendiente
+
+======================================================================
+
+PRIORIDAD BAJA / EXPANSIÓN
+
+7. [ ] Apartado de strats
+- [ ] Crear un módulo inspirado en herramientas de planificación como Valoplant.
+- [ ] Incluir mapas, agentes, habilidades y colocación de utilidades.
+- [ ] Guardar plantillas de estrategia por mapa y equipo.
+
+8. [ ] Documentación interna para presentación
+- [ ] Resumir cómo funciona la app por fuera.
+- [ ] Resumir cómo funciona por dentro.
+- [ ] Dejar una explicación visual y técnica corta para presentar el proyecto.
+
+9. [ ] Más integración externa
+- [ ] Sincronizar estadísticas con APIs de Valorant.
+- [ ] Importar datos de partidas o imágenes de forma manual/semiautomática.
+- [ ] Abrir la puerta a integraciones con Discord o calendarios externos.
+
+======================================================================
+
+NOTA
+
+- Cualquier mejora sensible, credencial o clave externa debe mantenerse fuera de este archivo.
+- Si aparece una nueva idea útil, se puede añadir aquí por prioridad.

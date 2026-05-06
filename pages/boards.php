@@ -256,7 +256,7 @@ $activeSection = 'boards';
             No hay un equipo activo para construir el Kanban. Ve a Equipos y activa uno para empezar a gestionar tareas.
         </div>
     <?php else: ?>
-        <div class="grid-2">
+        <div class="grid-2 boards-workspace">
             <div class="card">
                 <div class="dashboard-section-head">
                     <div>
@@ -272,10 +272,10 @@ $activeSection = 'boards';
                     <div class="landing-list-item">El tablero se crea automáticamente si el equipo no tenía uno.</div>
                 </div>
 
-                <div class="kanban">
+                <div class="kanban" data-kanban-board>
                     <?php foreach ($boardColumns as $column): ?>
                         <?php $columnTasks = $taskByColumn[(int) $column['id']] ?? []; ?>
-                        <section class="kanban-column">
+                        <section class="kanban-column" data-kanban-column data-column-id="<?php echo (int) $column['id']; ?>">
                             <div class="dashboard-section-head">
                                 <div>
                                     <div class="small">Columna</div>
@@ -293,7 +293,7 @@ $activeSection = 'boards';
                                         $previousColumn = $columnIndex !== false && $columnIndex > 0 ? $boardColumns[$columnIndex - 1] : null;
                                         $nextColumn = $columnIndex !== false && $columnIndex < count($boardColumns) - 1 ? $boardColumns[$columnIndex + 1] : null;
                                     ?>
-                                    <article class="task<?php echo in_array((string) $task['priority'], ['high', 'critical'], true) ? ' task-priority-high' : ''; ?>">
+                                    <article class="task<?php echo in_array((string) $task['priority'], ['high', 'critical'], true) ? ' task-priority-high' : ''; ?>" draggable="true" data-kanban-task data-task-id="<?php echo (int) $task['id']; ?>" data-task-column-id="<?php echo (int) $column['id']; ?>">
                                         <div class="dashboard-section-head">
                                             <div>
                                                 <div class="task-title"><?php echo htmlspecialchars((string) $task['title'], ENT_QUOTES, 'UTF-8'); ?></div>
@@ -349,15 +349,38 @@ $activeSection = 'boards';
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card board-actions-card">
+                <div class="dashboard-section-head">
+                    <div>
+                        <div class="small">Formulario en modal</div>
+                        <h3 class="h3"><?php echo $editingTask ? 'Editando tarjeta' : 'Crear tarjeta'; ?></h3>
+                    </div>
+                </div>
+
+                <div class="landing-list">
+                    <div class="landing-list-item">El formulario se abre en una capa superior para dejar más espacio al tablero.</div>
+                    <div class="landing-list-item">Usa mover atrás y mover adelante para cambios rápidos entre columnas.</div>
+                    <div class="landing-list-item">Al editar una tarjeta, el modal se abre automáticamente.</div>
+                </div>
+
+                <div class="stack-sm" style="margin-top: 20px;">
+                    <button class="btn btn-primary" type="button" data-open-modal="[data-board-task-modal]">Nueva tarea</button>
+                    <?php if ($editingTask): ?>
+                        <a class="btn btn-secondary" href="app.php?view=boards">Cerrar edición</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-modal" data-board-task-modal<?php echo $editingTask ? '' : ' hidden'; ?>>
+            <div class="app-modal-backdrop" data-modal-close></div>
+            <div class="app-modal-panel" role="dialog" aria-modal="true" aria-labelledby="board-task-modal-title">
                 <div class="dashboard-section-head">
                     <div>
                         <div class="small"><?php echo $editingTask ? 'Editar tarea' : 'Nueva tarea'; ?></div>
-                        <h3 class="h3"><?php echo $editingTask ? 'Actualizar tarjeta' : 'Crear tarjeta'; ?></h3>
+                        <h3 class="h3" id="board-task-modal-title"><?php echo $editingTask ? 'Actualizar tarjeta' : 'Crear tarjeta'; ?></h3>
                     </div>
-                    <?php if ($editingTask): ?>
-                        <a class="btn btn-secondary" href="app.php?view=boards">Cancelar edición</a>
-                    <?php endif; ?>
+                    <a class="btn btn-secondary" href="app.php?view=boards">Cerrar</a>
                 </div>
 
                 <form class="form" method="post" novalidate>
