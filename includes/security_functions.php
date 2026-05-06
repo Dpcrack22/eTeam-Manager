@@ -14,6 +14,8 @@ function ensureUserSecurityStorage(PDO $conn): void
         'login_code_token' => 'ALTER TABLE users ADD COLUMN login_code_token VARCHAR(64) NULL AFTER password_reset_expires_at',
         'login_code_sent_at' => 'ALTER TABLE users ADD COLUMN login_code_sent_at DATETIME NULL DEFAULT NULL AFTER login_code_token',
         'login_code_expires_at' => 'ALTER TABLE users ADD COLUMN login_code_expires_at DATETIME NULL DEFAULT NULL AFTER login_code_sent_at',
+        'profile_public' => 'ALTER TABLE users ADD COLUMN profile_public TINYINT(1) NOT NULL DEFAULT 0 AFTER bio',
+        'bio_public' => 'ALTER TABLE users ADD COLUMN bio_public TINYINT(1) NOT NULL DEFAULT 0 AFTER profile_public',
     ];
 
     foreach ($columns as $columnName => $alterSql) {
@@ -73,7 +75,7 @@ function sendMailMessage(string $to, string $subject, string $message): bool
     $headers = [
         'MIME-Version: 1.0',
         'Content-type: text/plain; charset=UTF-8',
-        'From: eTeam Manager <no-reply@localhost>',
+        'From: eTeam Manager <eteammanager2@gmail.com>',
     ];
 
     return @mail($to, $subject, $message, implode("\r\n", $headers));

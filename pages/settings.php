@@ -11,7 +11,7 @@ $errors = [];
 $successMessage = '';
 
 $userStatement = $conn->prepare(
-    'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, om.role, o.name AS organization_name
+    'SELECT u.id, u.username, u.email, u.avatar_url, u.bio, u.profile_public, u.bio_public, om.role, o.name AS organization_name
      FROM users u
      LEFT JOIN organization_members om ON om.user_id = u.id AND om.is_active = 1
      LEFT JOIN organizations o ON o.id = om.organization_id
@@ -58,15 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $bioValue = $bio !== '' ? $bio : null;
+        $profilePublic = !empty($_POST['profile_public']) ? 1 : 0;
+        $bioPublic = !empty($_POST['bio_public']) ? 1 : 0;
 
         if ($avatarUrl !== null) {
             $updateStatement = $conn->prepare(
-                'UPDATE users SET username = :username, bio = :bio, avatar_url = :avatar_url, updated_at = NOW() WHERE id = :user_id'
+                'UPDATE users SET username = :username, bio = :bio, avatar_url = :avatar_url, profile_public = :profile_public, bio_public = :bio_public, updated_at = NOW() WHERE id = :user_id'
             );
             $updateStatement->bindValue(':avatar_url', $avatarUrl, PDO::PARAM_STR);
         } else {
             $updateStatement = $conn->prepare(
-                'UPDATE users SET username = :username, bio = :bio, updated_at = NOW() WHERE id = :user_id'
+                'UPDATE users SET username = :username, bio = :bio, profile_public = :profile_public, bio_public = :bio_public, updated_at = NOW() WHERE id = :user_id'
             );
         }
 
@@ -76,11 +78,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $updateStatement->bindValue(':bio', $bioValue, PDO::PARAM_STR);
         }
+        $updateStatement->bindValue(':profile_public', $profilePublic, PDO::PARAM_INT);
+        $updateStatement->bindValue(':bio_public', $bioPublic, PDO::PARAM_INT);
         $updateStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
         $updateStatement->execute();
 
         $_SESSION['user']['name'] = $username;
         $_SESSION['user']['bio'] = $bioValue;
+        $_SESSION['user']['profile_public'] = $profilePublic;
+        $_SESSION['user']['bio_public'] = $bioPublic;
         if ($avatarUrl !== null) {
             $_SESSION['user']['avatar_url'] = $avatarUrl;
         }
@@ -213,6 +219,18 @@ if ($avatarInitials === '') {
                     <div class="field">
                         <label for="bio">Bio pública</label>
                         <textarea id="bio" name="bio" rows="4" placeholder="Cuéntale a la gente quién eres"><?php echo htmlspecialchars((string) ($profileUser['bio'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="profile_public">Perfil público</label>
+                        <div class="small">Activa para permitir que cualquiera vea tu perfil público.</div>
+                        <input id="profile_public" name="profile_public" type="checkbox" value="1" <?php echo (!empty($profileUser['profile_public']) ? 'checked' : ''); ?> />
+                    </div>
+
+                    <div class="field">
+                        <label for="bio_public">Mostrar bio públicamente</label>
+                        <div class="small">Si está desactivado, tu bio no aparecerá en el perfil público.</div>
+                        <input id="bio_public" name="bio_public" type="checkbox" value="1" <?php echo (!empty($profileUser['bio_public']) ? 'checked' : ''); ?> />
                     </div>
 
                     <div class="field">

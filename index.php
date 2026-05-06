@@ -28,6 +28,11 @@
 </head>
 <body>
 
+<?php
+session_start();
+require_once __DIR__ . '/includes/auth.php';
+$isLogged = isLogged();
+?>
     <header class="topbar landing-header">
         <div class="container landing-nav" style="padding: 0;">
             <a class="landing-brand" href="#inicio" aria-label="Ir al inicio">
@@ -44,16 +49,24 @@
                 <span class="landing-menu-label">Menú</span>
             </button>
 
-            <nav aria-label="Navegación principal" class="landing-nav-right" id="landing-menu">
+                <nav aria-label="Navegación principal" class="landing-nav-right" id="landing-menu">
                 <div class="landing-links">
                     <a class="landing-link" href="#inicio">Inicio</a>
                     <a class="landing-link" href="#funciones">Funciones</a>
                     <a class="landing-link" href="#flujo">Flujo</a>
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
-                    <a class="landing-link" id="login-register" href="login.php">Acceso</a>
+                    <?php if ($isLogged): ?>
+                        <a class="landing-link" id="login-register" href="app.php?view=settings">Mi perfil</a>
+                    <?php else: ?>
+                        <a class="landing-link" id="login-register" href="login.php">Acceso</a>
+                    <?php endif; ?>
                 </div>
-                <a class="btn btn-primary landing-cta" href="login.php">Iniciar sesión</a>
+                <?php if ($isLogged): ?>
+                    <a class="btn btn-primary landing-cta" href="app.php?view=settings">Mi perfil</a>
+                <?php else: ?>
+                    <a class="btn btn-primary landing-cta" href="login.php">Iniciar sesión</a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>

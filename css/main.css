@@ -1200,6 +1200,31 @@ body.is-modal-open {
   min-height: 64px;
 }
 
+/* Landing hamburger/menu tweaks */
+.landing-menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  color: var(--text-main);
+  cursor: pointer;
+  z-index: 80;
+}
+
+.landing-menu-icon span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-secondary);
+  margin: 3px 0;
+  transition: background 160ms ease;
+}
+
+.landing-menu-toggle[aria-expanded="true"] .landing-menu-icon span {
+  background: var(--text-main);
+}
+
 .landing-brand {
   display: inline-flex;
   align-items: baseline;

@@ -26,6 +26,16 @@ if (!isset($appNavItems)) {
 
     <?php if ($appAuthState === 'authenticated'): ?>
         <div class="card sidebar-panel">
+            <div class="small">Buscar</div>
+            <form action="/pages/search.php" method="get" style="margin-top:8px; display:flex; gap:8px;">
+                <input name="q" type="search" placeholder="Buscar usuarios o equipos" aria-label="Buscar" style="flex:1; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text-main);" />
+                <select name="type" aria-label="Tipo" style="padding:8px; border-radius:6px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text-main);">
+                    <option value="users">Usuarios</option>
+                    <option value="teams">Equipos</option>
+                </select>
+            </form>
+        </div>
+        <div class="card sidebar-panel">
             <div class="small">Navegacion principal</div>
             <nav class="sidebar-nav" aria-label="Navegacion interna">
                 <?php foreach ($appNavItems as $sectionKey => $item): ?>
