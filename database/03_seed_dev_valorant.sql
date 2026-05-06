@@ -4,6 +4,67 @@
 
 USE eteam_manager;
 
+SET @schema_name = DATABASE();
+
+SET @users_terms_column_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'users'
+    AND column_name = 'terms_accepted_at'
+);
+
+SET @sql_users_terms = IF(
+  @users_terms_column_exists = 0,
+  'ALTER TABLE users ADD COLUMN terms_accepted_at DATETIME NULL DEFAULT NULL AFTER is_active',
+  'SELECT 1'
+);
+PREPARE stmt_users_terms FROM @sql_users_terms;
+EXECUTE stmt_users_terms;
+DEALLOCATE PREPARE stmt_users_terms;
+
+SET @org_moderation_column_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'organization_members'
+    AND column_name = 'moderation_status'
+);
+
+SET @sql_org_moderation = IF(
+  @org_moderation_column_exists = 0,
+  'ALTER TABLE organization_members
+     ADD COLUMN moderation_status ENUM("active","suspended","banned") NOT NULL DEFAULT "active" AFTER role,
+     ADD COLUMN moderation_reason TEXT NULL AFTER moderation_status,
+     ADD COLUMN moderated_by BIGINT UNSIGNED NULL AFTER moderation_reason,
+     ADD COLUMN moderated_at DATETIME NULL AFTER moderated_by,
+     ADD COLUMN moderation_until DATETIME NULL AFTER moderated_at',
+  'SELECT 1'
+);
+PREPARE stmt_org_moderation FROM @sql_org_moderation;
+EXECUTE stmt_org_moderation;
+DEALLOCATE PREPARE stmt_org_moderation;
+
+SET @team_invite_token_exists = (
+  SELECT COUNT(*)
+  FROM information_schema.columns
+  WHERE table_schema = @schema_name
+    AND table_name = 'teams'
+    AND column_name = 'invite_token'
+);
+
+SET @sql_team_invite_token = IF(
+  @team_invite_token_exists = 0,
+  'ALTER TABLE teams
+     ADD COLUMN invite_token VARCHAR(128) NULL AFTER description,
+     ADD COLUMN invite_token_created_at DATETIME NULL AFTER invite_token,
+     ADD UNIQUE KEY uq_teams_invite_token (invite_token)',
+  'SELECT 1'
+);
+PREPARE stmt_team_invite_token FROM @sql_team_invite_token;
+EXECUTE stmt_team_invite_token;
+DEALLOCATE PREPARE stmt_team_invite_token;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Child tables first (safe order)
@@ -25,6 +86,7 @@ TRUNCATE TABLE matches;
 
 TRUNCATE TABLE user_game_accounts;
 TRUNCATE TABLE team_members;
+TRUNCATE TABLE team_invitations;
 TRUNCATE TABLE teams;
 
 TRUNCATE TABLE game_characters;
@@ -70,18 +132,21 @@ VALUES
 -- 2) Usuarios + Organización
 -- ------------------------------------------------------------
 
--- NOTE: password_hash is a dummy value for development only.
--- (Looks like a bcrypt hash format but it is not meant for real auth.)
+-- NOTE: all DEV users share the password `password123`.
+-- The app validates passwords with SHA-256 in this project.
 INSERT INTO users (
-  id, username, email, password_hash, avatar_url, is_active, created_at, updated_at, last_login_at
+  id, username, email, password_hash, avatar_url, is_active, terms_accepted_at, created_at, updated_at, last_login_at
 ) VALUES
-  (1, 'parallax_owner',  'owner@parallax.gg',  '$2y$10$devonlydummyhashowner000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (2, 'parallax_coach',  'coach@parallax.gg',  '$2y$10$devonlydummyhashcoach000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (3, 'pv_ace',          'ace@parallax.gg',    '$2y$10$devonlydummyhashace0000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (4, 'pv_lumen',        'lumen@parallax.gg',  '$2y$10$devonlydummyhashlumen00000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (5, 'pv_nova',         'nova@parallax.gg',   '$2y$10$devonlydummyhashnova000000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (6, 'pv_kairo',        'kairo@parallax.gg',  '$2y$10$devonlydummyhashkairo00000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW()),
-  (7, 'parallax_analyst','analyst@parallax.gg','$2y$10$devonlydummyhashanalyst000000000000000000000000000000000', NULL, 1, NOW(), NOW(), NOW());
+  (1, 'parallax_owner',  'owner@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (2, 'parallax_coach',  'coach@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (3, 'pv_ace',          'ace@parallax.gg',    'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (4, 'pv_lumen',        'lumen@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (5, 'pv_nova',         'nova@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (6, 'pv_kairo',        'kairo@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (7, 'parallax_analyst','analyst@parallax.gg','ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (8, 'parallax_scout',  'scout@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (9, 'parallax_mira',   'mira@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW()),
+  (10, 'guest_try',      'guest@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 1, NOW(), NOW(), NOW(), NOW());
 
 INSERT INTO organizations (
   id, name, slug, logo_url, description, owner_id, created_at, updated_at
@@ -104,7 +169,9 @@ VALUES
   (4, 1, 4, 'player',  NOW(), 1),
   (5, 1, 5, 'player',  NOW(), 1),
   (6, 1, 6, 'player',  NOW(), 1),
-  (7, 1, 7, 'analyst', NOW(), 1);
+  (7, 1, 7, 'analyst', NOW(), 1),
+  (8, 1, 8, 'viewer',  NOW(), 1),
+  (9, 1, 9, 'viewer',  NOW(), 1);
 
 -- ------------------------------------------------------------
 -- 3) Equipo Valorant + miembros
@@ -145,10 +212,22 @@ INSERT INTO user_game_accounts (
   (4, 4, 1, 'puuid-dev-lumen-0004',  'Lumen',        'PV', 'Ascendant','I',  1, NOW(), NOW()),
   (5, 5, 1, 'puuid-dev-nova-0005',   'Nova',         'PV', 'Diamond',  'III',1, NOW(), NOW()),
   (6, 6, 1, 'puuid-dev-kairo-0006',  'Kairo',        'PV', 'Diamond',  'I',  1, NOW(), NOW()),
-  (7, 7, 1, 'puuid-dev-analyst-0007','AnalystP',     'PV', 'Platinum', 'II', 1, NOW(), NOW());
+  (7, 7, 1, 'puuid-dev-analyst-0007','AnalystP',     'PV', 'Platinum', 'II', 1, NOW(), NOW()),
+  (8, 8, 1, 'puuid-dev-scout-0008',  'Scout',        'PV', 'Gold',     'I',  1, NOW(), NOW()),
+  (9, 9, 1, 'puuid-dev-mira-0009',   'Mira',         'PV', 'Platinum', 'III',1, NOW(), NOW());
 
 -- ------------------------------------------------------------
--- 4) Partidos / Scrims
+-- 4) Invitaciones de prueba
+-- ------------------------------------------------------------
+
+INSERT INTO team_invitations (
+  id, team_id, organization_id, invited_by, invited_user_id, invited_email, role, status, created_at, responded_at
+) VALUES
+  (1, 1, 1, 1, 8, 'scout@parallax.gg', 'player',  'pending', NOW(), NULL),
+  (2, 1, 1, 2, 9, 'mira@parallax.gg',  'analyst', 'pending', NOW(), NULL);
+
+-- ------------------------------------------------------------
+-- 5) Partidos / Scrims
 -- ------------------------------------------------------------
 
 INSERT INTO matches (
@@ -192,7 +271,7 @@ VALUES
   (12, 3, 6, 17, 17, 10,  255, NULL);
 
 -- ------------------------------------------------------------
--- 5) Boards y Tareas (Kanban)
+-- 6) Boards y Tareas (Kanban)
 -- ------------------------------------------------------------
 
 INSERT INTO boards (id, team_id, name, created_at)
@@ -222,7 +301,7 @@ INSERT INTO tasks (
       2, NOW(), NOW());
 
 -- ------------------------------------------------------------
--- 6) Eventos / Calendario
+-- 7) Eventos / Calendario
 -- ------------------------------------------------------------
 
 INSERT INTO events (
@@ -264,7 +343,7 @@ VALUES
   (12,2, 7, 'accepted');
 
 -- ------------------------------------------------------------
--- 7) Notas + tags
+-- 8) Notas + tags
 -- ------------------------------------------------------------
 
 INSERT INTO notes (
@@ -293,10 +372,12 @@ VALUES
   (3, 2);
 
 -- ------------------------------------------------------------
--- 8) Notificaciones (mínimo para demo)
+-- 9) Notificaciones (mínimo para demo)
 -- ------------------------------------------------------------
 
 INSERT INTO notifications (id, user_id, type, reference_id, message, is_read, created_at)
 VALUES
   (1, 3, 'event', 1, 'Nuevo evento: Entrenamiento — Aim + Protocolos', 0, NOW()),
-  (2, 2, 'task',  2, 'Tarea en progreso: VOD review: Nebula Academy',  0, NOW());
+  (2, 2, 'task',  2, 'Tarea en progreso: VOD review: Nebula Academy',  0, NOW()),
+  (3, 8, 'team_invite', 1, 'Tienes una invitación para unirte a Parallax V como player.', 0, NOW()),
+  (4, 9, 'team_invite', 2, 'Tienes una invitación para unirte a Parallax V como analyst.', 0, NOW());

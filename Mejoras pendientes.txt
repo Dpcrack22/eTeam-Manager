@@ -1,0 +1,40 @@
+eTeam Manager — Mejoras pendientes
+
+Fecha: 7 de abril de 2026
+
+Este documento recoge mejoras de corto plazo para pulir la app sin cambiar su base funcional.
+
+1. Ajustes visuales
+- Revisar spacing entre tarjetas, encabezados y botones en todas las vistas.
+- Unificar el tamaño de badges, chips y etiquetas de estado.
+- Reducir la variación entre formularios largos y cortos.
+
+2. Responsive fino
+- Comprobar login, dashboard, teams, scrims, calendar, boards, notes y settings en móvil.
+- Evitar cualquier solape de botones, formularios o tarjetas en anchos pequeños.
+- Revisar el sidebar cuando el viewport es estrecho.
+
+3. Accesibilidad y UX
+- Añadir estados de foco más claros en enlaces y botones.
+- Mejorar textos de ayuda en formularios largos.
+- Verificar contraste de textos secundarios y badges.
+
+4. Landing e index
+- Mantener metadata SEO y social actualizada.
+- Revisar títulos, descripciones y llamadas a la acción.
+- Alinear mejor la jerarquía visual de la portada pública.
+
+5. Calendario
+- Refinar el overlay de detalle por día.
+- Mejorar la lectura rápida de eventos y scrims.
+- Valorar edición inline si no complica la experiencia.
+
+6. Boards y notas
+- Simplificar acciones secundarias cuando haya demasiados botones.
+- Mejorar la densidad visual de tarjetas con contenido largo.
+- Revisar filtros y estados vacíos.
+
+7. Perfil y ajustes
+- Separar visualmente datos de perfil y edición si crece el módulo.
+- Revisar subida de avatar y preview.
+- Considerar una sección de preferencias real a futuro.

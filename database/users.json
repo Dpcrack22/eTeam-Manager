@@ -1,0 +1,14 @@
+[
+    {
+        "email": "admin@team.gg",
+        "password": "12345"
+    },
+    {
+        "email": "admin@simbio.cat",
+        "password": "1234567"
+    },
+    {
+        "email": "alejandro.garcia@unican.es",
+        "password": "password1"
+    }
+]

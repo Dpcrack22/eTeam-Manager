@@ -1,0 +1,33 @@
+eTeam Manager — Backlog de mejoras futuras
+
+Este archivo recoge ideas para seguir ampliando la app después de cerrar la base funcional actual.
+
+Las extensiones ya completadas se han movido a "Extensiones completadas.txt".
+
+Estado: [x] hecho | [ ] pendiente
+
+======================================================================
+
+PRIORIDAD BAJA / EXPANSIÓN
+
+7. [ ] Apartado de strats
+- [ ] Crear un módulo inspirado en herramientas de planificación como Valoplant.
+- [ ] Incluir mapas, agentes, habilidades y colocación de utilidades.
+- [ ] Guardar plantillas de estrategia por mapa y equipo.
+
+8. [ ] Documentación interna para presentación
+- [ ] Resumir cómo funciona la app por fuera.
+- [ ] Resumir cómo funciona por dentro.
+- [ ] Dejar una explicación visual y técnica corta para presentar el proyecto.
+
+9. [ ] Más integración externa
+- [ ] Sincronizar estadísticas con APIs de Valorant.
+- [ ] Importar datos de partidas o imágenes de forma manual/semiautomática.
+- [ ] Abrir la puerta a integraciones con Discord o calendarios externos.
+
+======================================================================
+
+NOTA
+
+- Cualquier mejora sensible, credencial o clave externa debe mantenerse fuera de este archivo.
+- Si aparece una nueva idea útil, se puede añadir aquí por prioridad.
