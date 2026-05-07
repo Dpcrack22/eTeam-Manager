@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // check permissions in the target organization
         $allowed = false;
-        foreach ($userOrgs as $uo) {
+        foreach ($userOrganizations as $uo) {
             if ((int) $uo['id'] === (int) $targetOrgId && in_array($uo['member_role'], ['owner', 'admin', 'manager'], true)) {
                 $allowed = true;
                 break;

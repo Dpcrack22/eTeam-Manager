@@ -237,7 +237,7 @@ foreach ($teamMembers as $member) {
             </div>
 
             <?php if (!empty($successMessage)): ?>
-                <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; color: var(--text-main);">
+                <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid var(--success); color: var(--text-main);">
                     <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
                 </div>
             <?php endif; ?>

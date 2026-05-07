@@ -1,5 +1,8 @@
 <?php
-$allowedSections = [
+header('HTTP/1.1 404 Not Found');
+header('Content-Type: text/plain');
+die('Este archivo no está disponible.');
+?>
     'dashboard',
     'organizations',
     'teams',

@@ -52,4 +52,4 @@ foreach ($connectionCandidates as $candidate) {
     }
 }
 
-die('Error en connectar amb la base de dades. Revisa .env, DB_HOST, DB_NAME, DB_USER y DB_PASSWORD.');
+die('Error al conectar con la base de datos. Verifica la configuración del servidor.');

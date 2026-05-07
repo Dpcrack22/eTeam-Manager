@@ -232,20 +232,24 @@ p {
 
 .sidebar-suggestions-list {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding: 8px 0;
 }
 
 .sidebar-suggestion-item {
   display: block;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
   background: color-mix(in srgb, var(--bg-secondary) 82%, var(--bg-card));
   color: var(--text-main);
   text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 120ms ease;
 }
 
 .sidebar-suggestion-item:hover {
-  background: color-mix(in srgb, var(--color-primary) 14%, var(--bg-secondary));
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--border-subtle));
 }
 
 .sidebar-brand-block {
@@ -2916,7 +2920,7 @@ textarea:focus {
 
 .profile-hero-title {
   margin: 0;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: var(--font-weight-bold);
   line-height: var(--lh-title);
 }
@@ -2927,9 +2931,9 @@ textarea:focus {
 }
 
 .profile-hero-avatar {
-  width: 88px;
-  height: 88px;
-  border-radius: 24px;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2955,8 +2959,8 @@ textarea:focus {
 
 .profile-summary-item {
   display: grid;
-  gap: 4px;
-  padding: var(--space-3);
+  gap: 6px;
+  padding: var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   background: color-mix(in srgb, var(--bg-secondary) 82%, var(--bg-card));
@@ -3001,9 +3005,9 @@ textarea:focus {
 }
 
 .profile-avatar-preview {
-  width: 88px;
-  height: 88px;
-  border-radius: 24px;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
   object-fit: cover;
   border: 1px solid var(--border-subtle);
 }
@@ -3909,7 +3913,7 @@ textarea:focus {
 
 @media (min-width: 769px) {
   .calendar-page .calendar-layout {
-    grid-template-columns: minmax(0, 1.95fr) minmax(300px, 0.8fr);
+    grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.8fr);
     align-items: start;
   }
 
