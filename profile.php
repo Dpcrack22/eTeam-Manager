@@ -184,6 +184,8 @@ if ($profileUser) {
     <?php endif; ?>
 </section>
 <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST['action'] === 'invite_user' && isLogged()):
+        endif; ?>
+    <?php
     $inviterId = (int) ($_SESSION['user']['id'] ?? 0);
     $teamId = (int) ($_POST['team_id'] ?? 0);
     if ($teamId > 0 && $inviterId > 0 && $profileUser) {
