@@ -87,23 +87,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($teamId <= 0) {
             $errors[] = 'Selecciona un equipo válido';
         } else {
-            $team = getTeamById($conn, $teamId);
-
-            if (!$team) {
-                $errors[] = 'Selecciona un equipo válido';
+            if (!$activeOrganizationId) {
+                $errors[] = 'Necesitas seleccionar una organización activa';
             } else {
-                $teamOrganizationId = (int) ($team['organization_id'] ?? 0);
+                $team = getTeamById($conn, $teamId, $activeOrganizationId);
 
-                if ($teamOrganizationId <= 0) {
-                    $errors[] = 'No tienes acceso a ese equipo';
+                if (!$team) {
+                    $errors[] = 'Equipo no encontrado o no tienes acceso';
                 } else {
-                    $orgContext = setActiveOrganizationContext($conn, $userId, $teamOrganizationId);
+                    $teamOrganizationId = (int) ($team['organization_id'] ?? 0);
 
-                    if (empty($orgContext['success'])) {
-                        $errors[] = $orgContext['error'] ?? 'No tienes acceso a esa organización';
+                    if ($teamOrganizationId <= 0) {
+                        $errors[] = 'No tienes acceso a ese equipo';
                     } else {
-                        $orgRole = strtolower((string) ($orgContext['organization']['role'] ?? ''));
-                        $isMember = isUserActiveMember($conn, $teamId, $userId);
+                        $orgContext = setActiveOrganizationContext($conn, $userId, $teamOrganizationId);
+
+                        if (empty($orgContext['success'])) {
+                            $errors[] = $orgContext['error'] ?? 'No tienes acceso a esa organización';
+                        } else {
+                            $orgRole = strtolower((string) ($orgContext['organization']['role'] ?? ''));
+                            $isMember = isUserActiveMember($conn, $teamId, $userId);
 
                         if (!$isMember && !in_array($orgRole, ['owner', 'admin', 'manager'], true)) {
                             $errors[] = 'No tienes acceso a ese equipo';
@@ -119,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     }
                 }
+                }
             }
         }
     } elseif ($action === 'delete_team') {
@@ -127,10 +131,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($teamId <= 0) {
             $errors[] = 'Selecciona un equipo válido';
         } else {
-            $team = getTeamById($conn, $teamId);
+            if (!$activeOrganizationId) {
+                $errors[] = 'Necesitas seleccionar una organización activa';
+            } else {
+                $team = getTeamById($conn, $teamId, $activeOrganizationId);
 
-            if (!$team) {
-                $errors[] = 'Selecciona un equipo válido';
+                if (!$team) {
+                    $errors[] = 'Equipo no encontrado o no tienes acceso';
             } else {
                 $teamOrganizationId = (int) ($team['organization_id'] ?? 0);
 
@@ -164,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['flash_success'] = 'Equipo eliminado';
                     header('Location: ' . $returnTo);
                     exit;
+                }
                 }
             }
         }
@@ -228,14 +236,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
-        $userOrgs = getUserOrganizations($conn, $userId);
         $targetOrgId = 0;
         
         if ($activeOrganizationId) {
             $targetOrgId = $activeOrganizationId;
         } else {
             // Find first org where user has management permissions
-            foreach ($userOrgs as $org) {
+            foreach ($userOrganizations as $org) {
                 if (in_array($org['member_role'], ['owner', 'admin', 'manager'], true)) {
                     $targetOrgId = (int) $org['id'];
                     break;

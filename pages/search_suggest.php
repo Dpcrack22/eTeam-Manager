@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+global $conn;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -29,5 +30,7 @@ try {
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($rows ?: []);
 } catch (Throwable $e) {
-    echo json_encode([]);
+    error_log('Search suggest error: ' . $e->getMessage() . ' | Query: ' . $q . ' | Type: ' . $type);
+    http_response_code(500);
+    echo json_encode(['error' => 'Database error']);
 }
