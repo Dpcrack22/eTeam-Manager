@@ -149,6 +149,13 @@ $appModules = [
         'description' => 'Configuracion del usuario, preferencias y datos personales.',
         'page' => __DIR__ . '/../pages/settings.php',
     ],
+    'search' => [
+        'label' => 'Buscar',
+        'title' => 'Buscar',
+        'eyebrow' => 'Buscar usuarios y equipos',
+        'description' => 'Busca usuarios y equipos en la plataforma',
+        'page' => __DIR__ . '/../pages/search.php',
+    ],
 	'login' => [
 		'label' => 'Login',
 		'title' => 'Login',

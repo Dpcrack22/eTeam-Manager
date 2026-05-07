@@ -135,18 +135,18 @@ VALUES
 -- NOTE: all DEV users share the password `password123`.
 -- The app validates passwords with SHA-256 in this project.
 INSERT INTO users (
-  id, username, email, password_hash, avatar_url, bio, is_active, terms_accepted_at, email_verified_at, created_at, updated_at, last_login_at
+  id, username, email, password_hash, avatar_url, bio, profile_public, bio_public, is_active, terms_accepted_at, email_verified_at, created_at, updated_at, last_login_at
 ) VALUES
-  (1, 'parallax_owner',  'owner@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Owner del proyecto y coordinador principal.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (2, 'parallax_coach',  'coach@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Coach centrado en scrims y preparación competitiva.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (3, 'pv_ace',          'ace@parallax.gg',    'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Jugador agresivo de entry.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (4, 'pv_lumen',        'lumen@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Jugador estable para rondas clave.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (5, 'pv_nova',         'nova@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Player de apoyo y utilidades.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (6, 'pv_kairo',        'kairo@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Especialista en coordinación de equipo.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (7, 'parallax_analyst','analyst@parallax.gg','ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Analista de rivales y tendencias.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (8, 'parallax_scout',  'scout@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Perfil de scouting y revisión de rivales.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (9, 'parallax_mira',   'mira@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Miembro de apoyo en pruebas internas.', 1, NOW(), NOW(), NOW(), NOW(), NOW()),
-  (10, 'guest_try',      'guest@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Cuenta de prueba para validaciones rápidas.', 1, NOW(), NOW(), NOW(), NOW(), NOW());
+  (1, 'parallax_owner',  'owner@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Owner del proyecto y coordinador principal.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (2, 'parallax_coach',  'coach@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Coach centrado en scrims y preparación competitiva.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (3, 'pv_ace',          'ace@parallax.gg',    'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Jugador agresivo de entry.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (4, 'pv_lumen',        'lumen@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Jugador estable para rondas clave.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (5, 'pv_nova',         'nova@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Player de apoyo y utilidades.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (6, 'pv_kairo',        'kairo@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Especialista en coordinación de equipo.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (7, 'parallax_analyst','analyst@parallax.gg','ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Analista de rivales y tendencias.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (8, 'parallax_scout',  'scout@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Perfil de scouting y revisión de rivales.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (9, 'parallax_mira',   'mira@parallax.gg',   'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Miembro de apoyo en pruebas internas.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW()),
+  (10, 'guest_try',      'guest@parallax.gg',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', NULL, 'Cuenta de prueba para validaciones rápidas.', 1, 1, 1, NOW(), NOW(), NOW(), NOW(), NOW());
 
 INSERT INTO organizations (
   id, name, slug, logo_url, description, owner_id, created_at, updated_at

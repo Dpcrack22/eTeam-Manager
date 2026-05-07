@@ -1,7 +1,7 @@
 <?php
 $resolvedTitle = isset($pageTitle) ? $pageTitle . ' | eTeam Manager' : 'eTeam Manager';
 $resolvedDescription = isset($pageDescription) ? trim((string) $pageDescription) : 'eTeam Manager, plataforma interna para equipos, scrims, calendario y organización de eSports.';
-$siteLogoPath = 'assets/mini-logo.svg';
+$siteLogoPath = '/assets/mini-logo.svg';
 $mainCssPath = __DIR__ . '/../css/main.css';
 $siteLogoFile = __DIR__ . '/../' . $siteLogoPath;
 $mainCssVersion = is_file($mainCssPath)
@@ -36,6 +36,6 @@ $siteLogoVersion = is_file($siteLogoFile) ? filemtime($siteLogoFile) : time();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css?v=<?php echo (int) $mainCssVersion; ?>">
+    <link rel="stylesheet" href="/css/main.css?v=<?php echo (int) $mainCssVersion; ?>">
 </head>
 <body>

@@ -147,7 +147,7 @@ if (empty($layoutIncluded)) {
             <label class="login-remember-row <?php echo isset($errors['terms_accept']) ? 'form-group-error' : ''; ?>">
                 <input type="checkbox" name="terms_accept" value="1" <?php echo $termsAccepted ? 'checked' : ''; ?> />
                 <span>
-                    <strong>Acepto la <a href="/normativa" target="_blank">normativa de acceso</a></strong>
+                    <strong>Acepto la <a href="/normativa.html" target="_blank">normativa de acceso</a></strong>
                     <small>Necesario para crear la cuenta y entrar en la app.</small>
                 </span>
             </label>

@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 
+requireAuth();
+
 $q = trim((string) ($_GET['q'] ?? ''));
 $type = trim((string) ($_GET['type'] ?? 'users'));
 
@@ -21,7 +23,9 @@ if ($q !== '') {
     }
 }
 
+$hideSidebar = $hideSidebar ?? false;
 if (empty($layoutIncluded)) { require __DIR__ . '/../includes/layout-start.php'; }
+$shouldCloseLayout = true;
 ?>
 <section class="page">
     <div class="container">
@@ -29,7 +33,8 @@ if (empty($layoutIncluded)) { require __DIR__ . '/../includes/layout-start.php';
             <div class="small">Buscar</div>
             <h2 class="h3">Buscar usuarios y equipos</h2>
 
-            <form method="get" action="/pages/search.php" style="margin-top:12px;">
+            <form method="get" action="app.php" style="margin-top:12px;">
+                <input type="hidden" name="view" value="search" />
                 <div style="display:flex; gap:8px; align-items:center;">
                     <input id="page-search-input" name="q" type="search" placeholder="Escribe al menos 2 caracteres" value="<?php echo htmlspecialchars($q, ENT_QUOTES, 'UTF-8'); ?>" autocomplete="off" />
                     <select id="page-search-type" name="type" aria-label="Tipo">

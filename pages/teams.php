@@ -229,10 +229,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
         $userOrgs = getUserOrganizations($conn, $userId);
-        $targetOrgId = $activeOrganizationId ?: ($userOrgs[0]['id'] ?? 0);
+        $targetOrgId = 0;
+        
+        if ($activeOrganizationId) {
+            $targetOrgId = $activeOrganizationId;
+        } else {
+            // Find first org where user has management permissions
+            foreach ($userOrgs as $org) {
+                if (in_array($org['member_role'], ['owner', 'admin', 'manager'], true)) {
+                    $targetOrgId = (int) $org['id'];
+                    break;
+                }
+            }
+        }
 
         if ($targetOrgId <= 0) {
-            $errors[] = 'Primero necesitas un contexto activo';
+            $errors[] = 'No tienes permisos en ninguna organización para crear equipos';
         }
 
         if ($teamName === '') {
@@ -353,7 +365,7 @@ if ($userId && !empty($teams)) {
         </div>
 
         <?php if (!empty($successMessage)): ?>
-            <div class="error-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; color: var(--text-main);">
+            <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid var(--success); color: var(--text-main);">
                 <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endif; ?>

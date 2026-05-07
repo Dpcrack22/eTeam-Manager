@@ -9,6 +9,7 @@ if (!isset($appNavItems)) {
         'calendar' => ['label' => 'Calendario', 'href' => 'app.php?view=calendar'],
         'boards' => ['label' => 'Tableros', 'href' => 'app.php?view=boards'],
         'notes' => ['label' => 'Notas', 'href' => 'app.php?view=notes'],
+        'search' => ['label' => 'Buscar', 'href' => 'app.php?view=search'],
         'settings' => ['label' => 'Configuracion', 'href' => 'app.php?view=settings'],
     ];
 }
@@ -30,7 +31,7 @@ if (!isset($appNavItems)) {
             <div style="margin-top:12px;">
                 <p class="small">Busca usuarios o equipos desde la página de búsqueda.</p>
                 <div class="stack-sm">
-                    <a class="btn btn-primary" href="/pages/search.php">Abrir búsqueda</a>
+                    <a class="btn btn-primary" href="app.php?view=search">Abrir búsqueda</a>
                 </div>
             </div>
         </div>
