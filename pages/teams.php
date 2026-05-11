@@ -279,16 +279,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // check permissions in the target organization
-        $allowed = false;
+        $isMemberOfOrg = false;
         foreach ($userOrganizations as $uo) {
-            if ((int) $uo['id'] === (int) $targetOrgId && in_array($uo['member_role'], ['owner', 'admin', 'manager'], true)) {
-                $allowed = true;
+            if ((int) $uo['id'] === (int) $targetOrgId) {
+                $isMemberOfOrg = true;
                 break;
             }
         }
 
-        if (!$allowed) {
-            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
+        if (!$isMemberOfOrg && $targetOrgId > 0) {
+            $errors[] = 'No perteneces a la organización seleccionada para crear un equipo';
         }
 
         if (empty($errors)) {
@@ -301,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $teamDescription !== '' ? $teamDescription : null
             );
 
-            $joinResult = joinTeam($conn, $newTeamId, $userId, 'coach');
+            $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
             if (empty($joinResult['success'])) {
                 $errors[] = $joinResult['error'] ?? 'No se ha podido añadirte como miembro del equipo';
             } else {
@@ -506,7 +506,21 @@ if ($userId && !empty($teams)) {
             <button class="btn btn-primary" type="submit">Crear equipo</button>
         </form>
 
-        <?php if ($canManageInvitations && $activeTeamId !== null): ?>
+        <?php 
+            // Verificamos si el usuario es el coach (u otro rol con permisos) del equipo activo
+            $isTeamManager = false;
+            if ($activeTeam) {
+                // Si el usuario es el creador/coach del equipo activo según la lista de sus equipos
+                foreach ($teams as $t) {
+                    if ((int)$t['id'] === (int)$activeTeamId && $t['member_role'] === 'owner') {
+                        $isTeamManager = true;
+                        break;
+                    }
+                }
+            }
+        ?>
+
+        <?php if (($canManageInvitations || $isTeamManager) && $activeTeamId !== null): ?>
             <div class="team-invite-panel" style="margin-top: 20px;">
                 <div class="dashboard-section-head">
                     <div>
