@@ -20,7 +20,7 @@ if ($q !== '') {
         $searchTerm = '%' . $q . '%';
         if ($type === 'teams') {
             // Consulta simplificada para evitar fallos de columnas
-            $stmt = $conn->prepare('SELECT id, name, tag, description FROM teams WHERE name LIKE :q OR tag LIKE :q LIMIT 20');
+            $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 50');
         } else {
             $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q LIMIT 20');
         }
@@ -120,4 +120,5 @@ if ($q !== '') {
     .btn-sm { padding: 6px 12px; border-radius: 5px; cursor: pointer; border: none; font-weight: 500; }
     .btn-primary { background: #6366f1; color: white; }
     .btn-secondary { background: #f3f4f6; color: #374151; }
+    .btn-tercero { background: #000000; color: #f3f4f6; }
 </style>
