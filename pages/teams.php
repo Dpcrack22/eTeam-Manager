@@ -285,39 +285,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($teamName === '') { $errors[] = 'El nombre del equipo es obligatorio'; }
         if ($gameId <= 0) { $errors[] = 'Selecciona un juego'; }
 
-        // 4. Verificación de duplicados
         if (empty($errors) && $targetOrgId > 0) {
             if (teamExistsByNameAndGame($conn, $targetOrgId, $teamName, $gameId)) {
-                $errors[] = 'Ya tienes un equipo con ese nombre para ese juego';
-            }
-        }
+                $errors[] = 'Ya existe este equipo en la organización';
+            } else {
+                $newTeamId = createTeam($conn, $targetOrgId, $gameId, $teamName, $teamTag ?: null, $teamDescription ?: null);
 
-        // 5. Creación del equipo y asignación como OWNER
-        if (empty($errors) && $targetOrgId > 0) {
-            $newTeamId = createTeam(
-                $conn,
-                $targetOrgId,
-                $gameId,
-                $teamName,
-                $teamTag !== '' ? $teamTag : null,
-                $teamDescription !== '' ? $teamDescription : null
-            );
-
-            if ($newTeamId) {
-                // Te unes como OWNER del equipo
-                $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
-                
-                if (!empty($joinResult['success'])) {
+                if ($newTeamId) {
+                    joinTeam($conn, $newTeamId, $userId, 'owner');
+                    
+                    // Sincronizar contextos para que al recargar todo esté en su sitio
                     setActiveOrganizationContext($conn, $userId, $targetOrgId);
                     setActiveTeamContext($conn, $targetOrgId, $newTeamId);
-                    $_SESSION['flash_success'] = '¡Equipo creado con éxito!';
+                    
+                    $_SESSION['flash_success'] = '¡Equipo creado correctamente!';
                     header('Location: ' . $returnTo);
                     exit;
                 } else {
-                    $errors[] = $joinResult['error'] ?? 'Error al unirse al equipo';
+                    $errors[] = 'Error al crear el equipo';
                 }
-            } else {
-                $errors[] = 'No se pudo crear el equipo';
             }
         }
     } else if ($action === "unjoin_team") {
@@ -339,12 +325,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-    // refresh teams list according to current context (member teams only)
-    if ($activeOrganizationId && $userId) {
-        $teams = getUserOrganizationTeams($conn, (int) $activeOrganizationId, $userId);
+// --- REFRESCO FINAL DE DATOS (IMPORTANTE PARA LA VISTA) ---
+// Volvemos a cargar los equipos después de cualquier POST para que el HTML muestre la realidad
+if ($activeOrganizationId && $userId) {
+    $teams = getUserOrganizationTeams($conn, (int) $activeOrganizationId, $userId);
+    
+    // Si el usuario acaba de unirse o crear, asegurar que activeTeam no sea null
+    if (!$activeTeamId && !empty($teams)) {
+        $activeTeamId = (int) $teams[0]['id'];
+        $activeTeam = $teams[0];
     } else {
-        $teams = [];
+        foreach ($teams as $t) {
+            if ((int)$t['id'] === (int)$activeTeamId) {
+                $activeTeam = $t;
+                break;
+            }
+        }
     }
+}
 
 // build membership map for current user to show only active-member actions
 $userTeamIds = [];
