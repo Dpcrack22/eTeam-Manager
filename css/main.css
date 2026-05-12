@@ -3986,7 +3986,7 @@ textarea:focus {
 }
 
 @media (min-width: 769px) {
-  .calendar-page .calendar-layout {
+  .calendar-page .calendar-layout:not(.calendar-layout--stacked) {
     grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.8fr);
     align-items: start;
   }
