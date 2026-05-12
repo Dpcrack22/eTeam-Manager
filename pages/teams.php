@@ -234,41 +234,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
+        // 1. Determinar la organización destino (la activa o la primera que tenga)
         $targetOrgId = 0;
-        $allowedRoles = ['owner', 'admin', 'manager'];
-
         foreach ($userOrganizations as $org) {
-            if ((int) $org['id'] !== (int) $activeOrganizationId && $activeOrganizationId > 0) {
-                continue;
-            }
-
-            if (in_array((string) ($org['member_role'] ?? ''), $allowedRoles, true)) {
+            if ($activeOrganizationId > 0 && (int) $org['id'] === (int) $activeOrganizationId) {
                 $targetOrgId = (int) $org['id'];
                 break;
             }
         }
-
-        if ($targetOrgId <= 0) {
-            foreach ($userOrganizations as $org) {
-                if (in_array((string) ($org['member_role'] ?? ''), $allowedRoles, true)) {
-                    $targetOrgId = (int) $org['id'];
-                    break;
-                }
-            }
+        
+        // Si no hay activa, cogemos la primera disponible
+        if ($targetOrgId <= 0 && !empty($userOrganizations)) {
+            $targetOrgId = (int) $userOrganizations[0]['id'];
         }
 
+        // 2. Validaciones básicas
         if ($targetOrgId <= 0) {
-            $errors[] = 'No tienes permisos en ninguna organización para crear equipos';
+            $errors[] = 'No perteneces a ninguna organización para crear un equipo';
         }
-
         if ($teamName === '') {
             $errors[] = 'El nombre del equipo es obligatorio';
         }
-
         if ($gameId <= 0) {
             $errors[] = 'Selecciona un juego';
         }
 
+        // 3. Verificar si el juego existe
         $gameExists = false;
         foreach ($games as $game) {
             if ((int) $game['id'] === $gameId) {
@@ -276,47 +267,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
         }
-
         if (!$gameExists) {
             $errors[] = 'El juego seleccionado no es válido';
         }
 
-        if (empty($errors) && teamExistsByNameAndGame($conn, (int) $targetOrgId, $teamName, $gameId)) {
-            $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
-        }
-
-        // --- BUSCA ESTO (Aproximadamente línea 258) ---
-        $allowed = false;
-        foreach ($userOrganizations as $uo) {
-            if ((int) $uo['id'] === (int) $targetOrgId && in_array($uo['member_role'], ['owner', 'admin', 'manager'], true)) {
-                $allowed = true;
-                break;
+        // 4. Verificar duplicados y permisos de miembro
+        if (empty($errors)) {
+            if (teamExistsByNameAndGame($conn, $targetOrgId, $teamName, $gameId)) {
+                $errors[] = 'Ya existe un equipo con ese nombre para ese juego en esta organización';
+            }
+            
+            // Verificamos que sea miembro (no importa el rol)
+            $isMemberOfOrg = false;
+            foreach ($userOrganizations as $uo) {
+                if ((int) $uo['id'] === $targetOrgId) {
+                    $isMemberOfOrg = true;
+                    break;
+                }
+            }
+            if (!$isMemberOfOrg) {
+                $errors[] = 'No tienes permiso para crear equipos en esta organización';
             }
         }
 
-        if (!$allowed) {
-            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
-        }
-
-        // --- REEMPLÁZALO POR ESTO ---
-        $isMemberOfOrg = false;
-        foreach ($userOrganizations as $uo) {
-            if ((int) $uo['id'] === (int) $targetOrgId) {
-                $isMemberOfOrg = true;
-                break;
-            }
-        }
-
-        // Si no es miembro, podrías dejar que lo cree igual si tu lógica de negocio lo permite, 
-        // pero aquí validamos que al menos pertenezca a la organización actual.
-        if (!$isMemberOfOrg && $targetOrgId > 0) {
-            $errors[] = 'No tienes permiso para crear equipos en esta organización';
-        }
-
-        if (!$isAllowedInOrg && $targetOrgId > 0) {
-            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
-        }
-
+        // 5. Creación y Auto-Join como OWNER del equipo
         if (empty($errors)) {
             $newTeamId = createTeam(
                 $conn,
@@ -327,15 +301,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $teamDescription !== '' ? $teamDescription : null
             );
 
-            $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
-            if (empty($joinResult['success'])) {
-                $errors[] = $joinResult['error'] ?? 'No se ha podido añadirte como miembro del equipo';
+            if ($newTeamId) {
+                // AQUÍ ES DONDE TE HACES OWNER DEL EQUIPO
+                $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
+                
+                if (empty($joinResult['success'])) {
+                    $errors[] = $joinResult['error'] ?? 'Equipo creado, pero no pudiste unirte automáticamente';
+                } else {
+                    setActiveOrganizationContext($conn, $userId, $targetOrgId);
+                    setActiveTeamContext($conn, $targetOrgId, $newTeamId);
+                    $_SESSION['flash_success'] = 'Equipo creado exitosamente. Ahora eres el responsable.';
+                    header('Location: ' . $returnTo);
+                    exit;
+                }
             } else {
-                setActiveOrganizationContext($conn, $userId, (int) $targetOrgId);
-                setActiveTeamContext($conn, $targetOrgId, $newTeamId);
-                $_SESSION['flash_success'] = 'Equipo creado y marcado como activo';
-                header('Location: ' . $returnTo);
-                exit;
+                $errors[] = 'Error crítico al crear el equipo en la base de datos';
             }
         }
     } else if ($action === "unjoin_team") {
