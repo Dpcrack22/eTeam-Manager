@@ -70,13 +70,13 @@ $pageDescription = $pageDescription ?? 'Resumen operativo del modulo actual.';
                         </div>
                         <a class="app-user-menu-item" href="index.php">Inicio</a>
                         <a class="app-user-menu-item" href="profile.php?user=<?php echo urlencode((string) $appCurrentUser['name']); ?>">Perfil público</a>
-                        <a class="app-user-menu-item" href="app.php?view=dashboard">Dashboard</a>
+                        <a class="app-user-menu-item" href="app.php?view=dashboard">Panel</a>
                         <a class="app-user-menu-item" href="app.php?view=teams">Equipos</a>
                         <a class="app-user-menu-item" href="app.php?view=calendar">Calendario</a>
                         <?php if (!empty($appCanModerateOrganization)): ?>
                             <a class="app-user-menu-item" href="admin.php">Administracion</a>
                         <?php endif; ?>
-                        <a class="app-user-menu-item" href="app.php?view=settings">Mi perfil</a>
+                        <a class="app-user-menu-item" href="app.php?view=settings">Ajustes</a>
                         <a class="app-user-menu-item" href="includes/logout.php">Cerrar sesión</a>
                     </div>
                 </details>

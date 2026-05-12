@@ -229,21 +229,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = $result['error'] ?? 'No se ha podido rechazar la invitación';
         }
     } elseif ($action === 'create_team') {
-        // allow creating a team even if there's no active organization by falling back
-        // to the first organization the user belongs to (if any)
         $teamName = trim((string) ($_POST['name'] ?? ''));
         $teamTag = trim((string) ($_POST['tag'] ?? ''));
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
         $targetOrgId = 0;
-        
-        if ($activeOrganizationId) {
-            $targetOrgId = $activeOrganizationId;
-        } else {
-            // Find first org where user has management permissions
+        $allowedRoles = ['owner', 'admin', 'manager'];
+
+        foreach ($userOrganizations as $org) {
+            if ((int) $org['id'] !== (int) $activeOrganizationId && $activeOrganizationId > 0) {
+                continue;
+            }
+
+            if (in_array((string) ($org['member_role'] ?? ''), $allowedRoles, true)) {
+                $targetOrgId = (int) $org['id'];
+                break;
+            }
+        }
+
+        if ($targetOrgId <= 0) {
             foreach ($userOrganizations as $org) {
-                if (in_array($org['member_role'], ['owner', 'admin', 'manager'], true)) {
+                if (in_array((string) ($org['member_role'] ?? ''), $allowedRoles, true)) {
                     $targetOrgId = (int) $org['id'];
                     break;
                 }
@@ -278,17 +285,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
         }
 
-        // check permissions in the target organization
-        $isMemberOfOrg = false;
+        $isAllowedInOrg = false;
         foreach ($userOrganizations as $uo) {
-            if ((int) $uo['id'] === (int) $targetOrgId) {
-                $isMemberOfOrg = true;
+            if ((int) $uo['id'] === (int) $targetOrgId && in_array((string) ($uo['member_role'] ?? ''), $allowedRoles, true)) {
+                $isAllowedInOrg = true;
                 break;
             }
         }
 
-        if (!$isMemberOfOrg && $targetOrgId > 0) {
-            $errors[] = 'No perteneces a la organización seleccionada para crear un equipo';
+        if (!$isAllowedInOrg && $targetOrgId > 0) {
+            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
         }
 
         if (empty($errors)) {
@@ -357,7 +363,7 @@ if ($userId && !empty($teams)) {
     <div class="card">
         <?php if (!$activeOrganizationId): ?>
             <div class="dashboard-empty-state" style="margin-bottom: 16px;">
-                        Todavía no tienes un contexto activo. Primero necesitas acceder a un equipo para poder gestionarlo.
+                        No tienes un equipo activo. Activa uno para gestionar el contenido desde aquí.
             </div>
         <?php endif; ?>
 

@@ -392,7 +392,7 @@ $pageDescription = $pageDescription ?? 'Gestion visual de organizaciones, miembr
 
                 <div class="field">
                     <label for="new_org_name">Nombre</label>
-                    <input id="new_org_name" name="name" type="text" placeholder="Parallax Esports" />
+                    <input id="new_org_name" name="name" type="text" placeholder="Nombre de la organización" />
                 </div>
 
                 <div class="field">

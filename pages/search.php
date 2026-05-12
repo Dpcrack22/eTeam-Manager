@@ -14,6 +14,7 @@ $currentUserRole = strtolower((string)($_SESSION['user']['role'] ?? ''));
 // Verificamos si es Owner o Admin (ajusta los strings según tu BD)
 $isPrivileged = in_array($currentUserRole, ['owner', 'admin', 'manager']);
 
+$results = [];
 if ($q !== '') {
     global $conn;
     try {
@@ -105,8 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         }
     }
 }
-?>
 
+$hideSidebar = $hideSidebar ?? false;
+if (empty($layoutIncluded)) { require __DIR__ . '/../includes/layout-start.php'; }
+$shouldCloseLayout = true;
+?>
 <section class="page">
     <div class="container">
         <div class="card">
@@ -129,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     
                     <button class="btn btn-primary" type="submit" style="padding: 0 25px;">Buscar</button>
                 </div>
+                <div id="page-search-suggestions" class="sidebar-search-suggestions" aria-hidden="true" style="margin-top:8px;"></div>
             </form>
 
             <div class="results-container">

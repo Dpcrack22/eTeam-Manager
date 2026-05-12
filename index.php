@@ -6,7 +6,7 @@
     <title>eTeam Manager — Gestion interna para equipos de eSports</title>
     <meta name="description" content="eTeam Manager es una plataforma interna para organizar equipos de eSports, scrims, calendario, tareas y notas desde un solo sitio.">
     <meta name="keywords" content="eSports, gestion de equipos, scrims, calendario, kanban, notas, roster, eTeam Manager">
-    <meta name="author" content="Parallax Esports">
+    <meta name="author" content="eTeam Manager">
     <meta name="robots" content="index,follow">
     <meta name="theme-color" content="#FF4655">
     <meta property="og:site_name" content="eTeam Manager">
@@ -57,7 +57,7 @@ $isLogged = isLogged();
                     <a class="landing-link" href="#roles">Roles</a>
                     <a class="landing-link" href="#contacto">Contacto</a>
                     <?php if ($isLogged): ?>
-                        <a class="landing-link" id="login-register" href="app.php?view=settings">Mi perfil</a>
+                        <a class="landing-link" id="login-register" href="app.php?view=dashboard">Panel</a>
                     <?php else: ?>
                         <a class="landing-link" id="login-register" href="login.php">Acceso</a>
                     <?php endif; ?>
@@ -99,20 +99,20 @@ $isLogged = isLogged();
 
                 <div class="landing-stat-strip" aria-label="Datos clave del proyecto">
                     <div class="card landing-stat-card">
-                        <div class="landing-stat-value">Teams</div>
-                        <div class="small">gestion de equipos y roster</div>
+                        <div class="landing-stat-value">Equipos</div>
+                        <div class="small">gestión de rosters y miembros</div>
                     </div>
                     <div class="card landing-stat-card">
                         <div class="landing-stat-value">Scrims</div>
                         <div class="small">registro de resultados y mapas</div>
                     </div>
                     <div class="card landing-stat-card">
-                        <div class="landing-stat-value">Boards</div>
+                        <div class="landing-stat-value">Tableros</div>
                         <div class="small">tareas y seguimiento interno</div>
                     </div>
                     <div class="card landing-stat-card">
-                        <div class="landing-stat-value">Notes</div>
-                        <div class="small">documentacion y estrategia</div>
+                        <div class="landing-stat-value">Notas</div>
+                        <div class="small">documentación y estrategia</div>
                     </div>
                 </div>
             </div>
@@ -282,7 +282,7 @@ $isLogged = isLogged();
                 <div class="landing-grid landing-grid-2">
                     <div class="card">
                         <h3 class="h3">Email</h3>
-                        <p style="margin-bottom: 0;"><a class="badge" href="mailto:contacto@parallax.gg">contacto@parallax.gg</a></p>
+                        <p style="margin-bottom: 0;"><a class="badge" href="mailto:eteammanager2@gmail.com">eteammanager2@gmail.com</a></p>
                     </div>
                     <div class="card">
                         <h3 class="h3">Estado del producto</h3>
@@ -310,7 +310,7 @@ $isLogged = isLogged();
                 <a class="landing-link" href="#contacto">Contacto</a>
                 <a class="landing-link" href="login.php">Acceso</a>
             </div>
-            <div class="small">© 2026 Parallax Esports. Todos los derechos reservados.</div>
+            <div class="small">© 2026 eTeam Manager</div>
         </div>
     </footer>
 
