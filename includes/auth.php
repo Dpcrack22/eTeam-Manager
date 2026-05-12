@@ -260,23 +260,23 @@ function login($email, $password, bool $rememberMe = false)
         if (!$user) {
             return [
                 'success' => false,
-                'error' => 'Correu electrònic no registrat',
-                'errors' => ['email' => 'No existeix cap compte amb aquest correu electrònic'],
+                'error' => 'Correo electrónico no registrado',
+                'errors' => ['email' => 'No existe ninguna cuenta con ese correo electrónico'],
             ];
         }
 
         if (!(int) $user['is_active']) {
             return [
                 'success' => false,
-                'error' => 'Compte pendent de validació',
-                'errors' => ['general' => 'La teva compte està pendent de validació.'],
+                'error' => 'Cuenta pendiente de validación',
+                'errors' => ['general' => 'Tu cuenta está pendiente de validación.'],
             ];
         }
 
         if (empty($user['email_verified_at'])) {
             return [
                 'success' => false,
-                'error' => 'Correo pendiente de verificacion',
+                'error' => 'Correo pendiente de verificación',
                 'errors' => ['general' => 'Debes verificar tu correo antes de entrar.'],
             ];
         }
@@ -396,6 +396,7 @@ function safeReturnToTarget(?string $returnTo, string $fallback = 'app.php?view=
         str_starts_with($returnTo, 'reset-password.php') ||
         str_starts_with($returnTo, 'login-code.php') ||
         str_starts_with($returnTo, 'normativa.html') ||
+        str_starts_with($returnTo, 'normativa.php') ||
         $returnTo === 'login.php' ||
         $returnTo === 'register.php' ||
         $returnTo === 'index.php' ||

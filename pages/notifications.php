@@ -127,7 +127,7 @@ function notificationViewLink(array $notification): string
 }
 
 $pageTitle = 'Notificaciones';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Centro de avisos, invitaciones y actividad reciente para el usuario autenticado.';
 $activeSection = 'notifications';
 ?>

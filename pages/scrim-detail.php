@@ -43,7 +43,7 @@ if ($activeTeamId !== null) {
 
 $pageScripts[] = 'js/modules/scrim-detail.js';
 $pageTitle = 'Detalle de scrim';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Resumen competitivo del enfrentamiento con mapas, score y espacio para análisis posterior.';
 $activeSection = 'scrims';
 ?>

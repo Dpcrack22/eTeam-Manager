@@ -226,7 +226,7 @@ foreach ($teamMembers as $member) {
         <div class="dashboard-empty-state">No hay un equipo seleccionado todavía. Vuelve al listado para crear uno o abre un roster existente.</div>
     </div>
 <?php else: ?>
-    <div class="grid-2">
+    <div class="grid-2 team-detail-layout">
         <div class="card">
             <div class="dashboard-section-head">
                 <div>

@@ -2770,6 +2770,21 @@ textarea:focus {
   overflow: hidden;
 }
 
+.success-box {
+  width: 100%;
+  max-width: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.16), rgba(46, 204, 113, 0.08));
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  border-left: 5px solid rgba(39, 174, 96, 0.92);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
 .calendar-event-pill {
   appearance: none;
   width: 100%;
@@ -2963,6 +2978,10 @@ textarea:focus {
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
   gap: var(--space-5);
   align-items: start;
+}
+
+.team-detail-layout {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .profile-summary-grid {

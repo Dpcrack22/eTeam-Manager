@@ -57,7 +57,7 @@ if ($activeTeamId !== null) {
 
 $pageScripts[] = 'js/modules/scrims.js';
 $pageTitle = 'Scrims';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Listado competitivo del roster activo con filtros por estado, acceso al detalle y entrada al formulario de alta o edición.';
 $activeSection = 'scrims';
 $statusOptions = getScrimStatusOptions();

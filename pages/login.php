@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $errors = $result['errors'] ?? ['login' => $result['error'] ?? 'Usuario o contraseña incorrectos'];
 
-        if (($result['error'] ?? '') === 'Correo pendiente de verificacion') {
+        if (($result['error'] ?? '') === 'Correo pendiente de verificación') {
             $errors['verification'] = 'Debes verificar tu correo antes de entrar. Usa la página de verificación o revisa el email.';
         }
     }
@@ -75,7 +75,7 @@ if (empty($layoutIncluded)) {
 ?>
 <div class="auth-page">
     <?php if ($verificationSuccess !== ''): ?>
-        <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 24px; border-left: 4px solid #2ecc71; color: var(--text-main); width: min(100%, 640px);">
+        <div class="success-box" style="margin-bottom: 24px; width: min(100%, 640px);">
             <?php echo htmlspecialchars($verificationSuccess, ENT_QUOTES, 'UTF-8'); ?>
         </div>
     <?php endif; ?>

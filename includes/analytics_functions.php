@@ -11,6 +11,7 @@ function getTeamAnalyticsSummary(PDO $conn, int $teamId): array
             COALESCE(SUM(CASE WHEN result = "loss" THEN 1 ELSE 0 END), 0) AS losses,
             COALESCE(SUM(CASE WHEN result = "draw" THEN 1 ELSE 0 END), 0) AS draws,
             COALESCE(SUM(CASE WHEN result = "pending" THEN 1 ELSE 0 END), 0) AS pending,
+            COALESCE(SUM(CASE WHEN result IN ("win", "loss", "draw") THEN 1 ELSE 0 END), 0) AS resolved_scrims,
             COALESCE(AVG(CASE WHEN score_for IS NOT NULL AND score_against IS NOT NULL THEN score_for - score_against END), 0) AS avg_score_diff,
             COALESCE(AVG(score_for), 0) AS avg_score_for,
             COALESCE(AVG(score_against), 0) AS avg_score_against,
@@ -37,6 +38,7 @@ function getTeamAnalyticsSummary(PDO $conn, int $teamId): array
     $losses = (int) ($row['losses'] ?? 0);
     $draws = (int) ($row['draws'] ?? 0);
     $pending = (int) ($row['pending'] ?? 0);
+    $resolvedScrims = (int) ($row['resolved_scrims'] ?? 0);
 
     return [
         'total_scrims' => $totalScrims,
@@ -44,7 +46,8 @@ function getTeamAnalyticsSummary(PDO $conn, int $teamId): array
         'losses' => $losses,
         'draws' => $draws,
         'pending' => $pending,
-        'win_rate' => $totalScrims > 0 ? round(($wins / $totalScrims) * 100, 1) : 0,
+        'resolved_scrims' => $resolvedScrims,
+        'win_rate' => $resolvedScrims > 0 ? round(($wins / $resolvedScrims) * 100, 1) : 0,
         'avg_score_diff' => round((float) ($row['avg_score_diff'] ?? 0), 1),
         'avg_score_for' => round((float) ($row['avg_score_for'] ?? 0), 1),
         'avg_score_against' => round((float) ($row['avg_score_against'] ?? 0), 1),
@@ -66,7 +69,7 @@ function getTeamAnalyticsMapStats(PDO $conn, int $teamId): array
          FROM match_maps mm
          INNER JOIN matches m ON m.id = mm.match_id
          INNER JOIN game_maps gm ON gm.id = mm.map_id
-         WHERE m.team_id = :team_id AND m.match_type = "scrim"
+         WHERE m.team_id = :team_id AND m.match_type = "scrim" AND m.result IN ("win", "loss", "draw")
          GROUP BY gm.id, gm.name
          ORDER BY times_played DESC, wins DESC, gm.name ASC
          LIMIT 5'
@@ -102,7 +105,7 @@ function getTeamAnalyticsOpponentStats(PDO $conn, int $teamId): array
             COALESCE(SUM(CASE WHEN result = "draw" THEN 1 ELSE 0 END), 0) AS draws,
             COALESCE(AVG(CASE WHEN score_for IS NOT NULL AND score_against IS NOT NULL THEN score_for - score_against END), 0) AS avg_score_diff
          FROM matches
-         WHERE team_id = :team_id AND match_type = "scrim"
+         WHERE team_id = :team_id AND match_type = "scrim" AND result IN ("win", "loss", "draw")
          GROUP BY opponent_name, opponent_tag
          ORDER BY total_matches DESC, wins DESC, opponent_name ASC
          LIMIT 5'

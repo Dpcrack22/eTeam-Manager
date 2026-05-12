@@ -35,7 +35,7 @@ $mapStats = $activeTeam ? getTeamAnalyticsMapStats($conn, (int) $activeTeamId) :
 $opponentStats = $activeTeam ? getTeamAnalyticsOpponentStats($conn, (int) $activeTeamId) : [];
 $recentMatches = $activeTeam ? getTeamAnalyticsRecentMatches($conn, (int) $activeTeamId, 5) : [];
 
-$pageTitle = 'Analitica del equipo';
+$pageTitle = 'Analítica del equipo';
 $pageEyebrow = 'Módulo';
 $pageDescription = 'Resumen competitivo del roster activo con victorias, mapas, rivales y scrims recientes.';
 $activeSection = 'analytics';
@@ -45,7 +45,7 @@ $activeSection = 'analytics';
     <div class="dashboard-hero card">
         <div>
             <div class="small">Seguimiento competitivo</div>
-            <h2 class="h2">Analitica del equipo</h2>
+            <h2 class="h2">Analítica del equipo</h2>
             <p>Este panel resume el rendimiento del roster activo con victorias, mapas jugados, rivales y la evolución reciente de los scrims.</p>
             <div class="stack-sm">
                 <span class="badge badge-info"><?php echo (int) $summary['total_scrims']; ?> scrims</span>
@@ -59,7 +59,7 @@ $activeSection = 'analytics';
                 <div class="dashboard-hero-value"><?php echo htmlspecialchars($activeTeam['name'] ?? 'Sin equipo', ENT_QUOTES, 'UTF-8'); ?></div>
             </div>
             <div class="dashboard-hero-chip">
-                <div class="small">Ultimo scrim</div>
+                <div class="small">Último scrim</div>
                 <div class="dashboard-hero-value"><?php echo !empty($summary['last_match_at']) ? htmlspecialchars(date('d/m/Y', strtotime((string) $summary['last_match_at'])), ENT_QUOTES, 'UTF-8') : 'Sin datos'; ?></div>
             </div>
         </div>
@@ -67,7 +67,7 @@ $activeSection = 'analytics';
 
     <?php if (!$activeTeam): ?>
         <div class="card dashboard-empty-state">
-            Todavia no hay un equipo activo para calcular analitica. Activa un equipo desde Equipos para ver sus datos competitivos.
+            Todavía no hay un equipo activo para calcular analítica. Activa un equipo desde Equipos para ver sus datos competitivos.
         </div>
     <?php else: ?>
         <div class="analytics-summary-grid">
@@ -79,7 +79,7 @@ $activeSection = 'analytics';
             <article class="card analytics-stat-card">
                 <div class="small">Win rate</div>
                 <div class="analytics-stat-value"><?php echo (float) $summary['win_rate']; ?>%</div>
-                <div class="small">Pendientes: <?php echo (int) $summary['pending']; ?></div>
+                <div class="small">Pendientes: <?php echo (int) $summary['pending']; ?> · Resueltas: <?php echo (int) $summary['resolved_scrims']; ?></div>
             </article>
             <article class="card analytics-stat-card">
                 <div class="small">Diferencia media</div>
@@ -168,7 +168,7 @@ $activeSection = 'analytics';
             </div>
 
             <?php if (empty($recentMatches)): ?>
-                <div class="dashboard-empty-state">Todavia no hay scrims recientes para mostrar.</div>
+                <div class="dashboard-empty-state">Todavía no hay scrims recientes para mostrar.</div>
             <?php else: ?>
                 <div class="analytics-recent-list">
                     <?php foreach ($recentMatches as $match): ?>

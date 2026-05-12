@@ -131,7 +131,7 @@ $isLogged = isLogged();
                         <p>Muestra un resumen general con el equipo activo, eventos cercanos, scrims recientes y tareas pendientes.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-info">Vista general</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=team-detail">
@@ -139,7 +139,7 @@ $isLogged = isLogged();
                         <p>Permite abrir el roster del equipo, ver miembros y ajustar roles internos sin salir del contexto operativo.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Roster</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=teams">
@@ -147,7 +147,7 @@ $isLogged = isLogged();
                         <p>Permite gestionar varios equipos, ver el detalle del roster y organizar jugadores, coach o analyst.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Roster</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=scrims">
@@ -155,7 +155,7 @@ $isLogged = isLogged();
                         <p>Permite registrar scrims con rival, fecha, resultado, score y mapas jugados para llevar historial competitivo.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-success">Competitivo</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=calendar">
@@ -163,7 +163,7 @@ $isLogged = isLogged();
                         <p>Permite programar eventos como entrenamientos, reuniones, torneos o scrims con fecha, lugar y estados de asistencia.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-info">Eventos</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=boards">
@@ -171,7 +171,7 @@ $isLogged = isLogged();
                         <p>Permite gestionar tareas del staff o del equipo en columnas, con prioridad, fecha limite y persona asignada.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-warning">Tareas</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=notes">
@@ -179,7 +179,7 @@ $isLogged = isLogged();
                         <p>Sirve para guardar analisis de rivales, estrategias, ideas de trabajo y apuntes internos etiquetados.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Estrategia</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=settings">
@@ -187,7 +187,7 @@ $isLogged = isLogged();
                         <p>Permite editar los datos del usuario, el avatar, el correo, la contrasena y otras preferencias personales.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Cuenta</span>
-                            <span class="landing-feature-link">Abrir modulo</span>
+                            <span class="landing-feature-link">Abrir módulo</span>
                         </div>
                     </a>
                 </div>

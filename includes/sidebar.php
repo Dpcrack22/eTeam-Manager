@@ -10,7 +10,7 @@ if (!isset($appNavItems)) {
         'boards' => ['label' => 'Tableros', 'href' => 'app.php?view=boards'],
         'notes' => ['label' => 'Notas', 'href' => 'app.php?view=notes'],
         'search' => ['label' => 'Buscar', 'href' => 'app.php?view=search'],
-        'settings' => ['label' => 'Configuracion', 'href' => 'app.php?view=settings'],
+        'settings' => ['label' => 'Configuración', 'href' => 'app.php?view=settings'],
     ];
 }
 ?>

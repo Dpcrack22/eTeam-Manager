@@ -206,7 +206,7 @@ if (empty($scrimMaps)) {
 
 $pageScripts[] = 'js/modules/scrim-form.js';
 $pageTitle = $scrim ? 'Editar scrim' : 'Nuevo scrim';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = $scrim ? 'Edición del enfrentamiento competitivo y sus mapas.' : 'Alta de un nuevo enfrentamiento con score, modo y mapas.';
 $activeSection = 'scrims';
 ?>

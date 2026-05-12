@@ -17,7 +17,7 @@ $errors = [];
 $successMessage = '';
 
 if (!$canManageModeration) {
-    $errors[] = 'No tienes permisos para acceder al panel de administracion';
+    $errors[] = 'No tienes permisos para acceder al panel de administración';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $canManageModeration) {
@@ -93,8 +93,8 @@ $activeSection = 'admin';
 <section class="admin-page">
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Administracion interna</div>
-            <h2 class="h2">Panel de administracion</h2>
+            <div class="small">Administración interna</div>
+            <h2 class="h2">Panel de administración</h2>
             <p>Desde aquí puedes moderar miembros de la organización activa, suspender o banear accesos y restaurarlos cuando toque.</p>
             <div class="stack-sm">
                 <span class="badge badge-info"><?php echo (int) $organizationStats['members']; ?> miembros activos</span>
@@ -129,7 +129,7 @@ $activeSection = 'admin';
 
     <?php if (!$canManageModeration || !$activeOrganizationId): ?>
         <div class="card dashboard-empty-state">
-            No tienes acceso a esta vista o no hay una organización activa con permisos de administracion.
+            No tienes acceso a esta vista o no hay una organización activa con permisos de administración.
         </div>
     <?php elseif (empty($organizationMembers)): ?>
         <div class="card dashboard-empty-state">

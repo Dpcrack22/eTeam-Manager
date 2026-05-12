@@ -122,7 +122,7 @@ function noteExcerpt(string $content, int $maxLength = 140): string
 }
 
 $pageTitle = 'Notas';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Repositorio de notas estratégicas con filtros por etiquetas, edición rápida y contexto por equipo.';
 $activeSection = 'notes';
 ?>
