@@ -570,10 +570,8 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
             }
         } else {
             $orgRole = $role;
-            if ($orgRole === 'substitute') {
+            if (in_array($orgRole, ['substitute', 'coach', 'analyst'], true)) {
                 $orgRole = 'player';
-            } elseif (in_array($orgRole, ['coach', 'analyst'], true)) {
-                $orgRole = 'manager';
             }
 
             $insertOrgMember = $conn->prepare(
