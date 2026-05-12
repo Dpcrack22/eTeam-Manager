@@ -270,8 +270,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 $targetOrgId = (int) $conn->lastInsertId();
 
-                // Hacer al usuario OWNER de esta nueva organización para que no haya errores de permisos
-                $stmtMem = $conn->prepare('INSERT INTO organization_members (organization_id, user_id, role, joined_at, is_active) VALUES (?, ?, "owner", NOW(), 1)');
+                // Hacer al usuario OWNER activo de esta nueva organización para evitar bloqueos de contexto
+                $stmtMem = $conn->prepare('INSERT INTO organization_members (organization_id, user_id, role, moderation_status, joined_at, is_active) VALUES (?, ?, "owner", "active", NOW(), 1)');
                 $stmtMem->execute([$targetOrgId, $userId]);
                 
                 // Refrescar las organizaciones del usuario en la sesión para que el resto del script las vea
@@ -289,20 +289,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (teamExistsByNameAndGame($conn, $targetOrgId, $teamName, $gameId)) {
                 $errors[] = 'Ya existe este equipo en la organización';
             } else {
-                $newTeamId = createTeam($conn, $targetOrgId, $gameId, $teamName, $teamTag ?: null, $teamDescription ?: null);
+                try {
+                    $conn->beginTransaction();
 
-                if ($newTeamId) {
-                    joinTeam($conn, $newTeamId, $userId, 'owner');
-                    
+                    $newTeamId = createTeam($conn, $targetOrgId, $gameId, $teamName, $teamTag ?: null, $teamDescription ?: null);
+                    if ($newTeamId <= 0) {
+                        throw new RuntimeException('No se pudo crear el equipo.');
+                    }
+
+                    $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
+                    if (empty($joinResult['success'])) {
+                        throw new RuntimeException((string) ($joinResult['error'] ?? 'No se pudo asociar el usuario al equipo recién creado.'));
+                    }
+
+                    $conn->commit();
+
                     // Sincronizar contextos para que al recargar todo esté en su sitio
                     setActiveOrganizationContext($conn, $userId, $targetOrgId);
                     setActiveTeamContext($conn, $targetOrgId, $newTeamId);
-                    
+
                     $_SESSION['flash_success'] = '¡Equipo creado correctamente!';
                     header('Location: ' . $returnTo);
                     exit;
-                } else {
-                    $errors[] = 'Error al crear el equipo';
+                } catch (Throwable $e) {
+                    if ($conn->inTransaction()) {
+                        $conn->rollBack();
+                    }
+                    $errors[] = 'Error al crear el equipo: ' . $e->getMessage();
                 }
             }
         }

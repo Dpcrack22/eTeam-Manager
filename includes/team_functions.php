@@ -533,7 +533,12 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         $orgMember = $orgMemberStatement->fetch();
 
         if ($orgMember) {
-            if ((string) ($orgMember['moderation_status'] ?? 'active') !== 'active') {
+            $moderationStatus = strtolower(trim((string) ($orgMember['moderation_status'] ?? 'active')));
+            if ($moderationStatus === '') {
+                $moderationStatus = 'active';
+            }
+
+            if ($moderationStatus !== 'active') {
                 return ['success' => false, 'error' => 'No tienes acceso a esta organización'];
             }
 
