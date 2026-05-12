@@ -20,7 +20,7 @@ if ($q !== '') {
         $searchTerm = '%' . $q . '%';
         if ($type === 'teams') {
             // Consulta simplificada para evitar fallos de columnas
-            $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 50');
+            $stmt = $conn->prepare('SELECT id, name, tag, description FROM teams WHERE name LIKE :q OR tag LIKE :q LIMIT 20');
         } else {
             $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q LIMIT 20');
         }
@@ -49,7 +49,7 @@ if ($q !== '') {
                            style="flex: 4; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;" 
                            required>
                     
-                    <select name="type" style="flex: 1; min-width: 120px; padding: 0 10px; border: 1px solid #ddd; border-radius: 6px; background: #374151; color: #f3f4f6; font-size: 1rem;">
+                    <select name="type" style="flex: 1; min-width: 120px; padding: 0 10px; border: 1px solid #ddd; border-radius: 6px; background: #374151; color: #f3f4f6;">
                         <option value="users" <?php echo $type === 'users' ? 'selected' : ''; ?>>Jugadores</option>
                         <option value="teams" <?php echo $type === 'teams' ? 'selected' : ''; ?>>Equipos</option>
                     </select>
