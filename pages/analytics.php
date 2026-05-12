@@ -103,7 +103,7 @@ $activeSection = 'analytics';
                 </div>
 
                 <?php if (empty($mapStats)): ?>
-                    <div class="dashboard-empty-state">Aun no hay mapas registrados para este equipo.</div>
+                    <div class="dashboard-empty-state">Aún no hay mapas registrados para este equipo.</div>
                 <?php else: ?>
                     <div class="analytics-table-wrap">
                         <table class="analytics-table">
@@ -139,7 +139,7 @@ $activeSection = 'analytics';
                 </div>
 
                 <?php if (empty($opponentStats)): ?>
-                    <div class="dashboard-empty-state">Aun no hay rivales registrados para este equipo.</div>
+                    <div class="dashboard-empty-state">Aún no hay rivales registrados para este equipo.</div>
                 <?php else: ?>
                     <div class="analytics-list">
                         <?php foreach ($opponentStats as $opponentRow): ?>
@@ -163,7 +163,7 @@ $activeSection = 'analytics';
             <div class="dashboard-section-head">
                 <div>
                     <div class="small">Periodo reciente</div>
-                    <h3 class="h3">Ultimos scrims</h3>
+                    <h3 class="h3">Últimos scrims</h3>
                 </div>
             </div>
 

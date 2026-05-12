@@ -297,7 +297,7 @@ function getTeamMembers(PDO $conn, int $teamId): array
          FROM team_members tm
          INNER JOIN users u ON u.id = tm.user_id
          WHERE tm.team_id = :team_id AND tm.is_active = 1
-         ORDER BY FIELD(tm.role, "coach", "player", "analyst", "substitute"), u.username ASC'
+         ORDER BY FIELD(tm.role, "owner", "admin", "coach", "player", "analyst", "substitute"), u.username ASC'
     );
     $statement->bindValue(':team_id', $teamId, PDO::PARAM_INT);
     $statement->execute();
@@ -513,7 +513,7 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
     }
 
     $role = strtolower(trim($role));
-    $allowedRoles = ['coach', 'player', 'analyst', 'substitute'];
+    $allowedRoles = ['owner', 'admin', 'coach', 'player', 'analyst', 'substitute'];
     if (!in_array($role, $allowedRoles, true)) {
         $role = 'player';
     }

@@ -52,8 +52,8 @@ $isCalendarChildView = $view === 'event-form';
 
 $appModules = [
     'dashboard' => [
-        'label' => 'Dashboard',
-        'title' => 'Dashboard',
+        'label' => 'Panel',
+        'title' => 'Panel',
         'eyebrow' => 'App interna',
         'description' => 'Resumen operativo del contexto actual, la agenda inmediata, las tareas abiertas y el seguimiento competitivo del roster.',
         'page' => __DIR__ . '/../pages/dashboard.php',
@@ -62,7 +62,7 @@ $appModules = [
         'label' => 'Equipos',
         'title' => 'Equipos',
         'eyebrow' => 'Módulo',
-        'description' => 'Gestion de roster, detalle de equipos y relacion con la organizacion activa.',
+        'description' => 'Gestión de roster, detalle de equipos y relación con la organización activa.',
         'page' => __DIR__ . '/../pages/teams.php',
     ],
     'team-detail' => [
@@ -94,7 +94,7 @@ $appModules = [
         'page' => __DIR__ . '/../pages/scrim-detail.php',
     ],
     'analytics' => [
-        'label' => 'Analitica',
+        'label' => 'Analítica',
         'title' => 'Analítica del equipo',
         'eyebrow' => 'Módulo',
         'description' => 'Resumen competitivo con victorias, mapas, rivales y rendimiento reciente.',
@@ -104,7 +104,7 @@ $appModules = [
         'label' => 'Administración',
         'title' => 'Panel de administración',
         'eyebrow' => 'Módulo',
-        'description' => 'Moderacion de miembros, sanciones y control interno de la organizacion activa.',
+        'description' => 'Moderación de miembros, sanciones y control interno de la organización activa.',
         'page' => __DIR__ . '/../pages/admin.php',
     ],
     'event-form' => [
@@ -118,7 +118,7 @@ $appModules = [
         'label' => 'Calendario',
         'title' => 'Calendario',
         'eyebrow' => 'Módulo',
-        'description' => 'Planificacion de eventos de equipo y organizacion con estados de asistencia.',
+        'description' => 'Planificación de eventos de equipo y organización con estados de asistencia.',
         'page' => __DIR__ . '/../pages/calendar.php',
     ],
     'boards' => [
@@ -132,7 +132,7 @@ $appModules = [
         'label' => 'Notas',
         'title' => 'Notas',
         'eyebrow' => 'Módulo',
-        'description' => 'Repositorio interno para estrategia, analisis y documentacion del equipo.',
+        'description' => 'Repositorio interno para estrategia, análisis y documentación del equipo.',
         'page' => __DIR__ . '/../pages/notes.php',
     ],
     'notifications' => [
@@ -157,10 +157,10 @@ $appModules = [
         'page' => __DIR__ . '/../pages/search.php',
     ],
 	'login' => [
-		'label' => 'Login',
-		'title' => 'Login',
+        'label' => 'Acceso',
+        'title' => 'Acceso',
 		'eyebrow' => 'Acceso',
-		'description' => 'Inicia sesión en eTeam Manager',
+        'description' => 'Inicia sesión en eTeam Manager',
 	],
 	'register' => [
 		'label' => 'Registro',

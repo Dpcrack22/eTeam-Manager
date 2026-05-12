@@ -11,8 +11,9 @@ global $conn;
 $currentUser = $_SESSION['user'] ?? [];
 $userId = (int) ($currentUser['id'] ?? 0);
 $allowedManageRoles = ['owner', 'admin', 'manager', 'coach'];
-$teamRoles = ['coach', 'player', 'analyst', 'substitute'];
+$teamRoles = ['admin', 'coach', 'player', 'analyst', 'substitute'];
 $teamRoleLabels = [
+    'admin' => 'Admin',
     'coach' => 'Coach',
     'player' => 'Player',
     'analyst' => 'Analyst',
@@ -193,6 +194,7 @@ if ($selectedTeam) {
 }
 
 $teamStats = [
+    'admin' => 0,
     'members' => count($teamMembers),
     'coach' => 0,
     'player' => 0,
@@ -273,6 +275,7 @@ foreach ($teamMembers as $member) {
             </div>
 
             <div class="stack-sm" style="margin-top: 20px;">
+                <span class="badge">Admin: <?php echo (int) $teamStats['admin']; ?></span>
                 <span class="badge">Coach: <?php echo (int) $teamStats['coach']; ?></span>
                 <span class="badge">Player: <?php echo (int) $teamStats['player']; ?></span>
                 <span class="badge">Analyst: <?php echo (int) $teamStats['analyst']; ?></span>
@@ -373,7 +376,7 @@ foreach ($teamMembers as $member) {
 
                 <div class="landing-list">
                     <div class="landing-list-item">La gestión de roster envía solicitudes por email y notificación interna.</div>
-                    <div class="landing-list-item">Los roles internos de equipo son coach, player, analyst y substitute.</div>
+                    <div class="landing-list-item">Los roles internos de equipo son admin, coach, player, analyst y substitute.</div>
                     <div class="landing-list-item">El enlace compartible del equipo se genera automáticamente.</div>
                 </div>
             </div>

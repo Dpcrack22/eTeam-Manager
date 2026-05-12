@@ -3622,12 +3622,27 @@ textarea:focus {
   }
 
   .landing-nav {
+    flex-wrap: wrap;
     align-items: center;
+  }
+
+  .landing-brand {
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .landing-brand .small {
+    margin-left: 0 !important;
+    line-height: 1.25;
   }
 
   .landing-menu-toggle {
     display: inline-flex;
     margin-left: auto;
+    flex: 0 0 auto;
   }
 
   .landing-nav-right {
@@ -3638,6 +3653,10 @@ textarea:focus {
     gap: var(--space-3);
     padding: 16px 0 6px;
     border-top: 1px solid var(--border-subtle);
+  }
+
+  .landing-header .container {
+    gap: 12px;
   }
 
   .landing-header.is-open .landing-nav-right {

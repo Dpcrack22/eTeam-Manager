@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eTeam Manager — Gestion interna para equipos de eSports</title>
+    <title>eTeam Manager — Gestión interna para equipos de eSports</title>
     <meta name="description" content="eTeam Manager es una plataforma interna para organizar equipos de eSports, scrims, calendario, tareas y notas desde un solo sitio.">
-    <meta name="keywords" content="eSports, gestion de equipos, scrims, calendario, kanban, notas, roster, eTeam Manager">
+    <meta name="keywords" content="eSports, gestión de equipos, scrims, calendario, kanban, notas, roster, eTeam Manager">
     <meta name="author" content="eTeam Manager">
     <meta name="robots" content="index,follow">
     <meta name="theme-color" content="#FF4655">
     <meta property="og:site_name" content="eTeam Manager">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta property="og:title" content="eTeam Manager — Gestión interna para equipos de eSports">
     <meta property="og:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
     <meta property="og:image" content="assets/mini-logo.svg">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="eTeam Manager — Gestion interna para equipos de eSports">
+    <meta name="twitter:title" content="eTeam Manager — Gestión interna para equipos de eSports">
     <meta name="twitter:description" content="Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.">
     <meta name="twitter:image" content="assets/mini-logo.svg">
     <link rel="icon" type="image/svg+xml" href="assets/mini-logo.svg">
@@ -76,9 +76,9 @@ $isLogged = isLogged();
             <div class="container">
                 <div class="landing-hero-content">
                     <div>
-                        <span class="badge" style="margin-bottom: 12px;">Organiza el dia a dia de un equipo competitivo</span>
+                        <span class="badge" style="margin-bottom: 12px;">Organiza el día a día de un equipo competitivo</span>
                         <h1 class="h1" style="margin-bottom: 12px;">Gestiona equipos, scrims, calendario, tareas y notas desde un solo sitio.</h1>
-                        <p style="max-width: 720px;">eTeam Manager es una aplicacion para llevar la gestion interna de equipos de eSports. Sirve para organizar miembros y roles, controlar rosters, programar eventos, registrar scrims, mover tareas en tableros y guardar notas estrategicas sin depender de varias herramientas separadas.</p>
+                        <p style="max-width: 720px;">eTeam Manager es una aplicación para llevar la gestión interna de equipos de eSports. Sirve para organizar miembros y roles, controlar rosters, programar eventos, registrar scrims, mover tareas en tableros y guardar notas estratégicas sin depender de varias herramientas separadas.</p>
 
                         <div class="landing-hero-actions">
                             <a class="btn btn-primary" href="#funciones">Ver funciones</a>
@@ -88,9 +88,9 @@ $isLogged = isLogged();
                     </div>
 
                     <div class="card landing-hero-card" aria-label="Resumen rápido">
-                        <h2 class="h3" style="margin-top: 0;">Que hace la aplicacion</h2>
+                        <h2 class="h3" style="margin-top: 0;">Qué hace la aplicación</h2>
                         <div class="landing-list">
-                            <div class="landing-list-item">Centraliza la informacion del equipo en un unico sistema.</div>
+                            <div class="landing-list-item">Centraliza la información del equipo en un único sistema.</div>
                             <div class="landing-list-item">Facilita coordinar staff, jugadores, tareas y eventos.</div>
                             <div class="landing-list-item">Deja preparada la operativa para crecer con backend y datos reales.</div>
                         </div>
@@ -122,7 +122,7 @@ $isLogged = isLogged();
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Funciones principales de la app</h2>
-                    <p>La aplicacion esta pensada para cubrir el trabajo operativo diario de un roster competitivo en un entorno unificado.</p>
+                    <p>La aplicación está pensada para cubrir el trabajo operativo diario de un roster competitivo en un entorno unificado.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-4">
@@ -168,7 +168,7 @@ $isLogged = isLogged();
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=boards">
                         <h3 class="h3">Kanban</h3>
-                        <p>Permite gestionar tareas del staff o del equipo en columnas, con prioridad, fecha limite y persona asignada.</p>
+                        <p>Permite gestionar tareas del staff o del equipo en columnas, con prioridad, fecha límite y persona asignada.</p>
                         <div class="landing-feature-footer">
                             <span class="badge badge-warning">Tareas</span>
                             <span class="landing-feature-link">Abrir módulo</span>
@@ -176,7 +176,7 @@ $isLogged = isLogged();
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=notes">
                         <h3 class="h3">Notas estrategicas</h3>
-                        <p>Sirve para guardar analisis de rivales, estrategias, ideas de trabajo y apuntes internos etiquetados.</p>
+                        <p>Sirve para guardar análisis de rivales, estrategias, ideas de trabajo y apuntes internos etiquetados.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Estrategia</span>
                             <span class="landing-feature-link">Abrir módulo</span>
@@ -184,7 +184,7 @@ $isLogged = isLogged();
                     </a>
                     <a class="card landing-feature-card" href="app.php?view=settings">
                         <h3 class="h3">Perfil y ajustes</h3>
-                        <p>Permite editar los datos del usuario, el avatar, el correo, la contrasena y otras preferencias personales.</p>
+                        <p>Permite editar los datos del usuario, el avatar, el correo, la contraseña y otras preferencias personales.</p>
                         <div class="landing-feature-footer">
                             <span class="badge">Cuenta</span>
                             <span class="landing-feature-link">Abrir módulo</span>
@@ -205,7 +205,7 @@ $isLogged = isLogged();
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 1</div>
                         <h3 class="h3">Entrar y seleccionar contexto</h3>
-                        <p>El usuario entra en la aplicacion y trabaja sobre el equipo que tenga activo.</p>
+                        <p>El usuario entra en la aplicación y trabaja sobre el equipo que tenga activo.</p>
                     </div>
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 2</div>
@@ -215,7 +215,7 @@ $isLogged = isLogged();
                     <div class="card">
                         <div class="badge" style="margin-bottom: 12px;">Paso 3</div>
                         <h3 class="h3">Revisar, coordinar y mejorar</h3>
-                        <p>El dashboard y las vistas de detalle permiten revisar pendientes, coordinar al staff y mantener la informacion conectada.</p>
+                        <p>El panel y las vistas de detalle permiten revisar pendientes, coordinar al staff y mantener la información conectada.</p>
                     </div>
                 </div>
             </div>
@@ -225,32 +225,32 @@ $isLogged = isLogged();
             <div class="container">
                 <div class="landing-section-head">
                     <h2 class="h2">Pensada para distintos roles dentro del equipo</h2>
-                    <p>La aplicacion no esta pensada solo para jugadores. Tambien sirve para staff, gestion y responsables del roster.</p>
+                    <p>La aplicación no está pensada solo para jugadores. También sirve para staff, gestión y responsables del roster.</p>
                 </div>
 
                 <div class="landing-grid landing-grid-3">
                     <div class="card">
-                        <h3 class="h3">Direccion y gestion</h3>
+                        <h3 class="h3">Dirección y gestión</h3>
                         <div class="landing-list">
                             <div class="landing-list-item">Owner y admin para control general.</div>
-                            <div class="landing-list-item">Manager para operativa del roster.</div>
-                            <div class="landing-list-item">Gestion de miembros y permisos.</div>
+                            <div class="landing-list-item">Manager para la operativa del roster.</div>
+                            <div class="landing-list-item">Gestión de miembros y permisos.</div>
                         </div>
                     </div>
                     <div class="card">
                         <h3 class="h3">Staff tecnico</h3>
                         <div class="landing-list">
                             <div class="landing-list-item">Coach y analyst para scrims, calendario y notas.</div>
-                            <div class="landing-list-item">Seguimiento tactico y preparacion de trabajo semanal.</div>
-                            <div class="landing-list-item">Uso de boards y documentacion interna.</div>
+                            <div class="landing-list-item">Seguimiento táctico y preparación de trabajo semanal.</div>
+                            <div class="landing-list-item">Uso de boards y documentación interna.</div>
                         </div>
                     </div>
                     <div class="card">
                         <h3 class="h3">Roster competitivo</h3>
                         <div class="landing-list">
                             <div class="landing-list-item">Players y substitutes dentro de cada team.</div>
-                            <div class="landing-list-item">Participacion en eventos y scrims.</div>
-                            <div class="landing-list-item">Consulta de informacion operativa desde un entorno comun.</div>
+                            <div class="landing-list-item">Participación en eventos y scrims.</div>
+                            <div class="landing-list-item">Consulta de información operativa desde un entorno común.</div>
                         </div>
                     </div>
                 </div>
@@ -301,7 +301,7 @@ $isLogged = isLogged();
         <div class="container landing-footer-inner">
             <div>
                 <div class="landing-footer-brand">eTeam Manager</div>
-                <div class="small">Sistema de gestion interna para equipos competitivos</div>
+                <div class="small">Sistema de gestión interna para equipos competitivos</div>
             </div>
             <div class="landing-footer-links">
                 <a class="landing-link" href="#funciones">Funciones</a>

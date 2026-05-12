@@ -140,7 +140,7 @@ $activeSection = 'admin';
             <div class="dashboard-section-head">
                 <div>
                     <div class="small">Miembros</div>
-                    <h3 class="h3">Moderacion de usuarios</h3>
+                    <h3 class="h3">Moderación de usuarios</h3>
                 </div>
             </div>
 
