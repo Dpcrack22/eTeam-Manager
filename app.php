@@ -168,6 +168,11 @@ $appModules = [
 		'eyebrow' => 'Crear cuenta',
         'description' => 'Crea una cuenta para acceder a eTeam Manager',
 	],
+    'team-profile' => [
+        'label' => 'Perfil de Equipo',
+        'title' => 'Detalle del Equipo',
+        'page' => __DIR__ . '/../pages/team_profile.php', // O la ruta donde esté
+    ],
 ];
 
 if (!isset($appModules[$view])) {

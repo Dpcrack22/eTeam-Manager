@@ -10,15 +10,16 @@ $type = trim((string) ($_GET['type'] ?? 'users'));
 $results = [];
 if ($q !== '') {
     global $conn;
+    $searchTerm = '%' . $q . '%';
     try {
         if ($type === 'teams') {
-            $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 50');
-            $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
+            $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE LOWER(t.name) LIKE :q OR LOWER(t.tag) LIKE :q LIMIT 50');
+            $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q OR email LIKE :q LIMIT 50');
-            $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
+            $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE LOWER(username) LIKE :q OR LOWER(email) LIKE :q LIMIT 50');
+            $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -66,8 +67,7 @@ $shouldCloseLayout = true;
                                             <strong><?php echo htmlspecialchars($r['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                             <div class="small"><?php echo htmlspecialchars($r['game_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo !empty($r['tag']) ? '· ' . htmlspecialchars($r['tag'], ENT_QUOTES, 'UTF-8') : ''; ?></div>
                                         </div>
-                                        <a class="btn btn-secondary" href="app.php?view=team-detail&id=<?php echo (int)$r['id']; ?>">Ver equipo</a>
-                                    </div>
+                                        <a class="btn btn-secondary" href="app.php?view=team-profile&team_id=<?php echo $r['id']; ?>">Ver equipo</a>                                    </div>
                                     <div class="small"><?php echo htmlspecialchars($r['description'] ?: 'Sin descripción', ENT_QUOTES, 'UTF-8'); ?></div>
                                 </div>
                             <?php else: ?>
