@@ -202,6 +202,5 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     /* Efecto hover suave para los resultados */
     .item-card:hover { border-color: #6366f1 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .btn-sm { padding: 6px 12px; border-radius: 5px; cursor: pointer; border: none; font-weight: 500; }
-    .btn-secondary { background: #f3f4f6; color: #374151; hover: background: #e5e7eb; }
     .btn-tercero { background: #000000; color: #f3f4f6; }
 </style>
