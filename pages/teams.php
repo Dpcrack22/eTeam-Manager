@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($targetOrgId <= 0) {
             try {
                 // Creamos una organización con el nombre del usuario o el del equipo
-                $orgName = "Org de " . ($currentUser['username'] ?? 'Usuario');
+                $orgName = "Valorant Organization";
                 // Generamos un slug único básico
                 $orgSlug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $orgName)) . '-' . time();
                 
