@@ -37,7 +37,24 @@ $teams = [];
 $selectedTeam = false;
 $selectedTeamId = (int) ($_GET['team_id'] ?? 0);
 $teamMembers = [];
-$canManageTeams = in_array(strtolower((string) ($_SESSION['user']['role'] ?? '')), $allowedManageRoles, true);
+$canManageTeams = false;
+
+if ($activeOrganizationId) {
+        $organizationRoleStatement = $conn->prepare(
+                'SELECT role
+                 FROM organization_members
+                 WHERE organization_id = :organization_id
+                     AND user_id = :user_id
+                     AND is_active = 1
+                     AND COALESCE(moderation_status, "active") = "active"
+                 LIMIT 1'
+        );
+        $organizationRoleStatement->bindValue(':organization_id', (int) $activeOrganizationId, PDO::PARAM_INT);
+        $organizationRoleStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $organizationRoleStatement->execute();
+        $organizationRole = strtolower((string) ($organizationRoleStatement->fetch()['role'] ?? ''));
+        $canManageTeams = in_array($organizationRole, $allowedManageRoles, true);
+}
 
 if ($activeOrganizationId) {
     $teams = getOrganizationTeams($conn, (int) $activeOrganizationId);

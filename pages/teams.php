@@ -208,8 +208,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = acceptTeamInvitation($conn, $invitationId, $userId);
             if (!empty($result['success'])) {
                 if (!empty($result['team'])) {
-                    setActiveOrganizationContext($conn, $userId, (int) $result['team']['organization_id']);
-                    setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
+                    $hasActiveContext = ($activeOrganizationId > 0) && !empty($activeTeamId);
+
+                    // Mantener el contexto actual evita que "desaparezcan" equipos al aceptar una invitación.
+                    if (!$hasActiveContext) {
+                        setActiveOrganizationContext($conn, $userId, (int) $result['team']['organization_id']);
+                        setActiveTeamContext($conn, (int) $result['team']['organization_id'], (int) $result['team']['id']);
+                    }
                 }
 
                 $_SESSION['flash_success'] = 'Invitación aceptada';
@@ -234,25 +239,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
-        // 1. Intentar obtener una organización existente
+        // 1. Elegir una organización donde el usuario pueda gestionar (owner/admin/manager)
         $targetOrgId = 0;
+        $manageableOrganizationRoles = ['owner', 'admin', 'manager'];
+
         if (!empty($userOrganizations)) {
-            foreach ($userOrganizations as $org) {
-                if ($activeOrganizationId > 0 && (int) $org['id'] === (int) $activeOrganizationId) {
-                    $targetOrgId = (int) $org['id'];
-                    break;
-                }
+            $activeOrganizationRole = strtolower((string) ($currentOrganizationRole ?? ''));
+
+            if (
+                $activeOrganizationId > 0
+                && in_array($activeOrganizationRole, $manageableOrganizationRoles, true)
+            ) {
+                $targetOrgId = (int) $activeOrganizationId;
             }
+
             if ($targetOrgId <= 0) {
-                $targetOrgId = (int) $userOrganizations[0]['id'];
+                foreach ($userOrganizations as $org) {
+                    $organizationRole = strtolower((string) ($org['member_role'] ?? ''));
+                    if (in_array($organizationRole, $manageableOrganizationRoles, true)) {
+                        $targetOrgId = (int) $org['id'];
+                        break;
+                    }
+                }
             }
         }
 
-        // 2. SI NO HAY ORGANIZACIÓN: La creamos automáticamente para el usuario
+        // 2. Si no hay organización gestionable, crear una propia para evitar bloqueo de permisos.
         if ($targetOrgId <= 0) {
             try {
-                // Creamos una organización con el nombre del usuario o el del equipo
-                $orgName = "Valorant Organization";
+                $baseOrganizationName = trim((string) ($currentUser['username'] ?? ''));
+                $orgName = $baseOrganizationName !== ''
+                    ? $baseOrganizationName . ' Organization'
+                    : 'Valorant Organization';
                 // Generamos un slug único básico
                 $orgSlug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $orgName)) . '-' . time();
                 
@@ -305,8 +323,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $conn->commit();
 
                     // Sincronizar contextos para que al recargar todo esté en su sitio
-                    setActiveOrganizationContext($conn, $userId, $targetOrgId);
-                    setActiveTeamContext($conn, $targetOrgId, $newTeamId);
+                    $organizationContextResult = setActiveOrganizationContext($conn, $userId, $targetOrgId);
+                    if (empty($organizationContextResult['success'])) {
+                        throw new RuntimeException((string) ($organizationContextResult['error'] ?? 'No se pudo activar la organización del nuevo equipo.'));
+                    }
+
+                    $teamContextResult = setActiveTeamContext($conn, $targetOrgId, $newTeamId);
+                    if (empty($teamContextResult['success'])) {
+                        throw new RuntimeException((string) ($teamContextResult['error'] ?? 'No se pudo activar el equipo recién creado.'));
+                    }
+
+                    $roleRefreshStatement = $conn->prepare(
+                        'SELECT role
+                         FROM organization_members
+                         WHERE organization_id = :organization_id AND user_id = :user_id
+                           AND is_active = 1 AND COALESCE(moderation_status, "active") = "active"
+                         LIMIT 1'
+                    );
+                    $roleRefreshStatement->bindValue(':organization_id', $targetOrgId, PDO::PARAM_INT);
+                    $roleRefreshStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                    $roleRefreshStatement->execute();
+                    $roleRefreshed = strtolower((string) ($roleRefreshStatement->fetch()['role'] ?? ''));
+                    if ($roleRefreshed !== '') {
+                        $_SESSION['user']['role'] = $roleRefreshed;
+                    }
 
                     $_SESSION['flash_success'] = '¡Equipo creado correctamente!';
                     header('Location: ' . $returnTo);

@@ -295,13 +295,19 @@ function getActiveOrganizationId(PDO $conn, int $userId): ?int
     if (!empty($_SESSION['active_organization_id'])) {
         $sessionOrganizationId = (int) $_SESSION['active_organization_id'];
         $validateStatement = $conn->prepare(
-            'SELECT organization_id FROM organization_members WHERE user_id = :user_id AND organization_id = :organization_id AND is_active = 1 AND COALESCE(moderation_status, "active") = "active" LIMIT 1'
+            'SELECT organization_id, role
+             FROM organization_members
+             WHERE user_id = :user_id AND organization_id = :organization_id
+               AND is_active = 1 AND COALESCE(moderation_status, "active") = "active"
+             LIMIT 1'
         );
         $validateStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
         $validateStatement->bindValue(':organization_id', $sessionOrganizationId, PDO::PARAM_INT);
         $validateStatement->execute();
+        $validatedMember = $validateStatement->fetch();
 
-        if ($validateStatement->fetch()) {
+        if ($validatedMember) {
+            $_SESSION['user']['role'] = (string) ($validatedMember['role'] ?? ($_SESSION['user']['role'] ?? ''));
             return $sessionOrganizationId;
         }
 
@@ -311,13 +317,20 @@ function getActiveOrganizationId(PDO $conn, int $userId): ?int
     if (!empty($_SESSION['user']['organization_id'])) {
         $sessionOrganizationId = (int) $_SESSION['user']['organization_id'];
         $validateStatement = $conn->prepare(
-            'SELECT organization_id FROM organization_members WHERE user_id = :user_id AND organization_id = :organization_id AND is_active = 1 AND COALESCE(moderation_status, "active") = "active" LIMIT 1'
+            'SELECT organization_id, role
+             FROM organization_members
+             WHERE user_id = :user_id AND organization_id = :organization_id
+               AND is_active = 1 AND COALESCE(moderation_status, "active") = "active"
+             LIMIT 1'
         );
         $validateStatement->bindValue(':user_id', $userId, PDO::PARAM_INT);
         $validateStatement->bindValue(':organization_id', $sessionOrganizationId, PDO::PARAM_INT);
         $validateStatement->execute();
+        $validatedMember = $validateStatement->fetch();
 
-        if ($validateStatement->fetch()) {
+        if ($validatedMember) {
+            $_SESSION['active_organization_id'] = $sessionOrganizationId;
+            $_SESSION['user']['role'] = (string) ($validatedMember['role'] ?? ($_SESSION['user']['role'] ?? ''));
             return $sessionOrganizationId;
         }
 
@@ -325,11 +338,21 @@ function getActiveOrganizationId(PDO $conn, int $userId): ?int
     }
 
     $statement = $conn->prepare(
-        'SELECT organization_id FROM organization_members WHERE user_id = :user_id AND is_active = 1 AND COALESCE(moderation_status, "active") = "active" ORDER BY joined_at DESC, organization_id DESC LIMIT 1'
+        'SELECT organization_id, role
+         FROM organization_members
+         WHERE user_id = :user_id AND is_active = 1 AND COALESCE(moderation_status, "active") = "active"
+         ORDER BY joined_at DESC, organization_id DESC
+         LIMIT 1'
     );
     $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
     $statement->execute();
     $row = $statement->fetch();
+
+    if ($row) {
+        $_SESSION['active_organization_id'] = (int) $row['organization_id'];
+        $_SESSION['user']['organization_id'] = (int) $row['organization_id'];
+        $_SESSION['user']['role'] = (string) ($row['role'] ?? ($_SESSION['user']['role'] ?? ''));
+    }
 
     return $row ? (int) $row['organization_id'] : null;
 }
