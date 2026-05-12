@@ -19,13 +19,13 @@ function validateLogin(string $email, string $password): array
     $errors = [];
 
     if ($email === '') {
-        $errors['email'] = 'El correo electronico es obligatorio';
+        $errors['email'] = 'El correo electrónico es obligatorio';
     } elseif (strpos($email, '@') === false) {
-        $errors['email'] = 'El correo electronico introducido no es valido (falta "@")';
+        $errors['email'] = 'El correo electrónico introducido no es válido (falta "@")';
     } elseif (strpos($email, ' ') !== false) {
-        $errors['email'] = 'El correo electronico no puede contener espacios';
+        $errors['email'] = 'El correo electrónico no puede contener espacios';
     } elseif (strlen($email) < 5) {
-        $errors['email'] = 'El correo electronico introducido es demasiado corto';
+        $errors['email'] = 'El correo electrónico introducido es demasiado corto';
     }
 
     if ($password === '') {
@@ -103,7 +103,7 @@ if (empty($layoutIncluded)) {
 
             <label class="login-remember-row">
                 <input type="checkbox" name="remember_me" value="1" <?php echo $rememberMe ? 'checked' : ''; ?> />
-                <span>
+                    <span>
                     <strong>Recordarme</strong>
                     <small>Mantiene la sesión activa en este navegador durante más tiempo.</small>
                 </span>

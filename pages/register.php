@@ -28,11 +28,11 @@ function validateRegister(string $name, string $email, string $password, string 
     }
 
     if ($email === '') {
-        $errors['email'] = 'El correo electronico es obligatorio';
+        $errors['email'] = 'El correo electrónico es obligatorio';
     } elseif (strpos($email, '@') === false) {
-        $errors['email'] = 'El correo electronico introducido no es valido (falta "@")';
+        $errors['email'] = 'El correo electrónico introducido no es válido (falta "@")';
     } elseif (strpos($email, ' ') !== false) {
-        $errors['email'] = 'El correo electronico no puede contener espacios';
+        $errors['email'] = 'El correo electrónico no puede contener espacios';
     }
 
     if ($password === '') {
@@ -121,12 +121,12 @@ if (empty($layoutIncluded)) {
             <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8'); ?>" />
             <div class="field <?php echo isset($errors['name']) ? 'form-group-error' : ''; ?>">
                 <label for="name">Nombre</label>
-                <input id="name" name="name" type="text" placeholder="Paco" value="<?php echo htmlspecialchars($name); ?>" />
+                <input id="name" name="name" type="text" placeholder="Tu nombre" value="<?php echo htmlspecialchars($name); ?>" />
             </div>
 
             <div class="field <?php echo isset($errors['email']) ? 'form-group-error' : ''; ?>">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="player@team.gg" value="<?php echo htmlspecialchars($email); ?>" />
+                <input id="email" name="email" type="email" placeholder="tu@email.com" value="<?php echo htmlspecialchars($email); ?>" />
             </div>
 
             <div class="field <?php echo isset($errors['password']) ? 'form-group-error' : ''; ?>">

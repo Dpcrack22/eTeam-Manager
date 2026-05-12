@@ -22,7 +22,7 @@ if (!isset($appNavItems)) {
                 <span class="sidebar-collapse-icon" aria-hidden="true"></span>
             </button>
         </div>
-        <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Espacio de trabajo interno' : 'Vista publica del layout'; ?></p>
+        <p class="small"><?php echo $appAuthState === 'authenticated' ? 'Espacio de trabajo interno' : 'Vista pública'; ?></p>
     </div>
 
     <?php if ($appAuthState === 'authenticated'): ?>
@@ -36,8 +36,8 @@ if (!isset($appNavItems)) {
             </div>
         </div>
         <div class="card sidebar-panel">
-            <div class="small">Navegacion principal</div>
-            <nav class="sidebar-nav" aria-label="Navegacion interna">
+            <div class="small">Navegación principal</div>
+            <nav class="sidebar-nav" aria-label="Navegación interna">
                 <?php foreach ($appNavItems as $sectionKey => $item): ?>
                     <a class="sidebar-link<?php echo $activeSection === $sectionKey ? ' is-active' : ''; ?>" href="<?php echo htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8'); ?>">
                         <?php echo htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8'); ?>
