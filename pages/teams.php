@@ -234,64 +234,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teamDescription = trim((string) ($_POST['description'] ?? ''));
         $gameId = (int) ($_POST['game_id'] ?? 0);
 
-        // 1. Determinar la organización destino (la activa o la primera que tenga)
+        // 1. Intentar obtener una organización existente
         $targetOrgId = 0;
-        foreach ($userOrganizations as $org) {
-            if ($activeOrganizationId > 0 && (int) $org['id'] === (int) $activeOrganizationId) {
-                $targetOrgId = (int) $org['id'];
-                break;
-            }
-        }
-        
-        // Si no hay activa, cogemos la primera disponible
-        if ($targetOrgId <= 0 && !empty($userOrganizations)) {
-            $targetOrgId = (int) $userOrganizations[0]['id'];
-        }
-
-        // 2. Validaciones básicas
-        if ($targetOrgId <= 0) {
-            $errors[] = 'No perteneces a ninguna organización para crear un equipo';
-        }
-        if ($teamName === '') {
-            $errors[] = 'El nombre del equipo es obligatorio';
-        }
-        if ($gameId <= 0) {
-            $errors[] = 'Selecciona un juego';
-        }
-
-        // 3. Verificar si el juego existe
-        $gameExists = false;
-        foreach ($games as $game) {
-            if ((int) $game['id'] === $gameId) {
-                $gameExists = true;
-                break;
-            }
-        }
-        if (!$gameExists) {
-            $errors[] = 'El juego seleccionado no es válido';
-        }
-
-        // 4. Verificar duplicados y permisos de miembro
-        if (empty($errors)) {
-            if (teamExistsByNameAndGame($conn, $targetOrgId, $teamName, $gameId)) {
-                $errors[] = 'Ya existe un equipo con ese nombre para ese juego en esta organización';
-            }
-            
-            // Verificamos que sea miembro (no importa el rol)
-            $isMemberOfOrg = false;
-            foreach ($userOrganizations as $uo) {
-                if ((int) $uo['id'] === $targetOrgId) {
-                    $isMemberOfOrg = true;
+        if (!empty($userOrganizations)) {
+            foreach ($userOrganizations as $org) {
+                if ($activeOrganizationId > 0 && (int) $org['id'] === (int) $activeOrganizationId) {
+                    $targetOrgId = (int) $org['id'];
                     break;
                 }
             }
-            if (!$isMemberOfOrg) {
-                $errors[] = 'No tienes permiso para crear equipos en esta organización';
+            if ($targetOrgId <= 0) {
+                $targetOrgId = (int) $userOrganizations[0]['id'];
             }
         }
 
-        // 5. Creación y Auto-Join como OWNER del equipo
-        if (empty($errors)) {
+        // 2. SI NO HAY ORGANIZACIÓN: La creamos automáticamente para el usuario
+        if ($targetOrgId <= 0) {
+            try {
+                // Creamos una organización con el nombre del usuario o el del equipo
+                $orgName = "Org de " . ($currentUser['username'] ?? 'Usuario');
+                $orgSlug = strtolower(str_replace(' ', '-', $orgName)) . '-' . time();
+                
+                $stmtOrg = $conn->prepare('INSERT INTO organizations (name, slug, created_at) VALUES (:name, :slug, NOW())');
+                $stmtOrg->execute([':name' => $orgName, ':slug' => $orgSlug]);
+                $targetOrgId = (int) $conn->lastInsertId();
+
+                // Hacer al usuario OWNER de esta nueva organización para que no haya errores de permisos
+                $stmtMem = $conn->prepare('INSERT INTO organization_members (organization_id, user_id, role, joined_at, is_active) VALUES (?, ?, "owner", NOW(), 1)');
+                $stmtMem->execute([$targetOrgId, $userId]);
+                
+                // Refrescar las organizaciones del usuario en la sesión para que el resto del script las vea
+                $userOrganizations = getUserOrganizations($conn, $userId);
+            } catch (Exception $e) {
+                $errors[] = 'No se pudo crear una organización base: ' . $e->getMessage();
+            }
+        }
+
+        // 3. Validaciones de nombre y juego
+        if ($teamName === '') { $errors[] = 'El nombre del equipo es obligatorio'; }
+        if ($gameId <= 0) { $errors[] = 'Selecciona un juego'; }
+
+        // 4. Verificación de duplicados
+        if (empty($errors) && $targetOrgId > 0) {
+            if (teamExistsByNameAndGame($conn, $targetOrgId, $teamName, $gameId)) {
+                $errors[] = 'Ya tienes un equipo con ese nombre para ese juego';
+            }
+        }
+
+        // 5. Creación del equipo y asignación como OWNER
+        if (empty($errors) && $targetOrgId > 0) {
             $newTeamId = createTeam(
                 $conn,
                 $targetOrgId,
@@ -302,20 +293,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
             if ($newTeamId) {
-                // AQUÍ ES DONDE TE HACES OWNER DEL EQUIPO
+                // Te unes como OWNER del equipo
                 $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
                 
-                if (empty($joinResult['success'])) {
-                    $errors[] = $joinResult['error'] ?? 'Equipo creado, pero no pudiste unirte automáticamente';
-                } else {
+                if (!empty($joinResult['success'])) {
                     setActiveOrganizationContext($conn, $userId, $targetOrgId);
                     setActiveTeamContext($conn, $targetOrgId, $newTeamId);
-                    $_SESSION['flash_success'] = 'Equipo creado exitosamente. Ahora eres el responsable.';
+                    $_SESSION['flash_success'] = '¡Equipo creado con éxito!';
                     header('Location: ' . $returnTo);
                     exit;
+                } else {
+                    $errors[] = $joinResult['error'] ?? 'Error al unirse al equipo';
                 }
             } else {
-                $errors[] = 'Error crítico al crear el equipo en la base de datos';
+                $errors[] = 'No se pudo crear el equipo';
             }
         }
     } else if ($action === "unjoin_team") {
