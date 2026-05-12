@@ -10,16 +10,21 @@ $type = trim((string) ($_GET['type'] ?? 'users'));
 $results = [];
 if ($q !== '') {
     global $conn;
-    if ($type === 'teams') {
-        $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 50');
-        $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-    } else {
-        $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q OR email LIKE :q LIMIT 50');
-        $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
+    try {
+        if ($type === 'teams') {
+            $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id FROM teams t LEFT JOIN games g ON g.id = t.game_id WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 50');
+            $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q OR email LIKE :q LIMIT 50');
+            $stmt->bindValue(':q', '%' . $q . '%', PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    } catch (PDOException $e) {
+        // Esto evitará el error 500 genérico y te dará pistas
+        error_log("Error en search.php: " . $e->getMessage());
     }
 }
 
@@ -33,7 +38,9 @@ $shouldCloseLayout = true;
             <div class="small">Buscar</div>
             <h2 class="h3">Buscar usuarios y equipos</h2>
 
-            <form method="get" action="pages/search.php" style="margin-top:12px;">
+            <form method="get" action="app.php" style="margin-top:12px;">
+                <input type="hidden" name="view" value="search">    
+                
                 <div style="display:flex; gap:8px; align-items:center;">
                     <input id="page-search-input" name="q" type="search" placeholder="Escribe al menos 2 caracteres" value="<?php echo htmlspecialchars($q, ENT_QUOTES, 'UTF-8'); ?>" autocomplete="off" />
                     <select id="page-search-type" name="type" aria-label="Tipo">
@@ -42,7 +49,6 @@ $shouldCloseLayout = true;
                     </select>
                     <button class="btn btn-primary" type="submit">Buscar</button>
                 </div>
-                <div id="page-search-suggestions" class="sidebar-search-suggestions" aria-hidden="true" style="margin-top:8px;"></div>
             </form>
 
             <?php if ($q === ''): ?>
@@ -60,7 +66,7 @@ $shouldCloseLayout = true;
                                             <strong><?php echo htmlspecialchars($r['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                             <div class="small"><?php echo htmlspecialchars($r['game_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo !empty($r['tag']) ? '· ' . htmlspecialchars($r['tag'], ENT_QUOTES, 'UTF-8') : ''; ?></div>
                                         </div>
-                                        <a class="btn btn-secondary" href="/pages/team_profile.php?team_id=<?php echo (int)$r['id']; ?>">Ver equipo</a>
+                                        <a class="btn btn-secondary" href="app.php?view=team-detail&id=<?php echo (int)$r['id']; ?>">Ver equipo</a>
                                     </div>
                                     <div class="small"><?php echo htmlspecialchars($r['description'] ?: 'Sin descripción', ENT_QUOTES, 'UTF-8'); ?></div>
                                 </div>
@@ -71,7 +77,7 @@ $shouldCloseLayout = true;
                                             <strong><?php echo htmlspecialchars($r['username'], ENT_QUOTES, 'UTF-8'); ?></strong>
                                             <div class="small"><?php echo htmlspecialchars($r['bio'] ?: '', ENT_QUOTES, 'UTF-8'); ?></div>
                                         </div>
-                                        <a class="btn btn-secondary" href="profile.php?user=<?php echo urlencode((string)$r['username']); ?>">Ver perfil</a>
+                                        <a class="btn btn-secondary" href="app.php?view=user-detail&user=<?php echo urlencode((string)$r['username']); ?>">Ver perfil</a>
                                     </div>
                                 </div>
                             <?php endif; ?>
