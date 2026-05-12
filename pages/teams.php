@@ -285,12 +285,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Ya existe un equipo con ese nombre para ese juego';
         }
 
-        $isAllowedInOrg = false;
+        // --- BUSCA ESTO (Aproximadamente línea 258) ---
+        $allowed = false;
         foreach ($userOrganizations as $uo) {
-            if ((int) $uo['id'] === (int) $targetOrgId && in_array((string) ($uo['member_role'] ?? ''), $allowedRoles, true)) {
-                $isAllowedInOrg = true;
+            if ((int) $uo['id'] === (int) $targetOrgId && in_array($uo['member_role'], ['owner', 'admin', 'manager'], true)) {
+                $allowed = true;
                 break;
             }
+        }
+
+        if (!$allowed) {
+            $errors[] = 'No tienes permisos para gestionar equipos en la organización seleccionada';
+        }
+
+        // --- REEMPLÁZALO POR ESTO ---
+        $isMemberOfOrg = false;
+        foreach ($userOrganizations as $uo) {
+            if ((int) $uo['id'] === (int) $targetOrgId) {
+                $isMemberOfOrg = true;
+                break;
+            }
+        }
+
+        // Si no es miembro, podrías dejar que lo cree igual si tu lógica de negocio lo permite, 
+        // pero aquí validamos que al menos pertenezca a la organización actual.
+        if (!$isMemberOfOrg && $targetOrgId > 0) {
+            $errors[] = 'No tienes permiso para crear equipos en esta organización';
         }
 
         if (!$isAllowedInOrg && $targetOrgId > 0) {
