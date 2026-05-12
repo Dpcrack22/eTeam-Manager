@@ -19,14 +19,17 @@ if ($q !== '') {
     try {
         $searchTerm = '%' . $q . '%';
         if ($type === 'teams') {
-            // Consulta simplificada para evitar fallos de columnas
-            $stmt = $conn->prepare('SELECT id, name, tag, description FROM teams WHERE name LIKE :q OR tag LIKE :q LIMIT 20');
+            $stmt = $conn->prepare('SELECT id, name, tag, description FROM teams WHERE name LIKE :q1 OR tag LIKE :q2 LIMIT 20');
+            $stmt->bindValue(':q1', $searchTerm, PDO::PARAM_STR);
+            $stmt->bindValue(':q2', $searchTerm, PDO::PARAM_STR); // Lo mandamos también para el tag
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q LIMIT 20');
+            $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         // Si falla, al menos veremos el error en lugar de página en blanco
         echo "<div class='alert alert-danger'>Error en la base de datos: " . htmlspecialchars($e->getMessage()) . "</div>";
