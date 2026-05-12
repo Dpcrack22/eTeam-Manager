@@ -15,10 +15,10 @@ $errors = [];
 $successMessage = '';
 
 // Obtener el contexto actual del usuario (Organización y Equipo activos)
-$activeOrganizationId = getActiveOrganizationContext($conn, $userId);
-$activeTeamId = getActiveTeamId($conn, $activeOrganizationId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $activeOrganizationId = getActiveOrganizationContext($conn, $userId);
+    $activeTeamId = getActiveTeamId($conn, $activeOrganizationId);
     $action = (string) ($_POST['notification_action'] ?? '');
 
     if ($action === 'accept_join_request') {
