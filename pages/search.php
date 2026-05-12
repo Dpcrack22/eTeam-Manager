@@ -49,7 +49,7 @@ if ($q !== '') {
                            style="flex: 4; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;" 
                            required>
                     
-                    <select name="type" style="flex: 1; min-width: 120px; padding: 0 10px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9;">
+                    <select name="type" style="flex: 1; min-width: 120px; padding: 0 10px; border: 1px solid #ddd; border-radius: 6px; background: #374151; color: #f3f4f6; font-size: 1rem;">
                         <option value="users" <?php echo $type === 'users' ? 'selected' : ''; ?>>Jugadores</option>
                         <option value="teams" <?php echo $type === 'teams' ? 'selected' : ''; ?>>Equipos</option>
                     </select>
