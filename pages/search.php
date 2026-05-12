@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/notification_functions.php';
 
 requireAuth();
 
@@ -9,86 +8,116 @@ $q = trim((string) ($_GET['q'] ?? ''));
 $type = trim((string) ($_GET['type'] ?? 'users'));
 $results = [];
 
-// Obtener datos del usuario actual para las validaciones de Owner/Admin
-$currentUserId = (int)$_SESSION['user']['id'];
-$currentUserRole = strtolower($_SESSION['user']['role'] ?? '');
-$isPrivileged = in_array($currentUserRole, ['owner', 'admin']);
+// Datos del usuario actual
+$currentUserId = (int)($_SESSION['user']['id'] ?? 0);
+$currentUserRole = strtolower((string)($_SESSION['user']['role'] ?? ''));
+// Verificamos si es Owner o Admin (ajusta los strings según tu BD)
+$isPrivileged = in_array($currentUserRole, ['owner', 'admin', 'manager']);
 
 if ($q !== '') {
     global $conn;
-    $searchTerm = '%' . $q . '%';
-    
-    if ($type === 'teams') {
-        $stmt = $conn->prepare('SELECT t.id, t.name, t.tag, t.description, g.name AS game_name, t.organization_id 
-                                FROM teams t 
-                                LEFT JOIN games g ON g.id = t.game_id 
-                                WHERE t.name LIKE :q OR t.tag LIKE :q LIMIT 20');
-    } else {
-        $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q LIMIT 20');
+    try {
+        $searchTerm = '%' . $q . '%';
+        if ($type === 'teams') {
+            // Consulta simplificada para evitar fallos de columnas
+            $stmt = $conn->prepare('SELECT id, name, tag, description FROM teams WHERE name LIKE :q OR tag LIKE :q LIMIT 20');
+        } else {
+            $stmt = $conn->prepare('SELECT id, username, avatar_url, bio FROM users WHERE username LIKE :q LIMIT 20');
+        }
+        $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Si falla, al menos veremos el error en lugar de página en blanco
+        echo "<div class='alert alert-danger'>Error en la base de datos: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
-    
-    $stmt->bindValue(':q', $searchTerm, PDO::PARAM_STR);
-    $stmt->execute();
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 
 <section class="page">
     <div class="container">
         <div class="card">
-            <h2 class="h3">Buscador rápido</h2>
-            
-            <form method="get" action="app.php" style="margin-bottom: 20px;">
+            <div class="small text-muted">Buscador global</div>
+            <h2 class="h4" style="margin-bottom: 20px;">Explorar la plataforma</h2>
+
+            <form method="get" action="app.php" style="margin-bottom: 30px;">
                 <input type="hidden" name="view" value="search">
-                <div style="display:flex; gap:10px;">
-                    <input name="q" type="search" placeholder="Buscar jugador o equipo..." value="<?php echo htmlspecialchars($q); ?>" style="flex:1;">
-                    <select name="type">
+                <div style="display: flex; gap: 10px; align-items: stretch;">
+                    <input name="q" type="search" 
+                           placeholder="Buscar por nombre o tag..." 
+                           value="<?php echo htmlspecialchars($q); ?>" 
+                           style="flex: 4; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;" 
+                           required>
+                    
+                    <select name="type" style="flex: 1; min-width: 120px; padding: 0 10px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9;">
                         <option value="users" <?php echo $type === 'users' ? 'selected' : ''; ?>>Jugadores</option>
                         <option value="teams" <?php echo $type === 'teams' ? 'selected' : ''; ?>>Equipos</option>
                     </select>
-                    <button class="btn btn-primary" type="submit">Buscar</button>
+                    
+                    <button class="btn btn-primary" type="submit" style="padding: 0 25px;">Buscar</button>
                 </div>
             </form>
 
-            <div class="results-grid" style="display: flex; flex-direction: column; gap: 12px;">
-                <?php if ($q !== '' && empty($results)): ?>
-                    <p class="small">No se han encontrado <?php echo $type === 'teams' ? 'equipos' : 'jugadores'; ?>.</p>
+            <div class="results-container">
+                <?php if ($q !== ''): ?>
+                    <h5 class="small text-muted" style="margin-bottom: 15px;">
+                        Resultados para: "<?php echo htmlspecialchars($q); ?>"
+                    </h5>
+                    
+                    <?php if (empty($results)): ?>
+                        <div style="padding: 40px; text-align: center; color: #999; border: 2px dashed #eee; border-radius: 8px;">
+                            No se han encontrado coincidencias.
+                        </div>
+                    <?php else: ?>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <?php foreach ($results as $r): ?>
+                                <div class="item-card" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: #fff; border: 1px solid #eee; border-radius: 10px; transition: 0.2s;">
+                                    
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <?php if ($type === 'users'): ?>
+                                            <div style="width: 45px; height: 45px; border-radius: 50%; background: #eee; overflow: hidden;">
+                                                <img src="<?php echo $r['avatar_url'] ?: 'https://ui-avatars.com/api/?name='.urlencode($r['username']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #333;"><?php echo htmlspecialchars($r['username']); ?></div>
+                                                <div style="font-size: 0.8rem; color: #888;"><?php echo htmlspecialchars($r['bio'] ?: 'Sin descripción'); ?></div>
+                                            </div>
+                                        <?php else: ?>
+                                            <div style="width: 45px; height: 45px; border-radius: 8px; background: #6366f1; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;">
+                                                <?php echo htmlspecialchars($r['tag'] ?: 'EQ'); ?>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 600; color: #333;"><?php echo htmlspecialchars($r['name']); ?></div>
+                                                <div style="font-size: 0.8rem; color: #888;">Equipo oficial</div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <div class="actions">
+                                        <?php if ($type === 'users'): ?>
+                                            <?php if ($isPrivileged): ?>
+                                                <button class="btn btn-sm btn-primary" style="font-size: 0.75rem;">Invitar Player</button>
+                                            <?php else: ?>
+                                                <span class="badge badge-light" style="font-size: 0.7rem; color: #ccc;">Solo Admins</span>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <button class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Solicitar Unirme</button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
-
-                <?php foreach ($results as $r): ?>
-                    <div class="search-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px solid #eee; border-radius: 8px;">
-                        
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <?php if ($type === 'users'): ?>
-                                <img src="<?php echo $r['avatar_url'] ?: 'assets/img/default-avatar.png'; ?>" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                                <div>
-                                    <div style="font-weight: bold;"><?php echo htmlspecialchars($r['username']); ?></div>
-                                    <div class="small text-muted"><?php echo htmlspecialchars($r['bio'] ?: 'Sin biografía'); ?></div>
-                                </div>
-                            <?php else: ?>
-                                <div style="width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; color: #666;">
-                                    <?php echo htmlspecialchars($r['tag'] ?: 'T'); ?>
-                                </div>
-                                <div>
-                                    <div style="font-weight: bold;"><?php echo htmlspecialchars($r['name']); ?></div>
-                                    <div class="small text-muted"><?php echo htmlspecialchars($r['game_name'] ?: 'Multigame'); ?></div>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <div>
-                            <?php if ($type === 'users'): ?>
-                                <?php if ($isPrivileged): ?>
-                                    <button class="btn btn-sm btn-primary" onclick="alert('Invitación enviada a <?php echo $r['username']; ?>')">Invitar al equipo</button>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <button class="btn btn-sm btn-secondary" onclick="alert('Solicitud enviada al equipo <?php echo $r['name']; ?>')">Solicitar unirse</button>
-                            <?php endif; ?>
-                        </div>
-
-                    </div>
-                <?php endforeach; ?>
             </div>
         </div>
     </div>
 </section>
+
+<style>
+    /* Efecto hover suave para los resultados */
+    .item-card:hover { border-color: #6366f1 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .btn-sm { padding: 6px 12px; border-radius: 5px; cursor: pointer; border: none; font-weight: 500; }
+    .btn-primary { background: #6366f1; color: white; }
+    .btn-secondary { background: #f3f4f6; color: #374151; }
+</style>
