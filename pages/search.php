@@ -37,32 +37,37 @@ if ($q !== '') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
-    $action = $_POST["action"] ?? '';
-    $targetId = (int)($_POST['target_id'] ?? 0);
+    $stmtEmail = $conn->prepare("SELECT email FROM users WHERE id = :id LIMIT 1");
+    $stmtEmail->execute(['id' => $targetId]);
+    $userToInvite = $stmtEmail->fetch();
 
-    // CASO A: Invitar a un jugador (Si eres admin o owner)
-    if ($action === 'invite_player' && $isPrivileged) {
-        // Necesitamos el email del usuario al que invitamos
-        $stmtEmail = $conn->prepare("SELECT email FROM users WHERE id = :id LIMIT 1");
-        $stmtEmail->execute(['id' => $targetId]);
-        $userToInvite = $stmtEmail->fetch();
+    if ($userToInvite && $activeTeamId) {
+        // 1. Creamos la invitación oficial en la tabla de invitaciones
+        $res = createTeamInvitation($conn, (int)$activeTeamId, $userId, $userToInvite['email'], 'player');
+        
+        if (!empty($res['success'])) {
+            // IMPORTANTE: Obtenemos el ID de la invitación recién creada
+            $invitationId = (int)$res['invitation_id']; 
 
-        if ($userToInvite && $activeTeamId) {
-            $res = createTeamInvitation($conn, (int)$activeTeamId, $userId, $userToInvite['email'], 'player');
-            if (!empty($res['success'])) {
-                $successMsg = "Invitación enviada correctamente.";
-            } else {
-                $errorMsg = $res['error'] ?? "No se pudo enviar la invitación.";
-            }
+            // 2. Creamos la notificación vinculándola con esa invitación
+            // Usamos 'team_invite' como tipo y el ID de la invitación como referencia
+            createNotification(
+                $conn, 
+                $targetId, 
+                'team_invite', 
+                $invitationId, // <--- Este es el reference_id que hace que salgan los botones
+                "Has sido invitado al equipo " . ($activeTeam['name'] ?? 'un equipo')
+            );
+            
+            $successMsg = "¡Invitación enviada!";
         } else {
-            $errorMsg = "Debes tener un equipo seleccionado como activo para invitar.";
+            $errorMsg = $res['error'] ?? "Error al invitar.";
         }
     }
 
     // CASO B: Solicitar unirse a un Equipo
     if ($action === 'request_join') {
-        // Aquí creamos una notificación para los dueños del equipo de destino
-        // Buscamos al dueño (owner) de la organización de ese equipo
+        // 1. Buscamos al dueño (owner) del equipo
         $stmtOwner = $conn->prepare("
             SELECT om.user_id 
             FROM teams t 
@@ -73,10 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         $owner = $stmtOwner->fetch();
 
         if ($owner) {
-            // Usamos tu función de notificaciones
-            createNotification($conn, (int)$owner['user_id'], 'team_join_request', $targetId, 
-                $_SESSION['user']['username'] . " quiere unirse a tu equipo.");
-            $successMsg = "Solicitud enviada al capitán del equipo.";
+            // 2. Creamos la notificación. 
+            // Usamos 'team_join_request' como tipo y el ID del usuario actual como referencia.
+            createNotification(
+                $conn, 
+                (int)$owner['user_id'], 
+                'team_join_request', 
+                $userId, // Referencia: El ID del jugador que solicita
+                $_SESSION['user']['username'] . " quiere unirse a tu equipo."
+            );
+            $successMsg = "Solicitud enviada al capitán.";
         }
     }
 }

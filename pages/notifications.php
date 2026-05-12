@@ -208,6 +208,21 @@ $activeSection = 'notifications';
                                     <input type="hidden" name="invitation_id" value="<?php echo (int) $notification['reference_id']; ?>" />
                                     <button class="btn btn-secondary" type="submit">Rechazar</button>
                                 </form>
+                            <?php elseif ((string) $notification['type'] === 'team_join_request' && !empty($notification['reference_id'])): ?>
+                                <div class="stack-sm" style="margin-top: 10px;">
+                                    <form method="post" style="display:inline;">
+                                        <input type="hidden" name="notification_action" value="accept_join_request" />
+                                        <input type="hidden" name="player_id" value="<?php echo (int) $notification['reference_id']; ?>" />
+                                        <input type="hidden" name="notification_id" value="<?php echo (int) $notification['id']; ?>" />
+                                        <button class="btn btn-primary btn-sm" type="submit">Aceptar Jugador</button>
+                                    </form>
+                                    
+                                    <form method="post" style="display:inline;">
+                                        <input type="hidden" name="notification_action" value="mark_read" />
+                                        <input type="hidden" name="notification_id" value="<?php echo (int) $notification['id']; ?>" />
+                                        <button class="btn btn-secondary btn-sm" type="submit">Denegar</button>
+                                    </form>
+                                </div>
                             <?php endif; ?>
                             <?php if (empty($notification['is_read'])): ?>
                                 <form method="post">
