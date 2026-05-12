@@ -372,7 +372,7 @@ $dashboardData = [
             <div class="dashboard-section-head">
                 <div>
                     <div class="small">Acceso rapido</div>
-                    <h3 class="h3">Modulos clave</h3>
+                    <h3 class="h3">Módulos clave</h3>
                 </div>
             </div>
 

@@ -285,8 +285,8 @@ foreach ($userOrganizations as $organization) {
 }
 
 $pageTitle = $pageTitle ?? 'Organizaciones';
-$pageEyebrow = $pageEyebrow ?? 'Modulo';
-$pageDescription = $pageDescription ?? 'Gestion visual de organizaciones, miembros y roles internos.';
+$pageEyebrow = $pageEyebrow ?? 'Módulo';
+$pageDescription = $pageDescription ?? 'Gestión visual de organizaciones, miembros y roles internos.';
 ?>
 
 <div class="organization-page">

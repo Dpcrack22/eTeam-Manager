@@ -244,7 +244,7 @@ if (!$eventMonthObject) {
 $eventMonth = $eventMonthObject->format('Y-m');
 $pageScripts[] = 'js/modules/calendar.js';
 $pageTitle = $event ? 'Editar evento' : 'Nuevo evento';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = $event ? 'Edición visual de un evento del calendario con participación y contexto operativo.' : 'Alta visual de un evento del calendario con participación y contexto del equipo.';
 $activeSection = 'calendar';
 ?>
@@ -274,7 +274,7 @@ $activeSection = 'calendar';
         </div>
     <?php else: ?>
         <?php if (!empty($successMessage)): ?>
-            <div class="error-box app-feedback app-feedback-success" data-flash-message role="status" aria-live="polite">
+            <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid #2ecc71; color: var(--text-main);" data-flash-message role="status" aria-live="polite">
                 <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endif; ?>

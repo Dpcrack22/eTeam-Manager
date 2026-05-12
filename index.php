@@ -261,7 +261,7 @@ $isLogged = isLogged();
             <div class="container">
                 <div class="card landing-cta-card">
                     <div>
-                        <h2 class="h2" style="margin-top: 0;">Todo el trabajo interno del equipo, reunido en una sola aplicacion.</h2>
+                        <h2 class="h2" style="margin-top: 0;">Todo el trabajo interno del equipo, reunido en una sola aplicación.</h2>
                         <p style="margin-bottom: 0;">La parte interna de eTeam Manager sirve para que staff y jugadores compartan contexto, tareas, calendario y seguimiento competitivo desde un mismo espacio.</p>
                     </div>
                     <div class="landing-hero-actions" style="margin-top: 0;">

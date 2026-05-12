@@ -35,7 +35,7 @@ if (empty($layoutIncluded)) {
         </div>
 
         <?php if ($message !== ''): ?>
-            <div class="error-box app-feedback app-feedback-success" role="status"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid #2ecc71; color: var(--text-main);" role="status"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></div>
         <?php endif; ?>
 
         <?php if ($errorMessage !== ''): ?>

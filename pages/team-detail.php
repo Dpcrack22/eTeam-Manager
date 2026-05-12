@@ -337,40 +337,6 @@ foreach ($teamMembers as $member) {
                 </div>
             <?php endif; ?>
         </div>
-
-        <div class="card">
-            <div class="dashboard-section-head">
-                <div>
-                    <div class="small">Navegación</div>
-                    <h3 class="h3">Otros equipos disponibles</h3>
-                </div>
-                <span class="badge badge-info"><?php echo count($teams); ?> totales</span>
-            </div>
-
-            <?php if (!empty($teams)): ?>
-                <div class="landing-list">
-                    <?php foreach ($teams as $team): ?>
-                        <div class="dashboard-list-item">
-                            <div class="dashboard-list-top">
-                                <div>
-                                    <div class="dashboard-list-title"><?php echo htmlspecialchars($team['name'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <div class="dashboard-list-meta"><?php echo htmlspecialchars($team['game_name'], ENT_QUOTES, 'UTF-8'); ?><?php echo !empty($team['tag']) ? ' · ' . htmlspecialchars($team['tag'], ENT_QUOTES, 'UTF-8') : ''; ?></div>
-                                </div>
-                                <span class="badge badge-info"><?php echo (int) $team['members_count']; ?> miembros</span>
-                            </div>
-
-                            <p class="small"><?php echo htmlspecialchars($team['description'] ?: 'Sin descripción', ENT_QUOTES, 'UTF-8'); ?></p>
-
-                            <a class="btn <?php echo (int) $team['id'] === (int) $selectedTeam['id'] ? 'btn-secondary' : 'btn-primary'; ?>" href="app.php?view=team-detail&amp;team_id=<?php echo (int) $team['id']; ?>">
-                                <?php echo (int) $team['id'] === (int) $selectedTeam['id'] ? 'Equipo actual' : 'Ver detalle'; ?>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="dashboard-empty-state">Todavía no hay equipos creados en este contexto.</div>
-            <?php endif; ?>
-        </div>
     </div>
 
     <div class="card" style="margin-top: 24px;">

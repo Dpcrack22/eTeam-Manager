@@ -36,7 +36,7 @@ $opponentStats = $activeTeam ? getTeamAnalyticsOpponentStats($conn, (int) $activ
 $recentMatches = $activeTeam ? getTeamAnalyticsRecentMatches($conn, (int) $activeTeamId, 5) : [];
 
 $pageTitle = 'Analitica del equipo';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Resumen competitivo del roster activo con victorias, mapas, rivales y scrims recientes.';
 $activeSection = 'analytics';
 ?>

@@ -6,6 +6,8 @@ $email = '';
 $password = '';
 $rememberMe = false;
 $errors = [];
+$verificationSuccess = (string) ($_SESSION['verification_success'] ?? '');
+unset($_SESSION['verification_success']);
 $returnTo = safeReturnToTarget($_REQUEST['return_to'] ?? ($_SESSION['return_to'] ?? null));
 unset($_SESSION['return_to']);
 
@@ -72,6 +74,11 @@ if (empty($layoutIncluded)) {
 }
 ?>
 <div class="auth-page">
+    <?php if ($verificationSuccess !== ''): ?>
+        <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 24px; border-left: 4px solid #2ecc71; color: var(--text-main); width: min(100%, 640px);">
+            <?php echo htmlspecialchars($verificationSuccess, ENT_QUOTES, 'UTF-8'); ?>
+        </div>
+    <?php endif; ?>
     <?php if (!empty($errors)): ?>
         <div class="error-container">
             <?php foreach ($errors as $error): ?>

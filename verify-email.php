@@ -13,9 +13,13 @@ if (!empty($token)) {
     $user = findUserByEmailToken($conn, $token);
     if ($user && empty($user['email_verified_at'])) {
         markUserEmailVerified($conn, (int) $user['id']);
-        $message = 'Tu correo se ha verificado correctamente. Ya puedes iniciar sesión.';
+        $_SESSION['verification_success'] = 'Tu correo se ha verificado correctamente. Ya puedes iniciar sesión.';
+        header('Location: login.php');
+        exit;
     } elseif ($user) {
-        $message = 'Ese correo ya estaba verificado.';
+        $_SESSION['verification_success'] = 'Ese correo ya estaba verificado. Inicia sesión si tienes una cuenta.';
+        header('Location: login.php');
+        exit;
     } else {
         $errorMessage = 'El enlace de verificación no es válido o ya ha caducado.';
     }

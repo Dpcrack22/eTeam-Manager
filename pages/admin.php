@@ -84,9 +84,9 @@ if (!empty($_SESSION['flash_success'])) {
 $organizationMembers = $activeOrganizationId ? getOrganizationMembers($conn, (int) $activeOrganizationId) : [];
 $organizationStats = $activeOrganizationId ? getOrganizationStats($conn, (int) $activeOrganizationId) : ['members' => 0, 'teams' => 0];
 
-$pageTitle = 'Panel de administracion';
-$pageEyebrow = 'Modulo';
-$pageDescription = 'Moderacion de miembros, sanciones y control interno de la organizacion activa.';
+$pageTitle = 'Panel de administración';
+$pageEyebrow = 'Módulo';
+$pageDescription = 'Moderación de miembros, sanciones y control interno de la organización activa.';
 $activeSection = 'admin';
 ?>
 
@@ -114,7 +114,7 @@ $activeSection = 'admin';
     </div>
 
     <?php if (!empty($successMessage)): ?>
-        <div class="error-box app-feedback app-feedback-success" data-flash-message role="status" aria-live="polite">
+        <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid #2ecc71; color: var(--text-main);" data-flash-message role="status" aria-live="polite">
             <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
         </div>
     <?php endif; ?>

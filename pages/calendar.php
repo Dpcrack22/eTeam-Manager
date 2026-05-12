@@ -82,7 +82,7 @@ for ($cursor = $gridStart; $cursor <= $gridEnd; $cursor = $cursor->modify('+1 da
 $calendarTimeline = array_slice($calendarEntries, 0, 10);
 
 $pageTitle = 'Calendario';
-$pageEyebrow = 'Modulo';
+$pageEyebrow = 'Módulo';
 $pageDescription = 'Agenda del equipo activo con un calendario mensual real, scrims recientes y eventos para mantener conectada la planificación competitiva.';
 $activeSection = 'calendar';
 $pageScripts[] = 'js/modules/calendar.js';
@@ -113,7 +113,7 @@ $pageScripts[] = 'js/modules/calendar.js';
     </div>
 
     <?php if (!empty($successMessage)): ?>
-        <div class="error-box app-feedback app-feedback-success" data-flash-message role="status" aria-live="polite">
+        <div class="success-box" style="border-color: rgba(46, 204, 113, 0.4); background: rgba(46, 204, 113, 0.1); margin-bottom: 16px; border-left: 4px solid #2ecc71; color: var(--text-main);" data-flash-message role="status" aria-live="polite">
             <?php echo htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8'); ?>
         </div>
     <?php endif; ?>
