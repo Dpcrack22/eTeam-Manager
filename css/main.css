@@ -2077,6 +2077,7 @@ textarea:focus {
 }
 
 .scrim-detail-grid {
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
 }
 
@@ -2251,10 +2252,18 @@ textarea:focus {
   align-items: start;
 }
 
+.calendar-layout--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .calendar-panel,
 .calendar-aside {
   display: grid;
   gap: var(--space-4);
+}
+
+.calendar-recent-card {
+  margin-top: var(--space-4);
 }
 
 .calendar-weekdays {
@@ -2978,6 +2987,10 @@ textarea:focus {
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
   gap: var(--space-5);
   align-items: start;
+}
+
+.profile-layout--settings {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
 }
 
 .team-detail-layout {

@@ -51,9 +51,9 @@ $activeSection = 'scrims';
 <section class="scrim-detail-page" data-scrim-detail-root>
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Detalle competitivo</div>
+            <div class="small">Scrim activo</div>
             <h2 class="h2">Detalle competitivo</h2>
-            <p>Esta vista aterriza el contexto del enfrentamiento para revisar score, modo, mapas y lectura táctica del scrim.</p>
+            <p>Resumen del enfrentamiento con score, modo y mapas.</p>
         </div>
         <div class="dashboard-hero-meta">
             <div class="dashboard-hero-chip">
@@ -111,22 +111,6 @@ $activeSection = 'scrims';
                 <div class="stack-sm">
                     <a class="btn btn-primary" href="app.php?view=scrim-form&amp;scrim_id=<?php echo (int) $scrim['id']; ?>">Editar scrim</a>
                     <a class="btn btn-secondary" href="app.php?view=scrims">Volver al listado</a>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="dashboard-section-head">
-                    <div>
-                        <div class="small">Notas</div>
-                        <h3 class="h3">Contexto del análisis</h3>
-                    </div>
-                </div>
-
-                <div class="landing-list">
-                    <div class="landing-list-item">Repasar los mapas en orden y detectar patrones de rotación.</div>
-                    <div class="landing-list-item">Cruzar el resultado con el plan previo del scrim.</div>
-                    <div class="landing-list-item">Dejar una nota post-scrim para el roster o staff.</div>
-                    <div class="landing-list-item">Preparar futuras estadísticas por mapa y resultado.</div>
                 </div>
             </div>
         </div>

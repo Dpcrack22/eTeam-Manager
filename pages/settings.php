@@ -146,7 +146,7 @@ if ($avatarInitials === '') {
         </div>
     </div>
 
-    <div class="profile-layout">
+    <div class="profile-layout profile-layout--settings">
         <div class="card">
             <div class="dashboard-section-head">
                 <div>

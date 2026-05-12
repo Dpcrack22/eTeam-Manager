@@ -214,9 +214,9 @@ $activeSection = 'scrims';
 <section class="scrim-form-page" data-scrim-form-root>
     <div class="dashboard-hero card">
         <div>
-            <div class="small">Gestión competitiva</div>
+            <div class="small">Scrims</div>
             <h2 class="h2"><?php echo $scrim ? 'Editar scrim' : 'Nuevo scrim'; ?></h2>
-            <p>El formulario prepara el dato base para el historial competitivo. Desde aquí se guarda rival, fecha, resultado, score y mapas.</p>
+            <p>Rellena rival, fecha, resultado, score y mapas para guardar el enfrentamiento.</p>
         </div>
         <div class="dashboard-hero-meta">
             <div class="dashboard-hero-chip">

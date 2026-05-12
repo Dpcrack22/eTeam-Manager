@@ -136,7 +136,7 @@ $pageScripts[] = 'js/modules/calendar.js';
             </div>
         </div>
 
-        <div class="calendar-layout">
+        <div class="calendar-layout calendar-layout--stacked">
             <div class="card calendar-panel">
                 <div class="calendar-weekdays" aria-hidden="true">
                     <?php foreach ($weekdayLabels as $weekdayLabel): ?>
@@ -174,33 +174,31 @@ $pageScripts[] = 'js/modules/calendar.js';
                     <?php endforeach; ?>
                 </div>
             </div>
+        </div>
 
-            <div class="calendar-aside">
-                <div class="card app-module-card">
-                    <div class="dashboard-section-head">
-                        <div>
-                            <div class="small">Scrims</div>
-                            <h3 class="h3">Historial reciente</h3>
-                        </div>
-                    </div>
-
-                    <?php if (empty($scrimEvents)): ?>
-                        <div class="dashboard-empty-state">No hay scrims recientes para este equipo.</div>
-                    <?php else: ?>
-                        <div class="dashboard-list">
-                            <?php foreach ($scrimEvents as $scrim): ?>
-                                <div class="dashboard-list-item">
-                                    <div class="dashboard-list-top">
-                                        <span class="dashboard-list-title">vs <?php echo htmlspecialchars($scrim['opponent_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                        <span class="badge <?php echo htmlspecialchars(scrimResultBadgeClass((string) $scrim['result']), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars(scrimResultLabel((string) $scrim['result']), ENT_QUOTES, 'UTF-8'); ?></span>
-                                    </div>
-                                    <div class="dashboard-list-meta"><?php echo htmlspecialchars($scrim['match_date_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($scrim['game_mode_name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($scrim['score_label'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+        <div class="card calendar-recent-card">
+            <div class="dashboard-section-head">
+                <div>
+                    <div class="small">Scrims</div>
+                    <h3 class="h3">Historial reciente</h3>
                 </div>
             </div>
+
+            <?php if (empty($scrimEvents)): ?>
+                <div class="dashboard-empty-state">No hay scrims recientes para este equipo.</div>
+            <?php else: ?>
+                <div class="dashboard-list">
+                    <?php foreach ($scrimEvents as $scrim): ?>
+                        <div class="dashboard-list-item">
+                            <div class="dashboard-list-top">
+                                <span class="dashboard-list-title">vs <?php echo htmlspecialchars($scrim['opponent_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="badge <?php echo htmlspecialchars(scrimResultBadgeClass((string) $scrim['result']), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars(scrimResultLabel((string) $scrim['result']), ENT_QUOTES, 'UTF-8'); ?></span>
+                            </div>
+                            <div class="dashboard-list-meta"><?php echo htmlspecialchars($scrim['match_date_label'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($scrim['game_mode_name'], ENT_QUOTES, 'UTF-8'); ?> · <?php echo htmlspecialchars($scrim['score_label'], ENT_QUOTES, 'UTF-8'); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="calendar-overlay" data-calendar-day-overlay hidden>
