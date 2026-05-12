@@ -235,142 +235,120 @@ $activeSection = 'scrims';
             No hay un equipo activo. Antes de crear scrims necesitas activar un roster desde Equipos.
         </div>
     <?php else: ?>
-        <div class="grid-2">
-            <div class="card">
-                <?php if (!empty($errors)): ?>
-                    <div class="error-container">
-                        <?php foreach ($errors as $error): ?>
-                            <div class="error-box"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+        <div class="card">
+            <?php if (!empty($errors)): ?>
+                <div class="error-container">
+                    <?php foreach ($errors as $error): ?>
+                        <div class="error-box"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
-                <form class="form scrim-form" method="post" novalidate>
-                    <input type="hidden" name="scrim_id" value="<?php echo (int) $scrimId; ?>" />
-                    <input type="hidden" name="scrim_action" value="save_scrim" />
+            <form class="form scrim-form" method="post" novalidate>
+                <input type="hidden" name="scrim_id" value="<?php echo (int) $scrimId; ?>" />
+                <input type="hidden" name="scrim_action" value="save_scrim" />
 
-                    <div class="scrim-form-grid">
-                        <div class="field">
-                            <label for="scrim_opponent">Rival</label>
-                            <input id="scrim_opponent" name="opponent_name" type="text" placeholder="Vertex Collective" value="<?php echo htmlspecialchars((string) ($formState['opponent_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_tag">Tag del rival</label>
-                            <input id="scrim_tag" name="opponent_tag" type="text" placeholder="VX" value="<?php echo htmlspecialchars((string) ($formState['opponent_tag'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_date">Fecha y hora</label>
-                            <input id="scrim_date" name="match_date" type="datetime-local" value="<?php echo htmlspecialchars((string) ($formState['match_date'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_mode">Modo</label>
-                            <select id="scrim_mode" name="game_mode_id">
-                                <?php foreach ($gameModes as $gameMode): ?>
-                                    <option value="<?php echo (int) $gameMode['id']; ?>" <?php echo (int) ($formState['game_mode_id'] ?? 0) === (int) $gameMode['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($gameMode['name'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_result">Resultado</label>
-                            <select id="scrim_result" name="result" data-scrim-result-select>
-                                <option value="pending" <?php echo ($formState['result'] ?? 'pending') === 'pending' ? 'selected' : ''; ?>>Pendiente</option>
-                                <option value="win" <?php echo ($formState['result'] ?? '') === 'win' ? 'selected' : ''; ?>>Victoria</option>
-                                <option value="loss" <?php echo ($formState['result'] ?? '') === 'loss' ? 'selected' : ''; ?>>Derrota</option>
-                                <option value="draw" <?php echo ($formState['result'] ?? '') === 'draw' ? 'selected' : ''; ?>>Empate</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_score_for">Score a favor</label>
-                            <input id="scrim_score_for" name="score_for" type="number" min="0" placeholder="26" value="<?php echo htmlspecialchars((string) ($formState['score_for'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-scrim-score-for />
-                        </div>
-
-                        <div class="field">
-                            <label for="scrim_score_against">Score en contra</label>
-                            <input id="scrim_score_against" name="score_against" type="number" min="0" placeholder="22" value="<?php echo htmlspecialchars((string) ($formState['score_against'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-scrim-score-against />
-                        </div>
+                <div class="scrim-form-grid">
+                    <div class="field">
+                        <label for="scrim_opponent">Rival</label>
+                        <input id="scrim_opponent" name="opponent_name" type="text" placeholder="Vertex Collective" value="<?php echo htmlspecialchars((string) ($formState['opponent_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
                     </div>
 
-                    <div class="dashboard-section-head" style="margin-top: 4px;">
-                        <div>
-                            <div class="small">Mapas</div>
-                            <h3 class="h3">Orden del enfrentamiento</h3>
-                        </div>
-                        <button class="btn btn-secondary" type="button" data-scrim-add-map>Agregar mapa</button>
+                    <div class="field">
+                        <label for="scrim_tag">Tag del rival</label>
+                        <input id="scrim_tag" name="opponent_tag" type="text" placeholder="VX" value="<?php echo htmlspecialchars((string) ($formState['opponent_tag'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
                     </div>
 
-                    <div class="scrim-form-map-list" data-scrim-map-list>
-                        <?php foreach ($scrimMaps as $index => $scrimMap): ?>
-                            <div class="scrim-form-map-row" data-scrim-map-row>
-                                <div class="field">
-                                    <label>Orden</label>
-                                    <input name="maps[<?php echo (int) $index; ?>][order_index]" type="number" min="1" value="<?php echo (int) ($scrimMap['order_index'] ?? ($index + 1)); ?>" data-map-field="order_index" />
-                                </div>
-
-                                <div class="field">
-                                    <label>Mapa</label>
-                                    <select name="maps[<?php echo (int) $index; ?>][map_id]" data-map-field="map_id">
-                                        <option value="">Selecciona un mapa</option>
-                                        <?php foreach ($gameMaps as $gameMap): ?>
-                                            <option value="<?php echo (int) $gameMap['id']; ?>" <?php echo (int) ($scrimMap['map_id'] ?? 0) === (int) $gameMap['id'] ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($gameMap['name'], ENT_QUOTES, 'UTF-8'); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div class="field">
-                                    <label>Score a favor</label>
-                                    <input name="maps[<?php echo (int) $index; ?>][score_for]" type="number" min="0" value="<?php echo htmlspecialchars((string) ($scrimMap['score_for'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-map-field="score_for" />
-                                </div>
-
-                                <div class="field">
-                                    <label>Score en contra</label>
-                                    <input name="maps[<?php echo (int) $index; ?>][score_against]" type="number" min="0" value="<?php echo htmlspecialchars((string) ($scrimMap['score_against'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-map-field="score_against" />
-                                </div>
-
-                                <div class="scrim-form-map-actions">
-                                    <button class="btn btn-secondary" type="button" data-scrim-remove-map>Quitar</button>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                    <div class="field">
+                        <label for="scrim_date">Fecha y hora</label>
+                        <input id="scrim_date" name="match_date" type="datetime-local" value="<?php echo htmlspecialchars((string) ($formState['match_date'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
                     </div>
 
-                    <div class="scrim-form-actions">
-                        <button class="btn btn-primary" type="submit"><?php echo $scrim ? 'Guardar cambios' : 'Crear scrim'; ?></button>
-                        <a class="btn btn-secondary" href="app.php?view=scrims">Volver al listado</a>
-                        <?php if ($scrim): ?>
-                            <button class="btn btn-secondary" type="submit" name="scrim_action" value="delete_scrim" data-delete-scrim-trigger>Eliminar</button>
-                        <?php endif; ?>
+                    <div class="field">
+                        <label for="scrim_mode">Modo</label>
+                        <select id="scrim_mode" name="game_mode_id">
+                            <?php foreach ($gameModes as $gameMode): ?>
+                                <option value="<?php echo (int) $gameMode['id']; ?>" <?php echo (int) ($formState['game_mode_id'] ?? 0) === (int) $gameMode['id'] ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($gameMode['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                </form>
-            </div>
 
-            <div class="card">
-                <div class="dashboard-section-head">
+                    <div class="field">
+                        <label for="scrim_result">Resultado</label>
+                        <select id="scrim_result" name="result" data-scrim-result-select>
+                            <option value="pending" <?php echo ($formState['result'] ?? 'pending') === 'pending' ? 'selected' : ''; ?>>Pendiente</option>
+                            <option value="win" <?php echo ($formState['result'] ?? '') === 'win' ? 'selected' : ''; ?>>Victoria</option>
+                            <option value="loss" <?php echo ($formState['result'] ?? '') === 'loss' ? 'selected' : ''; ?>>Derrota</option>
+                            <option value="draw" <?php echo ($formState['result'] ?? '') === 'draw' ? 'selected' : ''; ?>>Empate</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="scrim_score_for">Score a favor</label>
+                        <input id="scrim_score_for" name="score_for" type="number" min="0" placeholder="26" value="<?php echo htmlspecialchars((string) ($formState['score_for'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-scrim-score-for />
+                    </div>
+
+                    <div class="field">
+                        <label for="scrim_score_against">Score en contra</label>
+                        <input id="scrim_score_against" name="score_against" type="number" min="0" placeholder="22" value="<?php echo htmlspecialchars((string) ($formState['score_against'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-scrim-score-against />
+                    </div>
+                </div>
+
+                <div class="dashboard-section-head" style="margin-top: 4px;">
                     <div>
-                        <div class="small">Contexto del módulo</div>
-                        <h3 class="h3">Qué queda ya preparado</h3>
+                        <div class="small">Mapas</div>
+                        <h3 class="h3">Orden del enfrentamiento</h3>
                     </div>
+                    <button class="btn btn-secondary" type="button" data-scrim-add-map>Agregar mapa</button>
                 </div>
 
-                <div class="landing-list">
-                    <div class="landing-list-item">Alta y edición de scrims por equipo activo.</div>
-                    <div class="landing-list-item">Estructura de mapas con orden y score.</div>
-                    <div class="landing-list-item">Resultado, rival y modo enlazados al modelo `matches`.</div>
-                    <div class="landing-list-item">Base lista para conectar analítica más adelante.</div>
+                <div class="scrim-form-map-list" data-scrim-map-list>
+                    <?php foreach ($scrimMaps as $index => $scrimMap): ?>
+                        <div class="scrim-form-map-row" data-scrim-map-row>
+                            <div class="field">
+                                <label>Orden</label>
+                                <input name="maps[<?php echo (int) $index; ?>][order_index]" type="number" min="1" value="<?php echo (int) ($scrimMap['order_index'] ?? ($index + 1)); ?>" data-map-field="order_index" />
+                            </div>
+
+                            <div class="field">
+                                <label>Mapa</label>
+                                <select name="maps[<?php echo (int) $index; ?>][map_id]" data-map-field="map_id">
+                                    <option value="">Selecciona un mapa</option>
+                                    <?php foreach ($gameMaps as $gameMap): ?>
+                                        <option value="<?php echo (int) $gameMap['id']; ?>" <?php echo (int) ($scrimMap['map_id'] ?? 0) === (int) $gameMap['id'] ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($gameMap['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Score a favor</label>
+                                <input name="maps[<?php echo (int) $index; ?>][score_for]" type="number" min="0" value="<?php echo htmlspecialchars((string) ($scrimMap['score_for'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-map-field="score_for" />
+                            </div>
+
+                            <div class="field">
+                                <label>Score en contra</label>
+                                <input name="maps[<?php echo (int) $index; ?>][score_against]" type="number" min="0" value="<?php echo htmlspecialchars((string) ($scrimMap['score_against'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" data-map-field="score_against" />
+                            </div>
+
+                            <div class="scrim-form-map-actions">
+                                <button class="btn btn-secondary" type="button" data-scrim-remove-map>Quitar</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
-                <div class="scrim-note-box">
-                    Este formulario ya deja el sprint listo para seguir con calendario y estadísticas sin rehacer la estructura de datos.
+                <div class="scrim-form-actions">
+                    <button class="btn btn-primary" type="submit"><?php echo $scrim ? 'Guardar cambios' : 'Crear scrim'; ?></button>
+                    <a class="btn btn-secondary" href="app.php?view=scrims">Volver al listado</a>
+                    <?php if ($scrim): ?>
+                        <button class="btn btn-secondary" type="submit" name="scrim_action" value="delete_scrim" data-delete-scrim-trigger>Eliminar</button>
+                    <?php endif; ?>
                 </div>
-            </div>
+            </form>
         </div>
     <?php endif; ?>
 </section>

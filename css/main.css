@@ -2256,6 +2256,14 @@ textarea:focus {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.calendar-page .calendar-layout--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.calendar-page .calendar-layout--stacked .calendar-panel {
+  width: 100%;
+}
+
 .calendar-panel,
 .calendar-aside {
   display: grid;
