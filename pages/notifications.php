@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/invitation_functions.php';
 require_once __DIR__ . '/../includes/notification_functions.php';
 require_once __DIR__ . '/../includes/organization_functions.php';
+require_once __DIR__ . '/../includes/team_functions.php'; // Asegúrate de incluir esto
 
 requireAuth();
 
@@ -15,6 +16,39 @@ $successMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['notification_action'] ?? '');
+
+    if ($action === 'accept_join_request') {
+        $playerId = (int)($_POST['player_id'] ?? 0);
+        $notificationId = (int)($_POST['notification_id'] ?? 0);
+        
+        // 1. En lugar de funciones inexistentes, usamos la sesión directamente
+        // que es donde tu app guarda la organización activa.
+        $currentOrgId = (int) ($_SESSION['active_organization_id'] ?? ($_SESSION['user']['organization_id'] ?? 0));
+        
+        // 2. Obtenemos el equipo activo usando TU función del archivo
+        $activeTeamId = getActiveTeamId($conn, $currentOrgId);
+        
+        if ($activeTeamId > 0 && $playerId > 0) {
+            // 3. Usamos TU función joinTeam, que ya se encarga de:
+            // - Insertar en organization_members
+            // - Insertar en team_members con is_active = 1
+            // - Crear notificación para el jugador
+            $res = joinTeam($conn, $activeTeamId, $playerId, 'player');
+            
+            if ($res['success']) {
+                // 4. Marcamos la notificación del capitán como leída
+                markNotificationAsRead($conn, $notificationId, $userId);
+
+                $_SESSION['flash_success'] = 'Jugador aceptado y añadido al equipo.';
+                header('Location: app.php?view=notifications');
+                exit;
+            } else {
+                $errors[] = "Error: " . ($res['error'] ?? 'No se pudo unir al jugador');
+            }
+        } else {
+            $errors[] = "No tienes un equipo activo seleccionado. Ve a la sección de Equipos y selecciona uno.";
+        }
+    }
 
     if ($action === 'mark_all_read') {
         markAllNotificationsAsRead($conn, $userId);
@@ -197,6 +231,7 @@ $activeSection = 'notifications';
 
                         <div class="notification-card-actions">
                             <a class="btn btn-secondary" href="<?php echo htmlspecialchars(notificationViewLink($notification), ENT_QUOTES, 'UTF-8'); ?>">Abrir módulo</a>
+
                             <?php if ((string) $notification['type'] === 'team_invite' && !empty($notification['reference_id']) && isset($pendingInvitationsById[(int) $notification['reference_id']])): ?>
                                 <form method="post">
                                     <input type="hidden" name="notification_action" value="accept_invite" />
@@ -208,8 +243,21 @@ $activeSection = 'notifications';
                                     <input type="hidden" name="invitation_id" value="<?php echo (int) $notification['reference_id']; ?>" />
                                     <button class="btn btn-secondary" type="submit">Rechazar</button>
                                 </form>
-                            <?php endif; ?>
-                            <?php if (empty($notification['is_read'])): ?>
+
+                            <?php elseif ((string) $notification['type'] === 'team_join_request' && !empty($notification['reference_id'])): ?>
+                                <form method="post">
+                                    <input type="hidden" name="notification_action" value="accept_join_request" />
+                                    <input type="hidden" name="player_id" value="<?php echo (int) $notification['reference_id']; ?>" />
+                                    <input type="hidden" name="notification_id" value="<?php echo (int) $notification['id']; ?>" />
+                                    <button class="btn btn-primary" type="submit">Aceptar Jugador</button>
+                                </form>
+                                <form method="post">
+                                    <input type="hidden" name="notification_action" value="mark_read" />
+                                    <input type="hidden" name="notification_id" value="<?php echo (int) $notification['id']; ?>" />
+                                    <button class="btn btn-secondary" type="submit">Denegar</button>
+                                </form>
+
+                            <?php elseif (empty($notification['is_read'])): ?>
                                 <form method="post">
                                     <input type="hidden" name="notification_action" value="mark_read" />
                                     <input type="hidden" name="notification_id" value="<?php echo (int) $notification['id']; ?>" />
