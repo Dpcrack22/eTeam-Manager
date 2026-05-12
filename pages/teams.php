@@ -253,10 +253,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 // Creamos una organización con el nombre del usuario o el del equipo
                 $orgName = "Org de " . ($currentUser['username'] ?? 'Usuario');
-                $orgSlug = strtolower(str_replace(' ', '-', $orgName)) . '-' . time();
+                // Generamos un slug único básico
+                $orgSlug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $orgName)) . '-' . time();
                 
-                $stmtOrg = $conn->prepare('INSERT INTO organizations (name, slug, created_at) VALUES (:name, :slug, NOW())');
-                $stmtOrg->execute([':name' => $orgName, ':slug' => $orgSlug]);
+                // INSERT en organizations incluyendo owner_id
+                $stmtOrg = $conn->prepare('
+                    INSERT INTO organizations (name, slug, owner_id, description, created_at, updated_at) 
+                    VALUES (:name, :slug, :owner_id, :description, NOW(), NOW())
+                ');
+                
+                $stmtOrg->execute([
+                    ':name'     => $orgName,
+                    ':slug'     => $orgSlug,
+                    ':owner_id' => $userId, // Aquí asignamos al usuario como dueño legal
+                    ':description' => 'Organización creada automáticamente al crear un equipo.'
+                ]);
                 $targetOrgId = (int) $conn->lastInsertId();
 
                 // Hacer al usuario OWNER de esta nueva organización para que no haya errores de permisos
