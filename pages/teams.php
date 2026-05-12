@@ -525,21 +525,7 @@ if ($userId && !empty($teams)) {
             <button class="btn btn-primary" type="submit">Crear equipo</button>
         </form>
 
-        <?php 
-            // Verificamos si el usuario es el coach (u otro rol con permisos) del equipo activo
-            $isTeamManager = false;
-            if ($activeTeam) {
-                // Si el usuario es el creador/coach del equipo activo según la lista de sus equipos
-                foreach ($teams as $t) {
-                    if ((int)$t['id'] === (int)$activeTeamId && $t['member_role'] === 'owner') {
-                        $isTeamManager = true;
-                        break;
-                    }
-                }
-            }
-        ?>
-
-        <?php if (($canManageInvitations || $isTeamManager) && $activeTeamId !== null): ?>
+        <?php if ($canManageInvitations && $activeTeamId !== null): ?>
             <div class="team-invite-panel" style="margin-top: 20px;">
                 <div class="dashboard-section-head">
                     <div>

@@ -10,10 +10,9 @@ global $conn;
 
 $currentUser = $_SESSION['user'] ?? [];
 $userId = (int) ($currentUser['id'] ?? 0);
-$allowedManageRoles = ['owner', 'admin', 'manager', 'coach'];
-$teamRoles = ['admin', 'coach', 'player', 'analyst', 'substitute'];
+$allowedManageRoles = ['owner', 'admin', 'manager'];
+$teamRoles = ['coach', 'player', 'analyst', 'substitute'];
 $teamRoleLabels = [
-    'admin' => 'Admin',
     'coach' => 'Coach',
     'player' => 'Player',
     'analyst' => 'Analyst',
@@ -38,7 +37,7 @@ $teams = [];
 $selectedTeam = false;
 $selectedTeamId = (int) ($_GET['team_id'] ?? 0);
 $teamMembers = [];
-$canManageTeams = in_array((string) ($_SESSION['user']['role'] ?? ''), $allowedManageRoles, true);
+$canManageTeams = in_array(strtolower((string) ($_SESSION['user']['role'] ?? '')), $allowedManageRoles, true);
 
 if ($activeOrganizationId) {
     $teams = getOrganizationTeams($conn, (int) $activeOrganizationId);
@@ -194,7 +193,6 @@ if ($selectedTeam) {
 }
 
 $teamStats = [
-    'admin' => 0,
     'members' => count($teamMembers),
     'coach' => 0,
     'player' => 0,
@@ -275,7 +273,6 @@ foreach ($teamMembers as $member) {
             </div>
 
             <div class="stack-sm" style="margin-top: 20px;">
-                <span class="badge">Admin: <?php echo (int) $teamStats['admin']; ?></span>
                 <span class="badge">Coach: <?php echo (int) $teamStats['coach']; ?></span>
                 <span class="badge">Player: <?php echo (int) $teamStats['player']; ?></span>
                 <span class="badge">Analyst: <?php echo (int) $teamStats['analyst']; ?></span>
@@ -376,7 +373,7 @@ foreach ($teamMembers as $member) {
 
                 <div class="landing-list">
                     <div class="landing-list-item">La gestión de roster envía solicitudes por email y notificación interna.</div>
-                    <div class="landing-list-item">Los roles internos de equipo son admin, coach, player, analyst y substitute.</div>
+                    <div class="landing-list-item">Los roles internos de equipo son coach, player, analyst y substitute.</div>
                     <div class="landing-list-item">El enlace compartible del equipo se genera automáticamente.</div>
                 </div>
             </div>
