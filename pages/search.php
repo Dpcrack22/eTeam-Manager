@@ -36,6 +36,9 @@ if ($q !== '') {
     }
 }
 
+$currentOrgId = (int) ($_SESSION['active_organization_id'] ?? ($_SESSION['user']['organization_id'] ?? 0));
+$activeTeamId = getActiveTeamId($conn, $currentOrgId);
+
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $stmtEmail = $conn->prepare("SELECT email FROM users WHERE id = :id LIMIT 1");
     $stmtEmail->execute(['id' => $targetId]);

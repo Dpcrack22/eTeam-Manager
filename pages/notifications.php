@@ -21,35 +21,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $playerId = (int)($_POST['player_id'] ?? 0);
         $notificationId = (int)($_POST['notification_id'] ?? 0);
         
-        // 1. Obtenemos el equipo activo del capitán que está aceptando
-        // Asegúrate de que $activeTeamId está definido en tu contexto global
+        // 1. En lugar de funciones inexistentes, usamos la sesión directamente
+        // que es donde tu app guarda la organización activa.
+        $currentOrgId = (int) ($_SESSION['active_organization_id'] ?? ($_SESSION['user']['organization_id'] ?? 0));
+        
+        // 2. Obtenemos el equipo activo usando TU función del archivo
+        $activeTeamId = getActiveTeamId($conn, $currentOrgId);
+        
         if ($activeTeamId > 0 && $playerId > 0) {
+            // 3. Usamos TU función joinTeam, que ya se encarga de:
+            // - Insertar en organization_members
+            // - Insertar en team_members con is_active = 1
+            // - Crear notificación para el jugador
+            $res = joinTeam($conn, $activeTeamId, $playerId, 'player');
             
-            // 2. IMPORTANTE: Insertar al jugador en la ORGANIZACIÓN primero (si no está)
-            // Esto permite que el sistema le deje "ver" los recursos de la organización
-            $stmtOrg = $conn->prepare("INSERT IGNORE INTO organization_members (organization_id, user_id, role, is_active) VALUES (:oid, :uid, 'member', 1)");
-            $stmtOrg->execute(['oid' => $activeOrganizationId, 'uid' => $playerId]);
-
-            // 3. Insertar al jugador en el EQUIPO como ACTIVO
-            // Usamos una consulta directa si joinTeam() te está fallando
-            $stmtTeam = $conn->prepare("INSERT INTO team_members (team_id, user_id, role, is_active) VALUES (:tid, :uid, 'player', 1) ON DUPLICATE KEY UPDATE is_active = 1");
-            $success = $stmtTeam->execute(['tid' => $activeTeamId, 'uid' => $playerId]);
-
-            if ($success) {
-                // 4. Marcar la notificación como leída para que DESAPAREZCA de la lista
+            if ($res['success']) {
+                // 4. Marcamos la notificación del capitán como leída
                 markNotificationAsRead($conn, $notificationId, $userId);
-
-                // 5. Notificar al jugador que ha sido aceptado
-                createNotification($conn, $playerId, 'team_invite_accepted', $activeTeamId, "¡Tu solicitud para unirte al equipo ha sido aceptada!");
 
                 $_SESSION['flash_success'] = 'Jugador aceptado y añadido al equipo.';
                 header('Location: app.php?view=notifications');
                 exit;
             } else {
-                $errors[] = "Error al actualizar la base de datos.";
+                $errors[] = "Error: " . ($res['error'] ?? 'No se pudo unir al jugador');
             }
         } else {
-            $errors[] = "No tienes un equipo activo seleccionado para aceptar jugadores.";
+            $errors[] = "No tienes un equipo activo seleccionado. Ve a la sección de Equipos y selecciona uno.";
         }
     }
 
