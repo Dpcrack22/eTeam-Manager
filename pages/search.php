@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
-
+require_once __DIR__ . '/../includes/invitation_functions.php'; // Esencial
 requireAuth();
 
 $q = trim((string) ($_GET['q'] ?? ''));
@@ -33,6 +33,51 @@ if ($q !== '') {
     } catch (PDOException $e) {
         // Si falla, al menos veremos el error en lugar de página en blanco
         echo "<div class='alert alert-danger'>Error en la base de datos: " . htmlspecialchars($e->getMessage()) . "</div>";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+    $action = $_POST["action"] ?? '';
+    $targetId = (int)($_POST['target_id'] ?? 0);
+
+    // CASO A: Invitar a un jugador (Si eres admin o owner)
+    if ($action === 'invite_player' && $isPrivileged) {
+        // Necesitamos el email del usuario al que invitamos
+        $stmtEmail = $conn->prepare("SELECT email FROM users WHERE id = :id LIMIT 1");
+        $stmtEmail->execute(['id' => $targetId]);
+        $userToInvite = $stmtEmail->fetch();
+
+        if ($userToInvite && $activeTeamId) {
+            $res = createTeamInvitation($conn, (int)$activeTeamId, $userId, $userToInvite['email'], 'player');
+            if (!empty($res['success'])) {
+                $successMsg = "Invitación enviada correctamente.";
+            } else {
+                $errorMsg = $res['error'] ?? "No se pudo enviar la invitación.";
+            }
+        } else {
+            $errorMsg = "Debes tener un equipo seleccionado como activo para invitar.";
+        }
+    }
+
+    // CASO B: Solicitar unirse a un Equipo
+    if ($action === 'request_join') {
+        // Aquí creamos una notificación para los dueños del equipo de destino
+        // Buscamos al dueño (owner) de la organización de ese equipo
+        $stmtOwner = $conn->prepare("
+            SELECT om.user_id 
+            FROM teams t 
+            JOIN organization_members om ON t.organization_id = om.organization_id 
+            WHERE t.id = :team_id AND om.role = 'owner' LIMIT 1
+        ");
+        $stmtOwner->execute(['team_id' => $targetId]);
+        $owner = $stmtOwner->fetch();
+
+        if ($owner) {
+            // Usamos tu función de notificaciones
+            createNotification($conn, (int)$owner['user_id'], 'team_join_request', $targetId, 
+                $_SESSION['user']['username'] . " quiere unirse a tu equipo.");
+            $successMsg = "Solicitud enviada al capitán del equipo.";
+        }
     }
 }
 ?>
@@ -98,13 +143,24 @@ if ($q !== '') {
 
                                     <div class="actions">
                                         <?php if ($type === 'users'): ?>
-                                            <?php if ($isPrivileged): ?>
-                                                <button class="btn btn-sm btn-primary" style="font-size: 0.75rem;">Invitar Player</button>
+                                            <?php if ($isPrivileged && $activeTeamId): ?>
+                                                <form method="POST">
+                                                    <input type="hidden" name="action" value="invite_player">
+                                                    <input type="hidden" name="target_id" value="<?php echo $r['id']; ?>">
+                                                    <button type="submit" class="btn btn-sm btn-primary">Invitar a <?php echo htmlspecialchars($activeTeam['name'] ?? 'Equipo'); ?></button>
+                                                </form>
+                                            <?php elseif (!$activeTeamId): ?>
+                                                <span class="small text-muted">Selecciona un equipo primero</span>
                                             <?php else: ?>
-                                                <span class="badge badge-light" style="font-size: 0.7rem; color: #ccc;">Solo Admins</span>
+                                                <span class="badge badge-light">Solo Admins</span>
                                             <?php endif; ?>
+
                                         <?php else: ?>
-                                            <button class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Solicitar Unirme</button>
+                                            <form method="POST">
+                                                <input type="hidden" name="action" value="request_join">
+                                                <input type="hidden" name="target_id" value="<?php echo $r['id']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-secondary">Solicitar Unirme</button>
+                                            </form>
                                         <?php endif; ?>
                                     </div>
                                 </div>
