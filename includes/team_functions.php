@@ -307,6 +307,8 @@ function getTeamMembers(PDO $conn, int $teamId): array
 
 function addOrUpdateTeamMemberByEmail(PDO $conn, int $teamId, string $email, string $role): array
 {
+    $role = normalizeTeamRole($role);
+
     $userStatement = $conn->prepare('SELECT id, username FROM users WHERE email = :email LIMIT 1');
     $userStatement->bindValue(':email', $email, PDO::PARAM_STR);
     $userStatement->execute();
@@ -353,6 +355,8 @@ function addOrUpdateTeamMemberByEmail(PDO $conn, int $teamId, string $email, str
 
 function updateTeamMemberRole(PDO $conn, int $teamId, int $userId, string $role): bool
 {
+    $role = normalizeTeamRole($role);
+
     $statement = $conn->prepare(
         'UPDATE team_members SET role = :role, is_active = 1 WHERE team_id = :team_id AND user_id = :user_id'
     );
@@ -504,6 +508,22 @@ function getAllActiveTeams(PDO $conn): array
     return $statement->fetchAll();
 }
 
+function normalizeTeamRole(string $role): string
+{
+    $normalizedRole = strtolower(trim($role));
+
+    if (in_array($normalizedRole, ['coach', 'player', 'analyst', 'substitute'], true)) {
+        return $normalizedRole;
+    }
+
+    // Roles de organización no válidos en team_members se degradan a coach/player.
+    if (in_array($normalizedRole, ['owner', 'admin', 'manager'], true)) {
+        return 'coach';
+    }
+
+    return 'player';
+}
+
 function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'): array
 {
     $team = getTeamById($conn, $teamId);
@@ -512,11 +532,7 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
         return ['success' => false, 'error' => 'El equipo no existe'];
     }
 
-    $role = strtolower(trim($role));
-    $allowedRoles = ['owner', 'admin', 'coach', 'player', 'analyst', 'substitute'];
-    if (!in_array($role, $allowedRoles, true)) {
-        $role = 'player';
-    }
+    $role = normalizeTeamRole($role);
 
     $organizationId = (int) ($team['organization_id'] ?? 0);
 
@@ -556,6 +572,8 @@ function joinTeam(PDO $conn, int $teamId, int $userId, string $role = 'player'):
             $orgRole = $role;
             if ($orgRole === 'substitute') {
                 $orgRole = 'player';
+            } elseif (in_array($orgRole, ['coach', 'analyst'], true)) {
+                $orgRole = 'manager';
             }
 
             $insertOrgMember = $conn->prepare(

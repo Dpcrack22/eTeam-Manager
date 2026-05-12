@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teamId = (int) ($_POST['team_id'] ?? 0);
         $email = trim((string) ($_POST['email'] ?? ''));
         $role = strtolower(trim((string) ($_POST['role'] ?? 'player')));
-        $allowedRoles = ['admin', 'coach', 'player', 'analyst', 'substitute'];
+        $allowedRoles = ['coach', 'player', 'analyst', 'substitute'];
 
         if (!$canManageInvitations) {
             $errors[] = 'No tienes permisos para invitar miembros en este contexto';
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         throw new RuntimeException('No se pudo crear el equipo.');
                     }
 
-                    $joinResult = joinTeam($conn, $newTeamId, $userId, 'owner');
+                    $joinResult = joinTeam($conn, $newTeamId, $userId, 'coach');
                     if (empty($joinResult['success'])) {
                         throw new RuntimeException((string) ($joinResult['error'] ?? 'No se pudo asociar el usuario al equipo recién creado.'));
                     }
@@ -560,7 +560,6 @@ if ($userId && !empty($teams)) {
                     <div class="field">
                         <label for="invite_role">Rol</label>
                         <select id="invite_role" name="role">
-                            <option value="admin">Admin</option>
                             <option value="player">Player</option>
                             <option value="coach">Coach</option>
                             <option value="analyst">Analyst</option>
